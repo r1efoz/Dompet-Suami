@@ -3,6 +3,7 @@ import type { Account } from '../models/Account';
 import type { Category } from '../models/Category';
 import type { Transaction } from '../models/Transaction';
 import { computeBalances, startOfMonth, summarizeSince } from './ledger';
+import { formatIDR } from './format';
 
 const TRANSACTIONS_KEY = 'dompet-suami-transactions';
 const ACCOUNTS_KEY = 'dompet-suami-accounts';
@@ -91,18 +92,17 @@ function requireAmount(amount: number): number {
 export interface EntryInput {
   type: 'income' | 'expense';
   amount: number;
-  description: string;
+  description?: string;
   source: string;
   categoryId?: string;
   timestamp?: string;
+  adminFee?: number;
 }
 
-export function recordEntry({ type, amount, description, source, categoryId, timestamp }: EntryInput): Transaction {
+export function recordEntry({ type, amount, description, source, categoryId, timestamp, adminFee = 0 }: EntryInput): Transaction {
   requireAccount(source);
   const value = requireAmount(amount);
-  const note = description.trim();
-
-  if (!note) throw new Error('Keterangan wajib diisi.');
+  const note = description?.trim() ?? '';
 
   if (categoryId) {
     requireCategory(categoryId);
@@ -112,7 +112,7 @@ export function recordEntry({ type, amount, description, source, categoryId, tim
     }
   }
 
-  if (type === 'expense' && (get(balances)[source] ?? 0) < value) {
+  if (type === 'expense' && (get(balances)[source] ?? 0) < value + adminFee) {
     throw new Error('Saldo tidak cukup.');
   }
 
@@ -130,13 +130,13 @@ export function recordEntry({ type, amount, description, source, categoryId, tim
   return tx;
 }
 
-export function recordTransfer(from: string, to: string, amount: number): void {
+export function recordTransfer(from: string, to: string, amount: number, adminFee: number = 0): void {
   if (from === to) throw new Error('Sumber dan tujuan sama.');
   requireAccount(from);
   requireAccount(to);
 
   const value = requireAmount(amount);
-  if ((get(balances)[from] ?? 0) < value) {
+  if ((get(balances)[from] ?? 0) < value + adminFee) {
     throw new Error('Saldo tidak cukup.');
   }
 
@@ -148,8 +148,8 @@ export function recordTransfer(from: string, to: string, amount: number): void {
   const out: Transaction = {
     id: newId('tx'),
     type: 'expense',
-    amount: value,
-    description: `Transfer ke ${toName}`,
+    amount: value + adminFee,
+    description: `Transfer ke ${toName}${adminFee > 0 ? ` (biaya ${formatIDR(adminFee)})` : ''}`,
     source: from,
     destination: to,
     transferId,

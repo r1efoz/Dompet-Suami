@@ -16,6 +16,7 @@
   let source = 'bank';
   let destination = 'cash';
   let categoryId = '';
+  let adminFee = '';
 
   let error = '';
   let success = '';
@@ -33,6 +34,7 @@
   }
 
   $: amountDisplay = amount ? formatInput(amount) : '';
+  $: adminFeeDisplay = adminFee ? formatInput(adminFee) : '';
   $: submitLabel =
     mode === 'income' ? 'Simpan pemasukan' : mode === 'expense' ? 'Simpan pengeluaran' : 'Pindahkan dana';
 
@@ -53,21 +55,24 @@
     amount = '';
     description = '';
     categoryId = '';
+    adminFee = '';
   }
 
   function handleSubmit(event: SubmitEvent) {
     event.preventDefault();
     const value = parseInput(amount);
+    const fee = parseInput(adminFee);
 
     try {
       if (mode === 'transfer') {
-        recordTransfer(source, destination, value);
+        recordTransfer(source, destination, value, fee);
         notify('Transfer dicatat.', 'success');
       } else {
-        recordEntry({ type: mode, amount: value, description, source, categoryId });
+        recordEntry({ type: mode, amount: value, description, source, categoryId, adminFee: fee });
         notify(mode === 'income' ? 'Pemasukan dicatat.' : 'Pengeluaran dicatat.', 'success');
       }
       amount = '';
+      adminFee = '';
       description = '';
     } catch (err) {
       notify(err instanceof Error ? err.message : 'Gagal menyimpan.', 'error');
@@ -135,6 +140,26 @@
               <option value={account.id}>{account.name} · {formatIDR($balances[account.id] ?? 0)}</option>
             {/each}
           </select>
+        </div>
+        <div>
+          <label class="label" for="entry-fee">Biaya admin</label>
+          <div class="relative mt-1.5">
+            <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center font-mono text-[12px] text-ink2">Rp</span>
+            <input
+              id="entry-fee"
+              class="field num pl-10 text-[15px]"
+              type="text"
+              inputmode="numeric"
+              placeholder="0"
+              value={adminFeeDisplay}
+              on:input={(e) => {
+                const target = e.target as HTMLInputElement;
+                const raw = target.value.replace(/\./g, '');
+                adminFee = raw;
+                target.value = formatInput(raw);
+              }}
+            />
+          </div>
         </div>
       {:else}
         <div class="grid gap-4 sm:grid-cols-2">
