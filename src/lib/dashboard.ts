@@ -41,7 +41,7 @@ export function getDashboardData(
 
   // Category breakdown (income/expense only)
   const catTotals = categories.reduce((acc, c) => {
-    acc[c.id] = filtered
+    acc[c.id] = normalTransactions
       .filter((tx) => tx.categoryId === c.id)
       .reduce((sum, tx) => sum + (tx.type === 'income' ? tx.amount : -tx.amount), 0);
     return acc;
