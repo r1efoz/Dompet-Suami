@@ -19,19 +19,18 @@ export function getDashboardData(
   categories: Category[],
   transactions: Transaction[]
 ): DashboardData {
-  const filtered = transactions.filter((tx) => !tx.transferId);
-  const summary = summarizeSince(filtered, startOfMonth());
-  const total = Object.values(
-    accounts.reduce((acc, a) => ({ ...acc, [a.id]: acc[a.id] ?? 0 }), {} as Record<string, number>)
-  ).reduce((sum, v) => sum + v, 0);
+  const normalTransactions = transactions.filter((tx) => !tx.transferId);
+  const summary = summarizeSince(normalTransactions, startOfMonth());
 
-  // Account breakdown
+  // Account breakdown: include ALL transactions (including transfers) for balance
   const balances = accounts.reduce((acc, a) => {
-    acc[a.id] = filtered
+    acc[a.id] = transactions
       .filter((tx) => tx.source === a.id)
       .reduce((sum, tx) => sum + (tx.type === 'income' ? tx.amount : -tx.amount), 0);
     return acc;
   }, {} as Record<string, number>);
+
+  const total = Object.values(balances).reduce((sum, v) => sum + v, 0);
 
   const accountBreakdown = accounts.map((a) => ({
     id: a.id,
