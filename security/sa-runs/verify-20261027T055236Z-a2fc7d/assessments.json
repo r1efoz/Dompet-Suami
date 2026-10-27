@@ -1,0 +1,2323 @@
+{
+ "schema_version": "0.2.2",
+ "run_id": "verify-20261027T055236Z-a2fc7d",
+ "mode": "verify",
+ "evaluated_at": "2026-10-27T05:52:36.393192+00:00",
+ "execution_level": "L0",
+ "authorization_valid": true,
+ "authorization_reason": null,
+ "trusted_context_source": "sa-authorize",
+ "trusted_context_synthetic": false,
+ "evidence_currency": "compared",
+ "assessments": [
+  {
+   "control_id": "SA-GOV-01",
+   "source_id": "GOV-01",
+   "object": "APP",
+   "domain": "GOV",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "gov-01.profile-doc",
+    "gov-01.owner-attestation"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-GOV-02",
+   "source_id": "GOV-02",
+   "object": "APP",
+   "domain": "GOV",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "gov-02.inventory-doc",
+    "gov-02.stack-detect-diff"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-GOV-03",
+   "source_id": "GOV-03",
+   "object": "APP",
+   "domain": "GOV",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "gov-03.threat-model-doc",
+    "gov-03.abuse-case-test-links"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-GOV-04",
+   "source_id": "GOV-04",
+   "object": "APP",
+   "domain": "GOV",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "gov-04.acceptance-criteria-doc"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-GOV-05",
+   "source_id": "GOV-05",
+   "object": "APP+AIL",
+   "domain": "GOV",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "gov-05.ai-provider-list",
+    "gov-05.retention-attestation"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-GOV-06",
+   "source_id": "GOV-06",
+   "object": "APP",
+   "domain": "GOV",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "gov-06.exceptions-validate",
+    "gov-06.approver-authority-attestation"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-AGT-01a",
+   "source_id": "AGT-01",
+   "object": "AGT",
+   "domain": "AGT",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "agt-01a.probe-p1-p4",
+    "agt-01a.probe-p6",
+    "agt-01a.probe-p9",
+    "agt-01a.probe-p10"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-AGT-01b",
+   "source_id": "AGT-01",
+   "object": "AGT",
+   "domain": "AGT",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "agt-01b.probe-p5",
+    "agt-01b.probe-read-protected"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-AGT-02",
+   "source_id": "AGT-02",
+   "object": "AGT",
+   "domain": "AGT",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "agt-02.prod-credential-scan",
+    "agt-02.effective-identity-attestation"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-AGT-03",
+   "source_id": "AGT-03",
+   "object": "AGT",
+   "domain": "AGT",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "agt-03.probe-p7",
+    "agt-03.probe-p8",
+    "agt-03.probe-p10"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-AGT-04",
+   "source_id": "AGT-04",
+   "object": "AGT",
+   "domain": "AGT",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "agt-04.mcp-inventory",
+    "agt-04.tool-hash-diff",
+    "agt-04.owner-attestation"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-AGT-05",
+   "source_id": "AGT-05",
+   "object": "AGT",
+   "domain": "AGT",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [
+    "obs-0166",
+    "obs-0167"
+   ],
+   "missing_checks": [
+    "agt-05.probe-write-settings"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": [
+     "agt-05.probe-write-settings"
+    ]
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-AGT-06",
+   "source_id": "AGT-06",
+   "object": "AGT",
+   "domain": "AGT",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "agt-06.destructive-payload-set"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-DEP-01",
+   "source_id": "DEP-01",
+   "object": "APP",
+   "domain": "DEP",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "dep-01.new-deps-diff",
+    "dep-01.registry-verify",
+    "dep-01.rationale-doc"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-DEP-02",
+   "source_id": "DEP-02",
+   "object": "APP",
+   "domain": "DEP",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "inconclusive",
+   "observations": [
+    "obs-0001",
+    "obs-0003",
+    "obs-0002"
+   ],
+   "missing_checks": [],
+   "coverage": {
+    "complete": true,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-DEP-03",
+   "source_id": "DEP-03",
+   "object": "APP",
+   "domain": "DEP",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "dep-03.sca-advisories",
+    "dep-03.install-scripts-review"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-DEP-04",
+   "source_id": "DEP-04",
+   "object": "APP",
+   "domain": "DEP",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "dep-04.build-ok-l1",
+    "dep-04.api-matches-installed-review"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-DEP-05",
+   "source_id": "DEP-05",
+   "object": "APP",
+   "domain": "DEP",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [
+    "obs-0004",
+    "obs-0009",
+    "obs-0014",
+    "obs-0019",
+    "obs-0024",
+    "obs-0029",
+    "obs-0034",
+    "obs-0039",
+    "obs-0044",
+    "obs-0049",
+    "obs-0054",
+    "obs-0059",
+    "obs-0064",
+    "obs-0069",
+    "obs-0074",
+    "obs-0079",
+    "obs-0084",
+    "obs-0089",
+    "obs-0094",
+    "obs-0099",
+    "obs-0104",
+    "obs-0109",
+    "obs-0114",
+    "obs-0119",
+    "obs-0124"
+   ],
+   "missing_checks": [
+    "dep-05.prod-path-context-review"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": [
+     "dep-05.prod-path-context-review"
+    ]
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-DEP-06",
+   "source_id": "DEP-06",
+   "object": "APP",
+   "domain": "DEP",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "dep-06.sbom-generated",
+    "dep-06.sca-linked-to-sha"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-IAM-01",
+   "source_id": "IAM-01",
+   "object": "APP",
+   "domain": "IAM",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [
+    "obs-0007",
+    "obs-0012",
+    "obs-0017",
+    "obs-0022",
+    "obs-0027",
+    "obs-0032",
+    "obs-0037",
+    "obs-0042",
+    "obs-0047",
+    "obs-0052",
+    "obs-0057",
+    "obs-0062",
+    "obs-0067",
+    "obs-0072",
+    "obs-0077",
+    "obs-0082",
+    "obs-0087",
+    "obs-0092",
+    "obs-0097",
+    "obs-0102",
+    "obs-0107",
+    "obs-0112",
+    "obs-0117",
+    "obs-0122",
+    "obs-0127"
+   ],
+   "missing_checks": [
+    "iam-01.auth-component-identify",
+    "iam-01.reset-enumeration-test"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": [
+     "iam-01.auth-component-identify",
+     "iam-01.reset-enumeration-test"
+    ]
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-IAM-02",
+   "source_id": "IAM-02",
+   "object": "APP",
+   "domain": "IAM",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "iam-02.mfa-admin-attestation",
+    "iam-02.recovery-path-test"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-IAM-03",
+   "source_id": "IAM-03",
+   "object": "APP",
+   "domain": "IAM",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "iam-03.jwt-verify-scan",
+    "iam-03.revoke-test"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-IAM-04a",
+   "source_id": "IAM-04",
+   "object": "APP",
+   "domain": "IAM",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "iam-04a.endpoint-authz-map"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-IAM-04b",
+   "source_id": "IAM-04",
+   "object": "APP",
+   "domain": "IAM",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "iam-04b.neg-01",
+    "iam-04b.neg-07"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-IAM-05",
+   "source_id": "IAM-05",
+   "object": "APP",
+   "domain": "IAM",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "iam-05.service-account-list",
+    "iam-05.lifecycle-attestation"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-IAM-06",
+   "source_id": "IAM-06",
+   "object": "APP",
+   "domain": "IAM",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [
+    "obs-0008",
+    "obs-0013",
+    "obs-0018",
+    "obs-0023",
+    "obs-0028",
+    "obs-0033",
+    "obs-0038",
+    "obs-0043",
+    "obs-0048",
+    "obs-0053",
+    "obs-0058",
+    "obs-0063",
+    "obs-0068",
+    "obs-0073",
+    "obs-0078",
+    "obs-0083",
+    "obs-0088",
+    "obs-0093",
+    "obs-0098",
+    "obs-0103",
+    "obs-0108",
+    "obs-0113",
+    "obs-0118",
+    "obs-0123",
+    "obs-0128"
+   ],
+   "missing_checks": [
+    "iam-06.csrf-scan",
+    "iam-06.session-rotation-test"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": [
+     "iam-06.csrf-scan",
+     "iam-06.session-rotation-test"
+    ]
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-DAT-01",
+   "source_id": "DAT-01",
+   "object": "APP",
+   "domain": "DAT",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "dat-01.tenant-source-scan",
+    "dat-01.neg-02"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-DAT-02a",
+   "source_id": "DAT-02",
+   "object": "APP",
+   "domain": "DAT",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "dat-02a.rls-static-eval"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-DAT-02b",
+   "source_id": "DAT-02",
+   "object": "APP",
+   "domain": "DAT",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "dat-02b.anon-matrix",
+    "dat-02b.state-assert",
+    "dat-02b.positive-public"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-DAT-02c",
+   "source_id": "DAT-02",
+   "object": "APP",
+   "domain": "DAT",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "dat-02c.advisor-output"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-DAT-03",
+   "source_id": "DAT-03",
+   "object": "APP",
+   "domain": "DAT",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "dat-03.view-invoker-scan",
+    "dat-03.security-definer-scan",
+    "dat-03.pg-roles-query",
+    "dat-03.grants-effective"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-DAT-04a",
+   "source_id": "DAT-04",
+   "object": "APP",
+   "domain": "DAT",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "dat-04a.rules-lint",
+    "dat-04a.rules-unit-test"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-DAT-04b",
+   "source_id": "DAT-04",
+   "object": "APP",
+   "domain": "DAT",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "dat-04b.admin-sdk-handler-map",
+    "dat-04b.handler-authz-review"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-DAT-05",
+   "source_id": "DAT-05",
+   "object": "APP",
+   "domain": "DAT",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "dat-05.media-inventory",
+    "dat-05.neg-08",
+    "dat-05.neg-11"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-DAT-06",
+   "source_id": "DAT-06",
+   "object": "APP",
+   "domain": "DAT",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "dat-06.runtime-role-query",
+    "dat-06.migration-path-attestation"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-APP-01",
+   "source_id": "APP-01",
+   "object": "APP",
+   "domain": "APP",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "app-01.schema-validation-map",
+    "app-01.negative-input-test"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-APP-02",
+   "source_id": "APP-02",
+   "object": "APP",
+   "domain": "APP",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [
+    "obs-0005",
+    "obs-0010",
+    "obs-0015",
+    "obs-0020",
+    "obs-0025",
+    "obs-0030",
+    "obs-0035",
+    "obs-0040",
+    "obs-0045",
+    "obs-0050",
+    "obs-0055",
+    "obs-0060",
+    "obs-0065",
+    "obs-0070",
+    "obs-0075",
+    "obs-0080",
+    "obs-0085",
+    "obs-0090",
+    "obs-0095",
+    "obs-0100",
+    "obs-0105",
+    "obs-0110",
+    "obs-0115",
+    "obs-0120",
+    "obs-0125"
+   ],
+   "missing_checks": [
+    "app-02.sast-semgrep"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": [
+     "app-02.sast-semgrep"
+    ]
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-APP-03",
+   "source_id": "APP-03",
+   "object": "APP",
+   "domain": "APP",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "app-03.sink-scan",
+    "app-03.xss-manual-test"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-APP-04",
+   "source_id": "APP-04",
+   "object": "APP",
+   "domain": "APP",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "app-04.upload-handler-map",
+    "app-04.upload-negative-test"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-APP-05",
+   "source_id": "APP-05",
+   "object": "APP",
+   "domain": "APP",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "app-05.fetch-from-input-scan",
+    "app-05.neg-12"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-APP-06",
+   "source_id": "APP-06",
+   "object": "APP",
+   "domain": "APP",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "app-06.webhook-handler-map",
+    "app-06.neg-13"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-BIZ-01",
+   "source_id": "BIZ-01",
+   "object": "APP",
+   "domain": "BIZ",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "biz-01.state-machine-map",
+    "biz-01.transition-test"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-BIZ-02",
+   "source_id": "BIZ-02",
+   "object": "APP",
+   "domain": "BIZ",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "biz-02.neg-03"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-BIZ-03",
+   "source_id": "BIZ-03",
+   "object": "APP",
+   "domain": "BIZ",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "biz-03.neg-04",
+    "biz-03.binding-mechanism-review"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-BIZ-04",
+   "source_id": "BIZ-04",
+   "object": "APP",
+   "domain": "BIZ",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "biz-04.idempotency-scan",
+    "biz-04.neg-05"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-BIZ-05",
+   "source_id": "BIZ-05",
+   "object": "APP",
+   "domain": "BIZ",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "biz-05.concurrency-mechanism-scan",
+    "biz-05.neg-06"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-BIZ-06",
+   "source_id": "BIZ-06",
+   "object": "APP",
+   "domain": "BIZ",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "biz-06.money-representation-scan",
+    "biz-06.domain-rules-attestation"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-CIC-01",
+   "source_id": "CIC-01",
+   "object": "APP",
+   "domain": "CIC",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "cic-01.branch-rules-collect",
+    "cic-01.effectiveness-attestation"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-CIC-02",
+   "source_id": "CIC-02",
+   "object": "APP",
+   "domain": "CIC",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "cic-02.untrusted-code-privilege-parse"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-CIC-03",
+   "source_id": "CIC-03",
+   "object": "APP",
+   "domain": "CIC",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "cic-03.permissions-parse"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-CIC-04",
+   "source_id": "CIC-04",
+   "object": "APP",
+   "domain": "CIC",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "cic-04.uses-pin-parse",
+    "cic-04.image-digest-parse"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-CIC-05",
+   "source_id": "CIC-05",
+   "object": "APP",
+   "domain": "CIC",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "cic-05.gate-parse",
+    "cic-05.scanner-absent-test"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-CIC-06",
+   "source_id": "CIC-06",
+   "object": "APP",
+   "domain": "CIC",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "cic-06.artifact-promotion-parse",
+    "cic-06.digest-match-attestation"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-INF-01",
+   "source_id": "INF-01",
+   "object": "APP",
+   "domain": "INF",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [
+    "obs-0129",
+    "obs-0130",
+    "obs-0131",
+    "obs-0132",
+    "obs-0133",
+    "obs-0134",
+    "obs-0135",
+    "obs-0136",
+    "obs-0137",
+    "obs-0138",
+    "obs-0139",
+    "obs-0140",
+    "obs-0141",
+    "obs-0142",
+    "obs-0143",
+    "obs-0144",
+    "obs-0145",
+    "obs-0146",
+    "obs-0147",
+    "obs-0148",
+    "obs-0149",
+    "obs-0150",
+    "obs-0151",
+    "obs-0152",
+    "obs-0153",
+    "obs-0154",
+    "obs-0155",
+    "obs-0156",
+    "obs-0157",
+    "obs-0158",
+    "obs-0159",
+    "obs-0160",
+    "obs-0161",
+    "obs-0162",
+    "obs-0163",
+    "obs-0164",
+    "obs-0165"
+   ],
+   "missing_checks": [
+    "inf-01.secret-collector-history",
+    "inf-01.rotation-attestation"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": [
+     "inf-01.secret-collector-history",
+     "inf-01.rotation-attestation"
+    ]
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-INF-02",
+   "source_id": "INF-02",
+   "object": "APP",
+   "domain": "INF",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "inf-02.env-separation-attestation"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-INF-03",
+   "source_id": "INF-03",
+   "object": "APP",
+   "domain": "INF",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "inf-03.dockerfile-scan",
+    "inf-03.manifest-limits-scan"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-INF-04",
+   "source_id": "INF-04",
+   "object": "APP",
+   "domain": "INF",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "inf-04.exposure-attestation"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-INF-05",
+   "source_id": "INF-05",
+   "object": "APP",
+   "domain": "INF",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "inf-05.debug-flags-scan",
+    "inf-05.eol-components-sca"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-INF-06",
+   "source_id": "INF-06",
+   "object": "APP",
+   "domain": "INF",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "inf-06.headers-config-scan",
+    "inf-06.headers-runtime-curl"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-AIL-01",
+   "source_id": "AIL-01",
+   "object": "AIL",
+   "domain": "AIL",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "ail-01.prompt-assembly-scan",
+    "ail-01.injection-test"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-AIL-02",
+   "source_id": "AIL-02",
+   "object": "AIL",
+   "domain": "AIL",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "ail-02.tool-policy-map",
+    "ail-02.neg-18"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-AIL-03",
+   "source_id": "AIL-03",
+   "object": "AIL",
+   "domain": "AIL",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "ail-03.retrieval-filter-scan",
+    "ail-03.neg-18"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-AIL-04",
+   "source_id": "AIL-04",
+   "object": "AIL",
+   "domain": "AIL",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "ail-04.output-sink-scan"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-AIL-05",
+   "source_id": "AIL-05",
+   "object": "AIL",
+   "domain": "AIL",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "ail-05.approval-token-scan",
+    "ail-05.neg-19"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-AIL-06",
+   "source_id": "AIL-06",
+   "object": "AIL",
+   "domain": "AIL",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "ail-06.limits-scan",
+    "ail-06.limits-test"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-TST-01",
+   "source_id": "TST-01",
+   "object": "APP",
+   "domain": "TST",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "tst-01.sast-run",
+    "tst-01.sca-run",
+    "tst-01.secret-run",
+    "tst-01.config-run"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-TST-02",
+   "source_id": "TST-02",
+   "object": "APP",
+   "domain": "TST",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "tst-02.identity-matrix"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-TST-03",
+   "source_id": "TST-03",
+   "object": "APP",
+   "domain": "TST",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "tst-03.dast-authenticated-active"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-TST-04",
+   "source_id": "TST-04",
+   "object": "APP",
+   "domain": "TST",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "tst-04.manual-critical-flows-attestation"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-TST-05",
+   "source_id": "TST-05",
+   "object": "APP",
+   "domain": "TST",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "tst-05.evidence-completeness-validate"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-TST-06",
+   "source_id": "TST-06",
+   "object": "APP",
+   "domain": "TST",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "tst-06.independent-review-attestation"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-OPS-01",
+   "source_id": "OPS-01",
+   "object": "APP",
+   "domain": "OPS",
+   "environment_id": "local-worktree",
+   "decision_authority": "evaluator",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [
+    "obs-0006",
+    "obs-0011",
+    "obs-0016",
+    "obs-0021",
+    "obs-0026",
+    "obs-0031",
+    "obs-0036",
+    "obs-0041",
+    "obs-0046",
+    "obs-0051",
+    "obs-0056",
+    "obs-0061",
+    "obs-0066",
+    "obs-0071",
+    "obs-0076",
+    "obs-0081",
+    "obs-0086",
+    "obs-0091",
+    "obs-0096",
+    "obs-0101",
+    "obs-0106",
+    "obs-0111",
+    "obs-0116",
+    "obs-0121",
+    "obs-0126"
+   ],
+   "missing_checks": [
+    "ops-01.logger-structure-scan"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": [
+     "ops-01.logger-structure-scan"
+    ]
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-OPS-02",
+   "source_id": "OPS-02",
+   "object": "APP",
+   "domain": "OPS",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "ops-02.alert-simulation-attestation"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-OPS-03",
+   "source_id": "OPS-03",
+   "object": "APP",
+   "domain": "OPS",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "ops-03.overdue-findings"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-OPS-04",
+   "source_id": "OPS-04",
+   "object": "APP",
+   "domain": "OPS",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "ops-04.restore-script-run",
+    "ops-04.rpo-rto-attestation"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-OPS-05",
+   "source_id": "OPS-05",
+   "object": "APP",
+   "domain": "OPS",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "ops-05.revocation-drill-attestation"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  },
+  {
+   "control_id": "SA-OPS-06",
+   "source_id": "OPS-06",
+   "object": "APP",
+   "domain": "OPS",
+   "environment_id": "local-worktree",
+   "decision_authority": "human",
+   "applicable": true,
+   "status": "Belum diuji",
+   "status_reason": "not_executed",
+   "observations": [],
+   "missing_checks": [
+    "ops-06.config-drift-diff",
+    "ops-06.retention-doc"
+   ],
+   "coverage": {
+    "complete": false,
+    "missing": []
+   },
+   "freshness": "fresh",
+   "stale_fields": [],
+   "release_ready": false,
+   "exception_id": null,
+   "na_reason": null
+  }
+ ],
+ "parent_status": {
+  "GOV-01": "Belum diuji",
+  "GOV-02": "Belum diuji",
+  "GOV-03": "Belum diuji",
+  "GOV-04": "Belum diuji",
+  "GOV-05": "Belum diuji",
+  "GOV-06": "Belum diuji",
+  "AGT-01": "Belum diuji",
+  "AGT-02": "Belum diuji",
+  "AGT-03": "Belum diuji",
+  "AGT-04": "Belum diuji",
+  "AGT-05": "Belum diuji",
+  "AGT-06": "Belum diuji",
+  "DEP-01": "Belum diuji",
+  "DEP-02": "Belum diuji",
+  "DEP-03": "Belum diuji",
+  "DEP-04": "Belum diuji",
+  "DEP-05": "Belum diuji",
+  "DEP-06": "Belum diuji",
+  "IAM-01": "Belum diuji",
+  "IAM-02": "Belum diuji",
+  "IAM-03": "Belum diuji",
+  "IAM-04": "Belum diuji",
+  "IAM-05": "Belum diuji",
+  "IAM-06": "Belum diuji",
+  "DAT-01": "Belum diuji",
+  "DAT-02": "Belum diuji",
+  "DAT-03": "Belum diuji",
+  "DAT-04": "Belum diuji",
+  "DAT-05": "Belum diuji",
+  "DAT-06": "Belum diuji",
+  "APP-01": "Belum diuji",
+  "APP-02": "Belum diuji",
+  "APP-03": "Belum diuji",
+  "APP-04": "Belum diuji",
+  "APP-05": "Belum diuji",
+  "APP-06": "Belum diuji",
+  "BIZ-01": "Belum diuji",
+  "BIZ-02": "Belum diuji",
+  "BIZ-03": "Belum diuji",
+  "BIZ-04": "Belum diuji",
+  "BIZ-05": "Belum diuji",
+  "BIZ-06": "Belum diuji",
+  "CIC-01": "Belum diuji",
+  "CIC-02": "Belum diuji",
+  "CIC-03": "Belum diuji",
+  "CIC-04": "Belum diuji",
+  "CIC-05": "Belum diuji",
+  "CIC-06": "Belum diuji",
+  "INF-01": "Belum diuji",
+  "INF-02": "Belum diuji",
+  "INF-03": "Belum diuji",
+  "INF-04": "Belum diuji",
+  "INF-05": "Belum diuji",
+  "INF-06": "Belum diuji",
+  "AIL-01": "Belum diuji",
+  "AIL-02": "Belum diuji",
+  "AIL-03": "Belum diuji",
+  "AIL-04": "Belum diuji",
+  "AIL-05": "Belum diuji",
+  "AIL-06": "Belum diuji",
+  "TST-01": "Belum diuji",
+  "TST-02": "Belum diuji",
+  "TST-03": "Belum diuji",
+  "TST-04": "Belum diuji",
+  "TST-05": "Belum diuji",
+  "TST-06": "Belum diuji",
+  "OPS-01": "Belum diuji",
+  "OPS-02": "Belum diuji",
+  "OPS-03": "Belum diuji",
+  "OPS-04": "Belum diuji",
+  "OPS-05": "Belum diuji",
+  "OPS-06": "Belum diuji"
+ },
+ "counts_by_domain": {
+  "GOV": {
+   "total": 6,
+   "applicable": 6,
+   "Pass": 0,
+   "Fail": 0,
+   "Belum diuji": 6,
+   "N/A disetujui": 0,
+   "Exception aktif": 0,
+   "release_ready": 0
+  },
+  "AGT": {
+   "total": 7,
+   "applicable": 7,
+   "Pass": 0,
+   "Fail": 0,
+   "Belum diuji": 7,
+   "N/A disetujui": 0,
+   "Exception aktif": 0,
+   "release_ready": 0
+  },
+  "DEP": {
+   "total": 6,
+   "applicable": 6,
+   "Pass": 0,
+   "Fail": 0,
+   "Belum diuji": 6,
+   "N/A disetujui": 0,
+   "Exception aktif": 0,
+   "release_ready": 0
+  },
+  "IAM": {
+   "total": 7,
+   "applicable": 7,
+   "Pass": 0,
+   "Fail": 0,
+   "Belum diuji": 7,
+   "N/A disetujui": 0,
+   "Exception aktif": 0,
+   "release_ready": 0
+  },
+  "DAT": {
+   "total": 9,
+   "applicable": 9,
+   "Pass": 0,
+   "Fail": 0,
+   "Belum diuji": 9,
+   "N/A disetujui": 0,
+   "Exception aktif": 0,
+   "release_ready": 0
+  },
+  "APP": {
+   "total": 6,
+   "applicable": 6,
+   "Pass": 0,
+   "Fail": 0,
+   "Belum diuji": 6,
+   "N/A disetujui": 0,
+   "Exception aktif": 0,
+   "release_ready": 0
+  },
+  "BIZ": {
+   "total": 6,
+   "applicable": 6,
+   "Pass": 0,
+   "Fail": 0,
+   "Belum diuji": 6,
+   "N/A disetujui": 0,
+   "Exception aktif": 0,
+   "release_ready": 0
+  },
+  "CIC": {
+   "total": 6,
+   "applicable": 6,
+   "Pass": 0,
+   "Fail": 0,
+   "Belum diuji": 6,
+   "N/A disetujui": 0,
+   "Exception aktif": 0,
+   "release_ready": 0
+  },
+  "INF": {
+   "total": 6,
+   "applicable": 6,
+   "Pass": 0,
+   "Fail": 0,
+   "Belum diuji": 6,
+   "N/A disetujui": 0,
+   "Exception aktif": 0,
+   "release_ready": 0
+  },
+  "AIL": {
+   "total": 6,
+   "applicable": 6,
+   "Pass": 0,
+   "Fail": 0,
+   "Belum diuji": 6,
+   "N/A disetujui": 0,
+   "Exception aktif": 0,
+   "release_ready": 0
+  },
+  "TST": {
+   "total": 6,
+   "applicable": 6,
+   "Pass": 0,
+   "Fail": 0,
+   "Belum diuji": 6,
+   "N/A disetujui": 0,
+   "Exception aktif": 0,
+   "release_ready": 0
+  },
+  "OPS": {
+   "total": 6,
+   "applicable": 6,
+   "Pass": 0,
+   "Fail": 0,
+   "Belum diuji": 6,
+   "N/A disetujui": 0,
+   "Exception aktif": 0,
+   "release_ready": 0
+  }
+ },
+ "counts_total": {
+  "total": 77,
+  "applicable": 77,
+  "Pass": 0,
+  "Fail": 0,
+  "Belum diuji": 77,
+  "N/A disetujui": 0,
+  "Exception aktif": 0,
+  "release_ready": 0
+ },
+ "ignored_proposals": []
+}

@@ -1,0 +1,3452 @@
+{
+ "schema_version": "0.2.2",
+ "run_id": "verify-20261027T055121Z-c4aa47",
+ "mode": "verify",
+ "execution_level": "L0",
+ "authorization_ref": {
+  "grant_id": "G-f2af542643",
+  "who": "Arief Wicaksono",
+  "what": "verify",
+  "scope": {
+   "repo_id": "git:https://github.com/r1efoz/Dompet-Suami.git"
+  },
+  "at": "2026-10-27T05:51:21.740235+00:00",
+  "provenance": "proposal",
+  "level": "L0"
+ },
+ "subject": {
+  "repo_id": "git:https://github.com/r1efoz/Dompet-Suami.git",
+  "commit_sha": "25ef5da606a70a0ab405e744a90d16c395ed27ca",
+  "tree_hash": "sha256:f38d116fc8075860dffb2ea7cdc41ee36c53b04f89e5a3d6541bc4942d8b3b9a",
+  "dirty_diff_hash": "sha256:1b30f44d5e90e4d51adcf0aa4f4c3511351cf99853680159502a1ba96c44098a",
+  "environment_id": "local-worktree",
+  "policy_hash": "sha256:4637693c6e5ce93af071ccdbac848445df5f1c695f7c27f3f563c0c7243c2761",
+  "tool_and_rules_hash": "sha256:a3a21650643682157308463b3aba9d5ce19eb50681ed1e170be2088d07ad9327",
+  "platform": {
+   "os": "Darwin-arm64",
+   "python": "3.14.7",
+   "git": true
+  }
+ },
+ "policy_hash": "sha256:4637693c6e5ce93af071ccdbac848445df5f1c695f7c27f3f563c0c7243c2761",
+ "tool_and_rules_hash": "sha256:a3a21650643682157308463b3aba9d5ce19eb50681ed1e170be2088d07ad9327",
+ "observations": [
+  {
+   "observation_id": "obs-0001",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-02"
+   ],
+   "check_id": "dep-02.lockfile-present",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "repo",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.830625+00:00",
+   "finished_at": "2026-10-27T05:51:21.830633+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0001.json",
+   "evidence_hash": "sha256:6e0c711ed3bc9cd037037c09f52d71f34a9fa0cf1509bde1cb746e7d56e704bf"
+  },
+  {
+   "observation_id": "obs-0002",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-02"
+   ],
+   "check_id": "dep-02.ci-uses-ci-install",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "repo",
+   "result": "inconclusive",
+   "started_at": "2026-10-27T05:51:21.830671+00:00",
+   "finished_at": "2026-10-27T05:51:21.830672+00:00",
+   "exit_code": 2,
+   "evidence_ref": "evidence/obs-0002.json",
+   "evidence_hash": "sha256:c4fd450cefe8b3d7e13935f839b6724736d7e5a4a81eb6823f60b434e6e7f83e",
+   "reason_code": "scope_not_declared"
+  },
+  {
+   "observation_id": "obs-0003",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-02"
+   ],
+   "check_id": "dep-02.manifest-lock-consistency",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "repo",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.831145+00:00",
+   "finished_at": "2026-10-27T05:51:21.831148+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0003.json",
+   "evidence_hash": "sha256:aa06e86c625c912d2cdfc7a61db70436e8a4a5f2af8ae1d57aca587cd4db2c9e"
+  },
+  {
+   "observation_id": "obs-0004",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-05"
+   ],
+   "check_id": "dep-05.stub-pattern-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "postcss.config.js",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.831227+00:00",
+   "finished_at": "2026-10-27T05:51:21.831229+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0004.json",
+   "evidence_hash": "sha256:23f959e2248b838e93dc2697e3da6b064575dbf4ad75c9d500e8fb626a6f7508"
+  },
+  {
+   "observation_id": "obs-0005",
+   "type": "tool_run",
+   "controls": [
+    "SA-APP-02"
+   ],
+   "check_id": "app-02.internal-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "postcss.config.js",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.831343+00:00",
+   "finished_at": "2026-10-27T05:51:21.831345+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0005.json",
+   "evidence_hash": "sha256:9fd49d7a64f12f64c8f84cd1731033f1ef7251247d6eb444a977b54e793dd411"
+  },
+  {
+   "observation_id": "obs-0006",
+   "type": "tool_run",
+   "controls": [
+    "SA-OPS-01"
+   ],
+   "check_id": "ops-01.sensitive-log-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "postcss.config.js",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.831355+00:00",
+   "finished_at": "2026-10-27T05:51:21.831357+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0006.json",
+   "evidence_hash": "sha256:c61b5dc045b1579595f701ddba566e746aeebbcb4dd8c3a82897f027123ab470"
+  },
+  {
+   "observation_id": "obs-0007",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-01"
+   ],
+   "check_id": "iam-01.custom-crypto-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "postcss.config.js",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.831365+00:00",
+   "finished_at": "2026-10-27T05:51:21.831366+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0007.json",
+   "evidence_hash": "sha256:c61b5dc045b1579595f701ddba566e746aeebbcb4dd8c3a82897f027123ab470"
+  },
+  {
+   "observation_id": "obs-0008",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-06"
+   ],
+   "check_id": "iam-06.cookie-attrs-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "postcss.config.js",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.831374+00:00",
+   "finished_at": "2026-10-27T05:51:21.831375+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0008.json",
+   "evidence_hash": "sha256:c61b5dc045b1579595f701ddba566e746aeebbcb4dd8c3a82897f027123ab470"
+  },
+  {
+   "observation_id": "obs-0009",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-05"
+   ],
+   "check_id": "dep-05.stub-pattern-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "scripts/e2e.mjs",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.831540+00:00",
+   "finished_at": "2026-10-27T05:51:21.831541+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0009.json",
+   "evidence_hash": "sha256:c660610797bab267436f4378cb3ab292876703e2a40f27c4af4a888bf5a34606"
+  },
+  {
+   "observation_id": "obs-0010",
+   "type": "tool_run",
+   "controls": [
+    "SA-APP-02"
+   ],
+   "check_id": "app-02.internal-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "scripts/e2e.mjs",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.831857+00:00",
+   "finished_at": "2026-10-27T05:51:21.831858+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0010.json",
+   "evidence_hash": "sha256:d5a5956285defd21ebb36c8906ab6c14a1105b40063aac2194afeb3e5ce42f7a"
+  },
+  {
+   "observation_id": "obs-0011",
+   "type": "tool_run",
+   "controls": [
+    "SA-OPS-01"
+   ],
+   "check_id": "ops-01.sensitive-log-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "scripts/e2e.mjs",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.831971+00:00",
+   "finished_at": "2026-10-27T05:51:21.831972+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0011.json",
+   "evidence_hash": "sha256:ff33b0c5c249abbb6b75fc2385cb1076319aa5e499795e7f0b327a985d25fecc"
+  },
+  {
+   "observation_id": "obs-0012",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-01"
+   ],
+   "check_id": "iam-01.custom-crypto-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "scripts/e2e.mjs",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.832132+00:00",
+   "finished_at": "2026-10-27T05:51:21.832133+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0012.json",
+   "evidence_hash": "sha256:ff33b0c5c249abbb6b75fc2385cb1076319aa5e499795e7f0b327a985d25fecc"
+  },
+  {
+   "observation_id": "obs-0013",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-06"
+   ],
+   "check_id": "iam-06.cookie-attrs-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "scripts/e2e.mjs",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.832181+00:00",
+   "finished_at": "2026-10-27T05:51:21.832182+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0013.json",
+   "evidence_hash": "sha256:ff33b0c5c249abbb6b75fc2385cb1076319aa5e499795e7f0b327a985d25fecc"
+  },
+  {
+   "observation_id": "obs-0014",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-05"
+   ],
+   "check_id": "dep-05.stub-pattern-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "scripts/ledger.check.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.832261+00:00",
+   "finished_at": "2026-10-27T05:51:21.832263+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0014.json",
+   "evidence_hash": "sha256:8bc670ad988ab10f4185d7e3083f3c256d1f621c8d1d592a502b2b493fe1920b"
+  },
+  {
+   "observation_id": "obs-0015",
+   "type": "tool_run",
+   "controls": [
+    "SA-APP-02"
+   ],
+   "check_id": "app-02.internal-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "scripts/ledger.check.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.832388+00:00",
+   "finished_at": "2026-10-27T05:51:21.832389+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0015.json",
+   "evidence_hash": "sha256:10a743052b39e732286cc09d45d6e5465002fbd9a8b25e4dd034d870ca3495d6"
+  },
+  {
+   "observation_id": "obs-0016",
+   "type": "tool_run",
+   "controls": [
+    "SA-OPS-01"
+   ],
+   "check_id": "ops-01.sensitive-log-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "scripts/ledger.check.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.832442+00:00",
+   "finished_at": "2026-10-27T05:51:21.832443+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0016.json",
+   "evidence_hash": "sha256:a5f5257fccac9f4caa037640d7818783c90ef51fefd4b9c4db9e6fac815339ad"
+  },
+  {
+   "observation_id": "obs-0017",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-01"
+   ],
+   "check_id": "iam-01.custom-crypto-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "scripts/ledger.check.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.832514+00:00",
+   "finished_at": "2026-10-27T05:51:21.832515+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0017.json",
+   "evidence_hash": "sha256:a5f5257fccac9f4caa037640d7818783c90ef51fefd4b9c4db9e6fac815339ad"
+  },
+  {
+   "observation_id": "obs-0018",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-06"
+   ],
+   "check_id": "iam-06.cookie-attrs-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "scripts/ledger.check.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.832536+00:00",
+   "finished_at": "2026-10-27T05:51:21.832537+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0018.json",
+   "evidence_hash": "sha256:a5f5257fccac9f4caa037640d7818783c90ef51fefd4b9c4db9e6fac815339ad"
+  },
+  {
+   "observation_id": "obs-0019",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-05"
+   ],
+   "check_id": "dep-05.stub-pattern-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/App.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.832609+00:00",
+   "finished_at": "2026-10-27T05:51:21.832610+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0019.json",
+   "evidence_hash": "sha256:a99ebe68bad6a677a637f6704a9330fb4f9e57c2deb0ef1849d7bd583606bb91"
+  },
+  {
+   "observation_id": "obs-0020",
+   "type": "tool_run",
+   "controls": [
+    "SA-APP-02"
+   ],
+   "check_id": "app-02.internal-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/App.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.832732+00:00",
+   "finished_at": "2026-10-27T05:51:21.832733+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0020.json",
+   "evidence_hash": "sha256:5e323dbce6c5bad6674253a28de185f28a9e9590ef6e916a6846d6e125666375"
+  },
+  {
+   "observation_id": "obs-0021",
+   "type": "tool_run",
+   "controls": [
+    "SA-OPS-01"
+   ],
+   "check_id": "ops-01.sensitive-log-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/App.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.832777+00:00",
+   "finished_at": "2026-10-27T05:51:21.832778+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0021.json",
+   "evidence_hash": "sha256:494198f362dde5514e2703337d34b677935027e416377311f975ef5206893330"
+  },
+  {
+   "observation_id": "obs-0022",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-01"
+   ],
+   "check_id": "iam-01.custom-crypto-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/App.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.832843+00:00",
+   "finished_at": "2026-10-27T05:51:21.832844+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0022.json",
+   "evidence_hash": "sha256:494198f362dde5514e2703337d34b677935027e416377311f975ef5206893330"
+  },
+  {
+   "observation_id": "obs-0023",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-06"
+   ],
+   "check_id": "iam-06.cookie-attrs-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/App.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.832863+00:00",
+   "finished_at": "2026-10-27T05:51:21.832864+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0023.json",
+   "evidence_hash": "sha256:494198f362dde5514e2703337d34b677935027e416377311f975ef5206893330"
+  },
+  {
+   "observation_id": "obs-0024",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-05"
+   ],
+   "check_id": "dep-05.stub-pattern-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/AccountsManager.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.832999+00:00",
+   "finished_at": "2026-10-27T05:51:21.833001+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0024.json",
+   "evidence_hash": "sha256:143774aef9107c280f2875f99103be4b04a8dea9035dd2fccdebebed3ec6db3b"
+  },
+  {
+   "observation_id": "obs-0025",
+   "type": "tool_run",
+   "controls": [
+    "SA-APP-02"
+   ],
+   "check_id": "app-02.internal-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/AccountsManager.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.833296+00:00",
+   "finished_at": "2026-10-27T05:51:21.833297+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0025.json",
+   "evidence_hash": "sha256:e4a6be0df90e65d34d1416699865de2be887a0453d30020f5a304b269ef6e7c7"
+  },
+  {
+   "observation_id": "obs-0026",
+   "type": "tool_run",
+   "controls": [
+    "SA-OPS-01"
+   ],
+   "check_id": "ops-01.sensitive-log-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/AccountsManager.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.833407+00:00",
+   "finished_at": "2026-10-27T05:51:21.833408+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0026.json",
+   "evidence_hash": "sha256:65b995c20f7552ad3e16a21d1de8a30d3f2ca9d1a6836058f9339025abc76d8c"
+  },
+  {
+   "observation_id": "obs-0027",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-01"
+   ],
+   "check_id": "iam-01.custom-crypto-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/AccountsManager.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.833552+00:00",
+   "finished_at": "2026-10-27T05:51:21.833553+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0027.json",
+   "evidence_hash": "sha256:65b995c20f7552ad3e16a21d1de8a30d3f2ca9d1a6836058f9339025abc76d8c"
+  },
+  {
+   "observation_id": "obs-0028",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-06"
+   ],
+   "check_id": "iam-06.cookie-attrs-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/AccountsManager.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.833592+00:00",
+   "finished_at": "2026-10-27T05:51:21.833593+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0028.json",
+   "evidence_hash": "sha256:65b995c20f7552ad3e16a21d1de8a30d3f2ca9d1a6836058f9339025abc76d8c"
+  },
+  {
+   "observation_id": "obs-0029",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-05"
+   ],
+   "check_id": "dep-05.stub-pattern-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/CategoryManager.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.833743+00:00",
+   "finished_at": "2026-10-27T05:51:21.833745+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0029.json",
+   "evidence_hash": "sha256:8d03a5e7b3b1149e674edcb8177225201686183f33a0e1d73683b4a6f21d54cf"
+  },
+  {
+   "observation_id": "obs-0030",
+   "type": "tool_run",
+   "controls": [
+    "SA-APP-02"
+   ],
+   "check_id": "app-02.internal-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/CategoryManager.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.834039+00:00",
+   "finished_at": "2026-10-27T05:51:21.834041+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0030.json",
+   "evidence_hash": "sha256:171ddc8885570e2808ac2a5939f61046d83a9e0a7a09918b0f9ef5908be5eebd"
+  },
+  {
+   "observation_id": "obs-0031",
+   "type": "tool_run",
+   "controls": [
+    "SA-OPS-01"
+   ],
+   "check_id": "ops-01.sensitive-log-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/CategoryManager.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.834149+00:00",
+   "finished_at": "2026-10-27T05:51:21.834150+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0031.json",
+   "evidence_hash": "sha256:cbe4083f4e49642d5022d11669cf609532b97dd76b59edd6748b3b4307c903c9"
+  },
+  {
+   "observation_id": "obs-0032",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-01"
+   ],
+   "check_id": "iam-01.custom-crypto-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/CategoryManager.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.834295+00:00",
+   "finished_at": "2026-10-27T05:51:21.834296+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0032.json",
+   "evidence_hash": "sha256:cbe4083f4e49642d5022d11669cf609532b97dd76b59edd6748b3b4307c903c9"
+  },
+  {
+   "observation_id": "obs-0033",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-06"
+   ],
+   "check_id": "iam-06.cookie-attrs-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/CategoryManager.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.834334+00:00",
+   "finished_at": "2026-10-27T05:51:21.834336+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0033.json",
+   "evidence_hash": "sha256:cbe4083f4e49642d5022d11669cf609532b97dd76b59edd6748b3b4307c903c9"
+  },
+  {
+   "observation_id": "obs-0034",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-05"
+   ],
+   "check_id": "dep-05.stub-pattern-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/Dashboard.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.834701+00:00",
+   "finished_at": "2026-10-27T05:51:21.834706+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0034.json",
+   "evidence_hash": "sha256:42443a09938d0343bb99c87ff6aa5229d850c80ab1a120492c1db80d7169c392"
+  },
+  {
+   "observation_id": "obs-0035",
+   "type": "tool_run",
+   "controls": [
+    "SA-APP-02"
+   ],
+   "check_id": "app-02.internal-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/Dashboard.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.835010+00:00",
+   "finished_at": "2026-10-27T05:51:21.835012+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0035.json",
+   "evidence_hash": "sha256:3fd53e542734883b9187c0bccb1e1a7d7dcb167d0fc6fb3878c51f5ce71fb303"
+  },
+  {
+   "observation_id": "obs-0036",
+   "type": "tool_run",
+   "controls": [
+    "SA-OPS-01"
+   ],
+   "check_id": "ops-01.sensitive-log-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/Dashboard.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.835122+00:00",
+   "finished_at": "2026-10-27T05:51:21.835124+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0036.json",
+   "evidence_hash": "sha256:0d41a2b7e56d1ee5df4e1b9b160b39363007b869a3c7a52330c51fb77d566801"
+  },
+  {
+   "observation_id": "obs-0037",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-01"
+   ],
+   "check_id": "iam-01.custom-crypto-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/Dashboard.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.835275+00:00",
+   "finished_at": "2026-10-27T05:51:21.835276+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0037.json",
+   "evidence_hash": "sha256:0d41a2b7e56d1ee5df4e1b9b160b39363007b869a3c7a52330c51fb77d566801"
+  },
+  {
+   "observation_id": "obs-0038",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-06"
+   ],
+   "check_id": "iam-06.cookie-attrs-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/Dashboard.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.835462+00:00",
+   "finished_at": "2026-10-27T05:51:21.835467+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0038.json",
+   "evidence_hash": "sha256:0d41a2b7e56d1ee5df4e1b9b160b39363007b869a3c7a52330c51fb77d566801"
+  },
+  {
+   "observation_id": "obs-0039",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-05"
+   ],
+   "check_id": "dep-05.stub-pattern-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/EntryForm.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.835682+00:00",
+   "finished_at": "2026-10-27T05:51:21.835684+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0039.json",
+   "evidence_hash": "sha256:6896810cb31526d7453d711444f6e3d348c297e6654c324731e4860c42005bac"
+  },
+  {
+   "observation_id": "obs-0040",
+   "type": "tool_run",
+   "controls": [
+    "SA-APP-02"
+   ],
+   "check_id": "app-02.internal-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/EntryForm.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.836134+00:00",
+   "finished_at": "2026-10-27T05:51:21.836137+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0040.json",
+   "evidence_hash": "sha256:8f434da41f7e3bd31ac6e4c0001d893c710384f0f94323ce56861eec0fcf0a58"
+  },
+  {
+   "observation_id": "obs-0041",
+   "type": "tool_run",
+   "controls": [
+    "SA-OPS-01"
+   ],
+   "check_id": "ops-01.sensitive-log-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/EntryForm.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.836335+00:00",
+   "finished_at": "2026-10-27T05:51:21.836337+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0041.json",
+   "evidence_hash": "sha256:3d0098fe5ac9d59a46cd36b77bc408bba7999184f14f319e9a57377003cb9fb8"
+  },
+  {
+   "observation_id": "obs-0042",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-01"
+   ],
+   "check_id": "iam-01.custom-crypto-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/EntryForm.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.836503+00:00",
+   "finished_at": "2026-10-27T05:51:21.836505+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0042.json",
+   "evidence_hash": "sha256:3d0098fe5ac9d59a46cd36b77bc408bba7999184f14f319e9a57377003cb9fb8"
+  },
+  {
+   "observation_id": "obs-0043",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-06"
+   ],
+   "check_id": "iam-06.cookie-attrs-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/EntryForm.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.836553+00:00",
+   "finished_at": "2026-10-27T05:51:21.836555+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0043.json",
+   "evidence_hash": "sha256:3d0098fe5ac9d59a46cd36b77bc408bba7999184f14f319e9a57377003cb9fb8"
+  },
+  {
+   "observation_id": "obs-0044",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-05"
+   ],
+   "check_id": "dep-05.stub-pattern-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/Reports.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.836773+00:00",
+   "finished_at": "2026-10-27T05:51:21.836775+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0044.json",
+   "evidence_hash": "sha256:6200d0fd0f19da4a763348ee1657901d51de108568172fe11d2e313d724af351"
+  },
+  {
+   "observation_id": "obs-0045",
+   "type": "tool_run",
+   "controls": [
+    "SA-APP-02"
+   ],
+   "check_id": "app-02.internal-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/Reports.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.837153+00:00",
+   "finished_at": "2026-10-27T05:51:21.837155+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0045.json",
+   "evidence_hash": "sha256:30d2be73f4272571ff37c45339802c76879e610f6d50b0a46d4d3fb642c76bbc"
+  },
+  {
+   "observation_id": "obs-0046",
+   "type": "tool_run",
+   "controls": [
+    "SA-OPS-01"
+   ],
+   "check_id": "ops-01.sensitive-log-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/Reports.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.837311+00:00",
+   "finished_at": "2026-10-27T05:51:21.837314+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0046.json",
+   "evidence_hash": "sha256:fea8ab8928c7717ed57c89d2378d3f56072e97e690313087f9c9aaa56b4758cd"
+  },
+  {
+   "observation_id": "obs-0047",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-01"
+   ],
+   "check_id": "iam-01.custom-crypto-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/Reports.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.837587+00:00",
+   "finished_at": "2026-10-27T05:51:21.837589+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0047.json",
+   "evidence_hash": "sha256:fea8ab8928c7717ed57c89d2378d3f56072e97e690313087f9c9aaa56b4758cd"
+  },
+  {
+   "observation_id": "obs-0048",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-06"
+   ],
+   "check_id": "iam-06.cookie-attrs-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/Reports.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.837727+00:00",
+   "finished_at": "2026-10-27T05:51:21.837730+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0048.json",
+   "evidence_hash": "sha256:fea8ab8928c7717ed57c89d2378d3f56072e97e690313087f9c9aaa56b4758cd"
+  },
+  {
+   "observation_id": "obs-0049",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-05"
+   ],
+   "check_id": "dep-05.stub-pattern-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/TransactionList.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.837914+00:00",
+   "finished_at": "2026-10-27T05:51:21.837916+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0049.json",
+   "evidence_hash": "sha256:f2942b02f1b493f19ade07544bf3ee18106954c08da7205bd6c289d3e3d2e4c4"
+  },
+  {
+   "observation_id": "obs-0050",
+   "type": "tool_run",
+   "controls": [
+    "SA-APP-02"
+   ],
+   "check_id": "app-02.internal-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/TransactionList.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.838149+00:00",
+   "finished_at": "2026-10-27T05:51:21.838151+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0050.json",
+   "evidence_hash": "sha256:8182986a5f0d43db64e4dd009bb310fe227efb57bdd7b9115d9edcd2a01bd822"
+  },
+  {
+   "observation_id": "obs-0051",
+   "type": "tool_run",
+   "controls": [
+    "SA-OPS-01"
+   ],
+   "check_id": "ops-01.sensitive-log-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/TransactionList.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.838242+00:00",
+   "finished_at": "2026-10-27T05:51:21.838244+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0051.json",
+   "evidence_hash": "sha256:4b241634e45281b02e9559250b1e791cc010c52f73680ecc555acae70686f355"
+  },
+  {
+   "observation_id": "obs-0052",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-01"
+   ],
+   "check_id": "iam-01.custom-crypto-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/TransactionList.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.838491+00:00",
+   "finished_at": "2026-10-27T05:51:21.838494+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0052.json",
+   "evidence_hash": "sha256:4b241634e45281b02e9559250b1e791cc010c52f73680ecc555acae70686f355"
+  },
+  {
+   "observation_id": "obs-0053",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-06"
+   ],
+   "check_id": "iam-06.cookie-attrs-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/TransactionList.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.838569+00:00",
+   "finished_at": "2026-10-27T05:51:21.838573+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0053.json",
+   "evidence_hash": "sha256:4b241634e45281b02e9559250b1e791cc010c52f73680ecc555acae70686f355"
+  },
+  {
+   "observation_id": "obs-0054",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-05"
+   ],
+   "check_id": "dep-05.stub-pattern-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/lib/dashboard.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.838761+00:00",
+   "finished_at": "2026-10-27T05:51:21.838763+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0054.json",
+   "evidence_hash": "sha256:fde874643b4977de3d33d84f52d32e2ac026351766d9b42d9e2641a696283475"
+  },
+  {
+   "observation_id": "obs-0055",
+   "type": "tool_run",
+   "controls": [
+    "SA-APP-02"
+   ],
+   "check_id": "app-02.internal-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/lib/dashboard.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.838932+00:00",
+   "finished_at": "2026-10-27T05:51:21.838934+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0055.json",
+   "evidence_hash": "sha256:ad1766469fa7266dcb95f5b5c8308cfd51a9ac20100875a7b57baed79bfe7cdb"
+  },
+  {
+   "observation_id": "obs-0056",
+   "type": "tool_run",
+   "controls": [
+    "SA-OPS-01"
+   ],
+   "check_id": "ops-01.sensitive-log-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/lib/dashboard.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.839004+00:00",
+   "finished_at": "2026-10-27T05:51:21.839007+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0056.json",
+   "evidence_hash": "sha256:170c4304e9f1dfca7c390e8f45bb87f772adfc1a673ee4c9cd63f9d3cf410185"
+  },
+  {
+   "observation_id": "obs-0057",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-01"
+   ],
+   "check_id": "iam-01.custom-crypto-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/lib/dashboard.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.839092+00:00",
+   "finished_at": "2026-10-27T05:51:21.839093+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0057.json",
+   "evidence_hash": "sha256:170c4304e9f1dfca7c390e8f45bb87f772adfc1a673ee4c9cd63f9d3cf410185"
+  },
+  {
+   "observation_id": "obs-0058",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-06"
+   ],
+   "check_id": "iam-06.cookie-attrs-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/lib/dashboard.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.839121+00:00",
+   "finished_at": "2026-10-27T05:51:21.839123+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0058.json",
+   "evidence_hash": "sha256:170c4304e9f1dfca7c390e8f45bb87f772adfc1a673ee4c9cd63f9d3cf410185"
+  },
+  {
+   "observation_id": "obs-0059",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-05"
+   ],
+   "check_id": "dep-05.stub-pattern-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/lib/format.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.839206+00:00",
+   "finished_at": "2026-10-27T05:51:21.839208+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0059.json",
+   "evidence_hash": "sha256:52a439187617621533f4540af7afe1f652726c1014c1879bbbaaf33f3831c3ab"
+  },
+  {
+   "observation_id": "obs-0060",
+   "type": "tool_run",
+   "controls": [
+    "SA-APP-02"
+   ],
+   "check_id": "app-02.internal-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/lib/format.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.839279+00:00",
+   "finished_at": "2026-10-27T05:51:21.839280+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0060.json",
+   "evidence_hash": "sha256:96b3b3dcab0bc30e7d6901b8bd1ac10e59da11a4cc51445b26cd04bde79644ae"
+  },
+  {
+   "observation_id": "obs-0061",
+   "type": "tool_run",
+   "controls": [
+    "SA-OPS-01"
+   ],
+   "check_id": "ops-01.sensitive-log-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/lib/format.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.839306+00:00",
+   "finished_at": "2026-10-27T05:51:21.839308+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0061.json",
+   "evidence_hash": "sha256:41bf93f71ae0599de83ccd961e04f549c726c58a909409ead67bf59de71162aa"
+  },
+  {
+   "observation_id": "obs-0062",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-01"
+   ],
+   "check_id": "iam-01.custom-crypto-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/lib/format.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.839340+00:00",
+   "finished_at": "2026-10-27T05:51:21.839341+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0062.json",
+   "evidence_hash": "sha256:41bf93f71ae0599de83ccd961e04f549c726c58a909409ead67bf59de71162aa"
+  },
+  {
+   "observation_id": "obs-0063",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-06"
+   ],
+   "check_id": "iam-06.cookie-attrs-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/lib/format.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.839355+00:00",
+   "finished_at": "2026-10-27T05:51:21.839356+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0063.json",
+   "evidence_hash": "sha256:41bf93f71ae0599de83ccd961e04f549c726c58a909409ead67bf59de71162aa"
+  },
+  {
+   "observation_id": "obs-0064",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-05"
+   ],
+   "check_id": "dep-05.stub-pattern-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/lib/ledger.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.839440+00:00",
+   "finished_at": "2026-10-27T05:51:21.839464+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0064.json",
+   "evidence_hash": "sha256:bee66fff7db7581df8e6669b8eaf71495e8b8b22295f3b0e922b2cb2682c2ace"
+  },
+  {
+   "observation_id": "obs-0065",
+   "type": "tool_run",
+   "controls": [
+    "SA-APP-02"
+   ],
+   "check_id": "app-02.internal-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/lib/ledger.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.839610+00:00",
+   "finished_at": "2026-10-27T05:51:21.839612+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0065.json",
+   "evidence_hash": "sha256:82c6d9723832dd286851f0844eed535cc90184c84930bfb917663cc4974d045a"
+  },
+  {
+   "observation_id": "obs-0066",
+   "type": "tool_run",
+   "controls": [
+    "SA-OPS-01"
+   ],
+   "check_id": "ops-01.sensitive-log-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/lib/ledger.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.839667+00:00",
+   "finished_at": "2026-10-27T05:51:21.839668+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0066.json",
+   "evidence_hash": "sha256:043e034aad69bfbc34daa552c9b291e978fc6eccee6cd7610f6f59d4249486f9"
+  },
+  {
+   "observation_id": "obs-0067",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-01"
+   ],
+   "check_id": "iam-01.custom-crypto-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/lib/ledger.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.839748+00:00",
+   "finished_at": "2026-10-27T05:51:21.839750+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0067.json",
+   "evidence_hash": "sha256:043e034aad69bfbc34daa552c9b291e978fc6eccee6cd7610f6f59d4249486f9"
+  },
+  {
+   "observation_id": "obs-0068",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-06"
+   ],
+   "check_id": "iam-06.cookie-attrs-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/lib/ledger.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.839777+00:00",
+   "finished_at": "2026-10-27T05:51:21.839778+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0068.json",
+   "evidence_hash": "sha256:043e034aad69bfbc34daa552c9b291e978fc6eccee6cd7610f6f59d4249486f9"
+  },
+  {
+   "observation_id": "obs-0069",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-05"
+   ],
+   "check_id": "dep-05.stub-pattern-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/lib/store.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.840115+00:00",
+   "finished_at": "2026-10-27T05:51:21.840118+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0069.json",
+   "evidence_hash": "sha256:3173ce47c4b77f5eb8c951ad25ea1c34b69ee2e5b54f5690a589b68acd3641c7"
+  },
+  {
+   "observation_id": "obs-0070",
+   "type": "tool_run",
+   "controls": [
+    "SA-APP-02"
+   ],
+   "check_id": "app-02.internal-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/lib/store.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.840553+00:00",
+   "finished_at": "2026-10-27T05:51:21.840557+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0070.json",
+   "evidence_hash": "sha256:be1899f70c2016f53963a05a09953076473fdac88a7bb1c1426312a7a72ed01b"
+  },
+  {
+   "observation_id": "obs-0071",
+   "type": "tool_run",
+   "controls": [
+    "SA-OPS-01"
+   ],
+   "check_id": "ops-01.sensitive-log-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/lib/store.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.840678+00:00",
+   "finished_at": "2026-10-27T05:51:21.840679+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0071.json",
+   "evidence_hash": "sha256:8b35902439f3fac9b0a78f013dd99725ba3aa5bd1c3db5e75c01a0c23c19cbe2"
+  },
+  {
+   "observation_id": "obs-0072",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-01"
+   ],
+   "check_id": "iam-01.custom-crypto-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/lib/store.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.840862+00:00",
+   "finished_at": "2026-10-27T05:51:21.840864+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0072.json",
+   "evidence_hash": "sha256:8b35902439f3fac9b0a78f013dd99725ba3aa5bd1c3db5e75c01a0c23c19cbe2"
+  },
+  {
+   "observation_id": "obs-0073",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-06"
+   ],
+   "check_id": "iam-06.cookie-attrs-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/lib/store.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.840917+00:00",
+   "finished_at": "2026-10-27T05:51:21.840918+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0073.json",
+   "evidence_hash": "sha256:8b35902439f3fac9b0a78f013dd99725ba3aa5bd1c3db5e75c01a0c23c19cbe2"
+  },
+  {
+   "observation_id": "obs-0074",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-05"
+   ],
+   "check_id": "dep-05.stub-pattern-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/main.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.841080+00:00",
+   "finished_at": "2026-10-27T05:51:21.841083+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0074.json",
+   "evidence_hash": "sha256:e302d8e160d53cad27bc5108c9cafc1aa42c5f671f351a530c697b51b8ef8c8a"
+  },
+  {
+   "observation_id": "obs-0075",
+   "type": "tool_run",
+   "controls": [
+    "SA-APP-02"
+   ],
+   "check_id": "app-02.internal-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/main.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.841117+00:00",
+   "finished_at": "2026-10-27T05:51:21.841119+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0075.json",
+   "evidence_hash": "sha256:fe3e00406111d46a306d01cee01905065fa17b386410d69c36de0e68499edfd9"
+  },
+  {
+   "observation_id": "obs-0076",
+   "type": "tool_run",
+   "controls": [
+    "SA-OPS-01"
+   ],
+   "check_id": "ops-01.sensitive-log-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/main.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.841131+00:00",
+   "finished_at": "2026-10-27T05:51:21.841133+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0076.json",
+   "evidence_hash": "sha256:d2e074d240b43b6e1e6c5591491e92adb25818be051143d4e0ba5bcf57483d7c"
+  },
+  {
+   "observation_id": "obs-0077",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-01"
+   ],
+   "check_id": "iam-01.custom-crypto-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/main.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.841143+00:00",
+   "finished_at": "2026-10-27T05:51:21.841144+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0077.json",
+   "evidence_hash": "sha256:d2e074d240b43b6e1e6c5591491e92adb25818be051143d4e0ba5bcf57483d7c"
+  },
+  {
+   "observation_id": "obs-0078",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-06"
+   ],
+   "check_id": "iam-06.cookie-attrs-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/main.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.841152+00:00",
+   "finished_at": "2026-10-27T05:51:21.841153+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0078.json",
+   "evidence_hash": "sha256:d2e074d240b43b6e1e6c5591491e92adb25818be051143d4e0ba5bcf57483d7c"
+  },
+  {
+   "observation_id": "obs-0079",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-05"
+   ],
+   "check_id": "dep-05.stub-pattern-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/models/Account.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.841292+00:00",
+   "finished_at": "2026-10-27T05:51:21.841295+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0079.json",
+   "evidence_hash": "sha256:fc8d0e1ecb9b6c71d5a9d9550a1a306008492c11089936016b544751fde34895"
+  },
+  {
+   "observation_id": "obs-0080",
+   "type": "tool_run",
+   "controls": [
+    "SA-APP-02"
+   ],
+   "check_id": "app-02.internal-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/models/Account.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.841315+00:00",
+   "finished_at": "2026-10-27T05:51:21.841317+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0080.json",
+   "evidence_hash": "sha256:5f23e6d702717cb982eda5885fbfc985f08ea0eb51d6336b17b55640e5336207"
+  },
+  {
+   "observation_id": "obs-0081",
+   "type": "tool_run",
+   "controls": [
+    "SA-OPS-01"
+   ],
+   "check_id": "ops-01.sensitive-log-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/models/Account.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.841325+00:00",
+   "finished_at": "2026-10-27T05:51:21.841366+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0081.json",
+   "evidence_hash": "sha256:f07afc5e73eab184f94b18c8145abe18aa74aafbb8f65fe6ee4c97e482bf43c6"
+  },
+  {
+   "observation_id": "obs-0082",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-01"
+   ],
+   "check_id": "iam-01.custom-crypto-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/models/Account.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.841378+00:00",
+   "finished_at": "2026-10-27T05:51:21.841379+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0082.json",
+   "evidence_hash": "sha256:f07afc5e73eab184f94b18c8145abe18aa74aafbb8f65fe6ee4c97e482bf43c6"
+  },
+  {
+   "observation_id": "obs-0083",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-06"
+   ],
+   "check_id": "iam-06.cookie-attrs-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/models/Account.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.841386+00:00",
+   "finished_at": "2026-10-27T05:51:21.841387+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0083.json",
+   "evidence_hash": "sha256:f07afc5e73eab184f94b18c8145abe18aa74aafbb8f65fe6ee4c97e482bf43c6"
+  },
+  {
+   "observation_id": "obs-0084",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-05"
+   ],
+   "check_id": "dep-05.stub-pattern-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/models/Category.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.841516+00:00",
+   "finished_at": "2026-10-27T05:51:21.841530+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0084.json",
+   "evidence_hash": "sha256:a174bec0daba8c45d6e64fa93ca27aaf84002d9009daf049155ad64634aa2bfb"
+  },
+  {
+   "observation_id": "obs-0085",
+   "type": "tool_run",
+   "controls": [
+    "SA-APP-02"
+   ],
+   "check_id": "app-02.internal-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/models/Category.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.841643+00:00",
+   "finished_at": "2026-10-27T05:51:21.841647+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0085.json",
+   "evidence_hash": "sha256:797ddd3c65658815126bacd2075f88a2035ec9551fe486a0d6f43ecfdd1a5a01"
+  },
+  {
+   "observation_id": "obs-0086",
+   "type": "tool_run",
+   "controls": [
+    "SA-OPS-01"
+   ],
+   "check_id": "ops-01.sensitive-log-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/models/Category.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.841663+00:00",
+   "finished_at": "2026-10-27T05:51:21.841664+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0086.json",
+   "evidence_hash": "sha256:d29dbc10aa1d80aa2bd9e463d68adea25664b6d7b225a128478efab854ff7e11"
+  },
+  {
+   "observation_id": "obs-0087",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-01"
+   ],
+   "check_id": "iam-01.custom-crypto-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/models/Category.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.841674+00:00",
+   "finished_at": "2026-10-27T05:51:21.841675+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0087.json",
+   "evidence_hash": "sha256:d29dbc10aa1d80aa2bd9e463d68adea25664b6d7b225a128478efab854ff7e11"
+  },
+  {
+   "observation_id": "obs-0088",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-06"
+   ],
+   "check_id": "iam-06.cookie-attrs-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/models/Category.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.841682+00:00",
+   "finished_at": "2026-10-27T05:51:21.841683+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0088.json",
+   "evidence_hash": "sha256:d29dbc10aa1d80aa2bd9e463d68adea25664b6d7b225a128478efab854ff7e11"
+  },
+  {
+   "observation_id": "obs-0089",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-05"
+   ],
+   "check_id": "dep-05.stub-pattern-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/models/Transaction.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.841774+00:00",
+   "finished_at": "2026-10-27T05:51:21.841776+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0089.json",
+   "evidence_hash": "sha256:417f57d797e531d7e5aac54420943f862882b615e14d404eebcc6ea47903bed9"
+  },
+  {
+   "observation_id": "obs-0090",
+   "type": "tool_run",
+   "controls": [
+    "SA-APP-02"
+   ],
+   "check_id": "app-02.internal-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/models/Transaction.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.841822+00:00",
+   "finished_at": "2026-10-27T05:51:21.841824+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0090.json",
+   "evidence_hash": "sha256:cf0930f61ea699e0806180e61fe02be4977f33e5b606233ae7a17dcdd21a18e7"
+  },
+  {
+   "observation_id": "obs-0091",
+   "type": "tool_run",
+   "controls": [
+    "SA-OPS-01"
+   ],
+   "check_id": "ops-01.sensitive-log-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/models/Transaction.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.841837+00:00",
+   "finished_at": "2026-10-27T05:51:21.841838+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0091.json",
+   "evidence_hash": "sha256:32f9941d3f6e304ff614bd7e8bb5a063ffd8ae79186c7c2100e075fbef92f1a9"
+  },
+  {
+   "observation_id": "obs-0092",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-01"
+   ],
+   "check_id": "iam-01.custom-crypto-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/models/Transaction.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.841854+00:00",
+   "finished_at": "2026-10-27T05:51:21.841856+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0092.json",
+   "evidence_hash": "sha256:32f9941d3f6e304ff614bd7e8bb5a063ffd8ae79186c7c2100e075fbef92f1a9"
+  },
+  {
+   "observation_id": "obs-0093",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-06"
+   ],
+   "check_id": "iam-06.cookie-attrs-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/models/Transaction.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.841865+00:00",
+   "finished_at": "2026-10-27T05:51:21.841866+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0093.json",
+   "evidence_hash": "sha256:32f9941d3f6e304ff614bd7e8bb5a063ffd8ae79186c7c2100e075fbef92f1a9"
+  },
+  {
+   "observation_id": "obs-0094",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-05"
+   ],
+   "check_id": "dep-05.stub-pattern-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/models/Transfer.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.841908+00:00",
+   "finished_at": "2026-10-27T05:51:21.841910+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0094.json",
+   "evidence_hash": "sha256:2655c336fe82f34ff51a2a6e393d18c8460f331c428fbfefaade4fb61f2e468c"
+  },
+  {
+   "observation_id": "obs-0095",
+   "type": "tool_run",
+   "controls": [
+    "SA-APP-02"
+   ],
+   "check_id": "app-02.internal-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/models/Transfer.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.841927+00:00",
+   "finished_at": "2026-10-27T05:51:21.841928+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0095.json",
+   "evidence_hash": "sha256:ea9b2a61a5fb1591f47333b047434a4a85cf90e4c0ea0208741fb6e5347db152"
+  },
+  {
+   "observation_id": "obs-0096",
+   "type": "tool_run",
+   "controls": [
+    "SA-OPS-01"
+   ],
+   "check_id": "ops-01.sensitive-log-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/models/Transfer.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.841936+00:00",
+   "finished_at": "2026-10-27T05:51:21.841937+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0096.json",
+   "evidence_hash": "sha256:6a2e8c6636c6eecafdffa290c3b2266f941d7815b6d50e32f13c139690a29972"
+  },
+  {
+   "observation_id": "obs-0097",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-01"
+   ],
+   "check_id": "iam-01.custom-crypto-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/models/Transfer.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.841945+00:00",
+   "finished_at": "2026-10-27T05:51:21.841946+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0097.json",
+   "evidence_hash": "sha256:6a2e8c6636c6eecafdffa290c3b2266f941d7815b6d50e32f13c139690a29972"
+  },
+  {
+   "observation_id": "obs-0098",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-06"
+   ],
+   "check_id": "iam-06.cookie-attrs-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/models/Transfer.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.841952+00:00",
+   "finished_at": "2026-10-27T05:51:21.841954+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0098.json",
+   "evidence_hash": "sha256:6a2e8c6636c6eecafdffa290c3b2266f941d7815b6d50e32f13c139690a29972"
+  },
+  {
+   "observation_id": "obs-0099",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-05"
+   ],
+   "check_id": "dep-05.stub-pattern-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/views/Home.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.841987+00:00",
+   "finished_at": "2026-10-27T05:51:21.841989+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0099.json",
+   "evidence_hash": "sha256:5e5cf202b040f01fc4b7de0b652be204ef019367302706ffdcfa8f6036d55143"
+  },
+  {
+   "observation_id": "obs-0100",
+   "type": "tool_run",
+   "controls": [
+    "SA-APP-02"
+   ],
+   "check_id": "app-02.internal-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/views/Home.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842002+00:00",
+   "finished_at": "2026-10-27T05:51:21.842003+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0100.json",
+   "evidence_hash": "sha256:e712fa7b9231e4555179f0b7daa720dcd6f75ccd1c64bf39c37425738fe46dbc"
+  },
+  {
+   "observation_id": "obs-0101",
+   "type": "tool_run",
+   "controls": [
+    "SA-OPS-01"
+   ],
+   "check_id": "ops-01.sensitive-log-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/views/Home.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842010+00:00",
+   "finished_at": "2026-10-27T05:51:21.842011+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0101.json",
+   "evidence_hash": "sha256:38cf710c705302fb70e4576b0fb635c33c1ac426a1f756cc716bd7de1986abcd"
+  },
+  {
+   "observation_id": "obs-0102",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-01"
+   ],
+   "check_id": "iam-01.custom-crypto-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/views/Home.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842019+00:00",
+   "finished_at": "2026-10-27T05:51:21.842020+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0102.json",
+   "evidence_hash": "sha256:38cf710c705302fb70e4576b0fb635c33c1ac426a1f756cc716bd7de1986abcd"
+  },
+  {
+   "observation_id": "obs-0103",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-06"
+   ],
+   "check_id": "iam-06.cookie-attrs-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/views/Home.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842026+00:00",
+   "finished_at": "2026-10-27T05:51:21.842027+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0103.json",
+   "evidence_hash": "sha256:38cf710c705302fb70e4576b0fb635c33c1ac426a1f756cc716bd7de1986abcd"
+  },
+  {
+   "observation_id": "obs-0104",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-05"
+   ],
+   "check_id": "dep-05.stub-pattern-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/views/Master.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842063+00:00",
+   "finished_at": "2026-10-27T05:51:21.842065+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0104.json",
+   "evidence_hash": "sha256:81df52a9fc9c8a4e70673acabc2d0ebca8d9303621f697aa33c5aee192d6ec67"
+  },
+  {
+   "observation_id": "obs-0105",
+   "type": "tool_run",
+   "controls": [
+    "SA-APP-02"
+   ],
+   "check_id": "app-02.internal-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/views/Master.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842086+00:00",
+   "finished_at": "2026-10-27T05:51:21.842088+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0105.json",
+   "evidence_hash": "sha256:5d3aff857fcc424f08a967c77c5907bfebec5b123780968e7c71a10f8a8c5578"
+  },
+  {
+   "observation_id": "obs-0106",
+   "type": "tool_run",
+   "controls": [
+    "SA-OPS-01"
+   ],
+   "check_id": "ops-01.sensitive-log-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/views/Master.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842097+00:00",
+   "finished_at": "2026-10-27T05:51:21.842099+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0106.json",
+   "evidence_hash": "sha256:2a076e5006d898d08b078c94ce7f80de2e408628e06ea38598219d4e3b932fe0"
+  },
+  {
+   "observation_id": "obs-0107",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-01"
+   ],
+   "check_id": "iam-01.custom-crypto-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/views/Master.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842110+00:00",
+   "finished_at": "2026-10-27T05:51:21.842111+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0107.json",
+   "evidence_hash": "sha256:2a076e5006d898d08b078c94ce7f80de2e408628e06ea38598219d4e3b932fe0"
+  },
+  {
+   "observation_id": "obs-0108",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-06"
+   ],
+   "check_id": "iam-06.cookie-attrs-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/views/Master.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842118+00:00",
+   "finished_at": "2026-10-27T05:51:21.842119+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0108.json",
+   "evidence_hash": "sha256:2a076e5006d898d08b078c94ce7f80de2e408628e06ea38598219d4e3b932fe0"
+  },
+  {
+   "observation_id": "obs-0109",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-05"
+   ],
+   "check_id": "dep-05.stub-pattern-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/views/Report.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842150+00:00",
+   "finished_at": "2026-10-27T05:51:21.842152+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0109.json",
+   "evidence_hash": "sha256:f8408eef9e3631677bc02e035f7598b7e3466a0ce49315de99f966d30c2d8e39"
+  },
+  {
+   "observation_id": "obs-0110",
+   "type": "tool_run",
+   "controls": [
+    "SA-APP-02"
+   ],
+   "check_id": "app-02.internal-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/views/Report.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842166+00:00",
+   "finished_at": "2026-10-27T05:51:21.842167+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0110.json",
+   "evidence_hash": "sha256:bf4383fbea35550d4af97d57793c13ceb19dc89aaeabde5f26361761eefa6e8b"
+  },
+  {
+   "observation_id": "obs-0111",
+   "type": "tool_run",
+   "controls": [
+    "SA-OPS-01"
+   ],
+   "check_id": "ops-01.sensitive-log-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/views/Report.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842174+00:00",
+   "finished_at": "2026-10-27T05:51:21.842175+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0111.json",
+   "evidence_hash": "sha256:185385847426518eb6f330ad0c0331bf7ae3884c898541e32de914eff75d9081"
+  },
+  {
+   "observation_id": "obs-0112",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-01"
+   ],
+   "check_id": "iam-01.custom-crypto-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/views/Report.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842182+00:00",
+   "finished_at": "2026-10-27T05:51:21.842184+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0112.json",
+   "evidence_hash": "sha256:185385847426518eb6f330ad0c0331bf7ae3884c898541e32de914eff75d9081"
+  },
+  {
+   "observation_id": "obs-0113",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-06"
+   ],
+   "check_id": "iam-06.cookie-attrs-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/views/Report.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842189+00:00",
+   "finished_at": "2026-10-27T05:51:21.842191+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0113.json",
+   "evidence_hash": "sha256:185385847426518eb6f330ad0c0331bf7ae3884c898541e32de914eff75d9081"
+  },
+  {
+   "observation_id": "obs-0114",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-05"
+   ],
+   "check_id": "dep-05.stub-pattern-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/views/Transaction.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842225+00:00",
+   "finished_at": "2026-10-27T05:51:21.842226+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0114.json",
+   "evidence_hash": "sha256:dbc1b0038918649aedfe4f8f8f46a0e0368d556d10e41e9a09cb838760542aa1"
+  },
+  {
+   "observation_id": "obs-0115",
+   "type": "tool_run",
+   "controls": [
+    "SA-APP-02"
+   ],
+   "check_id": "app-02.internal-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/views/Transaction.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842268+00:00",
+   "finished_at": "2026-10-27T05:51:21.842270+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0115.json",
+   "evidence_hash": "sha256:9131a26c3dbaab8685ad07cf77ad9304e38f9d7c25546ead1fc2e88ef959e1f7"
+  },
+  {
+   "observation_id": "obs-0116",
+   "type": "tool_run",
+   "controls": [
+    "SA-OPS-01"
+   ],
+   "check_id": "ops-01.sensitive-log-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/views/Transaction.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842280+00:00",
+   "finished_at": "2026-10-27T05:51:21.842281+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0116.json",
+   "evidence_hash": "sha256:7f5270a084e1e2cc4b7039ea06ad67a27176f6f8a222ce3a422bce8fef5ee7d2"
+  },
+  {
+   "observation_id": "obs-0117",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-01"
+   ],
+   "check_id": "iam-01.custom-crypto-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/views/Transaction.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842292+00:00",
+   "finished_at": "2026-10-27T05:51:21.842293+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0117.json",
+   "evidence_hash": "sha256:7f5270a084e1e2cc4b7039ea06ad67a27176f6f8a222ce3a422bce8fef5ee7d2"
+  },
+  {
+   "observation_id": "obs-0118",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-06"
+   ],
+   "check_id": "iam-06.cookie-attrs-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/views/Transaction.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842300+00:00",
+   "finished_at": "2026-10-27T05:51:21.842301+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0118.json",
+   "evidence_hash": "sha256:7f5270a084e1e2cc4b7039ea06ad67a27176f6f8a222ce3a422bce8fef5ee7d2"
+  },
+  {
+   "observation_id": "obs-0119",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-05"
+   ],
+   "check_id": "dep-05.stub-pattern-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "svelte.config.js",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842336+00:00",
+   "finished_at": "2026-10-27T05:51:21.842338+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0119.json",
+   "evidence_hash": "sha256:3e5cdedc9b8848ebd2e010e8717f1d3c9ef94bb37d4e3880c44dcc586c01552d"
+  },
+  {
+   "observation_id": "obs-0120",
+   "type": "tool_run",
+   "controls": [
+    "SA-APP-02"
+   ],
+   "check_id": "app-02.internal-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "svelte.config.js",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842352+00:00",
+   "finished_at": "2026-10-27T05:51:21.842353+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0120.json",
+   "evidence_hash": "sha256:7526513558a4c5ef6c2ec4cc7441526f539b305b3d9460c5d1acc31b54a7a380"
+  },
+  {
+   "observation_id": "obs-0121",
+   "type": "tool_run",
+   "controls": [
+    "SA-OPS-01"
+   ],
+   "check_id": "ops-01.sensitive-log-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "svelte.config.js",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842360+00:00",
+   "finished_at": "2026-10-27T05:51:21.842361+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0121.json",
+   "evidence_hash": "sha256:7248a045a9d39060bca1e02b9771a98c04403439085e4727eea7076bcf40e2ae"
+  },
+  {
+   "observation_id": "obs-0122",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-01"
+   ],
+   "check_id": "iam-01.custom-crypto-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "svelte.config.js",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842369+00:00",
+   "finished_at": "2026-10-27T05:51:21.842371+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0122.json",
+   "evidence_hash": "sha256:7248a045a9d39060bca1e02b9771a98c04403439085e4727eea7076bcf40e2ae"
+  },
+  {
+   "observation_id": "obs-0123",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-06"
+   ],
+   "check_id": "iam-06.cookie-attrs-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "svelte.config.js",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842377+00:00",
+   "finished_at": "2026-10-27T05:51:21.842379+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0123.json",
+   "evidence_hash": "sha256:7248a045a9d39060bca1e02b9771a98c04403439085e4727eea7076bcf40e2ae"
+  },
+  {
+   "observation_id": "obs-0124",
+   "type": "tool_run",
+   "controls": [
+    "SA-DEP-05"
+   ],
+   "check_id": "dep-05.stub-pattern-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "vite.config.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842419+00:00",
+   "finished_at": "2026-10-27T05:51:21.842421+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0124.json",
+   "evidence_hash": "sha256:f980fbb5524a848dbd30589fb8e0ba91d7d365d94e108aca0db658127d7b854b"
+  },
+  {
+   "observation_id": "obs-0125",
+   "type": "tool_run",
+   "controls": [
+    "SA-APP-02"
+   ],
+   "check_id": "app-02.internal-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "vite.config.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842452+00:00",
+   "finished_at": "2026-10-27T05:51:21.842453+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0125.json",
+   "evidence_hash": "sha256:4319edfab994c36232f39f73aadd6f55e3fa3e75178026d0508412cf77ae4e22"
+  },
+  {
+   "observation_id": "obs-0126",
+   "type": "tool_run",
+   "controls": [
+    "SA-OPS-01"
+   ],
+   "check_id": "ops-01.sensitive-log-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "vite.config.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842466+00:00",
+   "finished_at": "2026-10-27T05:51:21.842468+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0126.json",
+   "evidence_hash": "sha256:90038f4e5df122d7bd88a7aad6bddc9853666f0bae9e196148f495c8247ad61e"
+  },
+  {
+   "observation_id": "obs-0127",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-01"
+   ],
+   "check_id": "iam-01.custom-crypto-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "vite.config.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842483+00:00",
+   "finished_at": "2026-10-27T05:51:21.842484+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0127.json",
+   "evidence_hash": "sha256:90038f4e5df122d7bd88a7aad6bddc9853666f0bae9e196148f495c8247ad61e"
+  },
+  {
+   "observation_id": "obs-0128",
+   "type": "tool_run",
+   "controls": [
+    "SA-IAM-06"
+   ],
+   "check_id": "iam-06.cookie-attrs-scan",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "vite.config.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842492+00:00",
+   "finished_at": "2026-10-27T05:51:21.842494+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0128.json",
+   "evidence_hash": "sha256:90038f4e5df122d7bd88a7aad6bddc9853666f0bae9e196148f495c8247ad61e"
+  },
+  {
+   "observation_id": "obs-0129",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": ".claude/settings.json",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842659+00:00",
+   "finished_at": "2026-10-27T05:51:21.842660+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0129.json",
+   "evidence_hash": "sha256:84e9d51b114d1802370e026a73c43c44624a111f428ad0f943180c833c08555c"
+  },
+  {
+   "observation_id": "obs-0130",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": ".vscode/extensions.json",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.842712+00:00",
+   "finished_at": "2026-10-27T05:51:21.842714+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0130.json",
+   "evidence_hash": "sha256:89b77fd73186cdfff1181b9e407f89afbe8f0a270b086708c65179c0a8b4ba90"
+  },
+  {
+   "observation_id": "obs-0131",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "README.md",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.843076+00:00",
+   "finished_at": "2026-10-27T05:51:21.843078+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0131.json",
+   "evidence_hash": "sha256:c104cf8e0e40fa36af43e1219b70cf9914de8541caba743422377f7819a952cf"
+  },
+  {
+   "observation_id": "obs-0132",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "TASKS.md",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.843521+00:00",
+   "finished_at": "2026-10-27T05:51:21.843523+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0132.json",
+   "evidence_hash": "sha256:598b91afa1d6c38cea4a1e6e0e3b882df597e4a6d9ba6fa2657b8ca9a9745618"
+  },
+  {
+   "observation_id": "obs-0133",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "index.html",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.843664+00:00",
+   "finished_at": "2026-10-27T05:51:21.843665+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0133.json",
+   "evidence_hash": "sha256:15f264796f7dc41efe53fb648f82abafcf649f2b16314cc02fb4d3eea7207e13"
+  },
+  {
+   "observation_id": "obs-0134",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "package-lock.json",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.856944+00:00",
+   "finished_at": "2026-10-27T05:51:21.856955+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0134.json",
+   "evidence_hash": "sha256:21b63380757e79c57c719381668af0ed4b730a1ba2e48217a9c1d3af9cbbb1fd"
+  },
+  {
+   "observation_id": "obs-0135",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "package.json",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.857150+00:00",
+   "finished_at": "2026-10-27T05:51:21.857152+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0135.json",
+   "evidence_hash": "sha256:3d3568ac74e3ab2f055faa8e20b5e40165a848d2ac3eb6218405c862f8c8c22f"
+  },
+  {
+   "observation_id": "obs-0136",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "postcss.config.js",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.857204+00:00",
+   "finished_at": "2026-10-27T05:51:21.857206+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0136.json",
+   "evidence_hash": "sha256:a33a81a63de000344e61106c232ed4c42d27324704ea878d1cf23a330927488d"
+  },
+  {
+   "observation_id": "obs-0137",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "scripts/e2e.mjs",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.857832+00:00",
+   "finished_at": "2026-10-27T05:51:21.857834+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0137.json",
+   "evidence_hash": "sha256:13000ccfbb2971b7a9f6f0b701bd2a458217a48400e06b5915aa14dd92ff771b"
+  },
+  {
+   "observation_id": "obs-0138",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "scripts/ledger.check.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.858078+00:00",
+   "finished_at": "2026-10-27T05:51:21.858080+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0138.json",
+   "evidence_hash": "sha256:6383d5fc4e5e5079f3dcb8a7a5cfac9b68bc9132704e55006d9bc8fe6d558343"
+  },
+  {
+   "observation_id": "obs-0139",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/App.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.858323+00:00",
+   "finished_at": "2026-10-27T05:51:21.858324+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0139.json",
+   "evidence_hash": "sha256:5beccefcbce11bab2f07ed3f828dc838dba561d4303b37ae76182bf76c33fdd4"
+  },
+  {
+   "observation_id": "obs-0140",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/AccountsManager.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.858902+00:00",
+   "finished_at": "2026-10-27T05:51:21.858904+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0140.json",
+   "evidence_hash": "sha256:aef0ca4056dd289bd1b0a3b8742d7f9c969020ff1d460797576b1e205c4f1ce2"
+  },
+  {
+   "observation_id": "obs-0141",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/CategoryManager.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.859476+00:00",
+   "finished_at": "2026-10-27T05:51:21.859478+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0141.json",
+   "evidence_hash": "sha256:031bda912cfe606db7f132d9237a2c39d2ae49699c3ddf638d652e41d1ebba7f"
+  },
+  {
+   "observation_id": "obs-0142",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/Dashboard.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.860031+00:00",
+   "finished_at": "2026-10-27T05:51:21.860033+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0142.json",
+   "evidence_hash": "sha256:40b66dd4d9425afdb52b3cf577a07384d690e6bdf0085710d0f95f8c6c513d52"
+  },
+  {
+   "observation_id": "obs-0143",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/EntryForm.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.860734+00:00",
+   "finished_at": "2026-10-27T05:51:21.860736+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0143.json",
+   "evidence_hash": "sha256:0f3ea0260b99141a2b33e8e613225ab0e4e99b8877674e4ef982e0c481e2742f"
+  },
+  {
+   "observation_id": "obs-0144",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/Reports.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.861418+00:00",
+   "finished_at": "2026-10-27T05:51:21.861419+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0144.json",
+   "evidence_hash": "sha256:7ca13846759e73bfcf8b8d745bb3d859f816ed36cb8728cbc4884968f3cb69cb"
+  },
+  {
+   "observation_id": "obs-0145",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/components/TransactionList.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.861822+00:00",
+   "finished_at": "2026-10-27T05:51:21.861824+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0145.json",
+   "evidence_hash": "sha256:b5dd85e2987253c35905ee7c739df61dd9ec00114b1483b6276c5cce2fa7885e"
+  },
+  {
+   "observation_id": "obs-0146",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/lib/dashboard.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.862132+00:00",
+   "finished_at": "2026-10-27T05:51:21.862134+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0146.json",
+   "evidence_hash": "sha256:0a8ceb1c5fd0db3f8ddd3e92617909ea11160f30eb7ec7b6f541f22c6cfcc630"
+  },
+  {
+   "observation_id": "obs-0147",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/lib/format.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.862288+00:00",
+   "finished_at": "2026-10-27T05:51:21.862289+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0147.json",
+   "evidence_hash": "sha256:8abaf4db0a722b4e3646778d0e3cf4ad434cd2cee8f974ea7914c72fe17ae52b"
+  },
+  {
+   "observation_id": "obs-0148",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/lib/ledger.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.862553+00:00",
+   "finished_at": "2026-10-27T05:51:21.862555+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0148.json",
+   "evidence_hash": "sha256:a649f9edcb1390265c690195acb3890b5f2ba68cd05c044a70b0d2012242e484"
+  },
+  {
+   "observation_id": "obs-0149",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/lib/store.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.863182+00:00",
+   "finished_at": "2026-10-27T05:51:21.863184+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0149.json",
+   "evidence_hash": "sha256:a13469aeeee23e0fddebd73f50c17f33a9e5caa8b5b0babd0122cf6d160f5a2b"
+  },
+  {
+   "observation_id": "obs-0150",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/main.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.863239+00:00",
+   "finished_at": "2026-10-27T05:51:21.863240+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0150.json",
+   "evidence_hash": "sha256:3777aeddd1873491d940ab3ebfa287679f424331085f4976ae6ffeb13d3dfba9"
+  },
+  {
+   "observation_id": "obs-0151",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/models/Account.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.863287+00:00",
+   "finished_at": "2026-10-27T05:51:21.863288+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0151.json",
+   "evidence_hash": "sha256:00707d316491dfed38cc7455335cb2470d934a10c07eab9ba04ec79791f180b2"
+  },
+  {
+   "observation_id": "obs-0152",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/models/Category.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.863333+00:00",
+   "finished_at": "2026-10-27T05:51:21.863335+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0152.json",
+   "evidence_hash": "sha256:32b4792f6a074020c7c97975408f3b4baddc1b3062c3cff20682a46712019ff6"
+  },
+  {
+   "observation_id": "obs-0153",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/models/Transaction.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.863405+00:00",
+   "finished_at": "2026-10-27T05:51:21.863407+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0153.json",
+   "evidence_hash": "sha256:2c9b4421f5932b9648e368fafca95e412fc455a9f5a051f24d1891e459297d88"
+  },
+  {
+   "observation_id": "obs-0154",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/models/Transfer.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.863451+00:00",
+   "finished_at": "2026-10-27T05:51:21.863452+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0154.json",
+   "evidence_hash": "sha256:dacaae73bffcdcec609342fac9b51bd9bf1e27457c044d66db5758f969b9ef61"
+  },
+  {
+   "observation_id": "obs-0155",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/views/Home.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.863493+00:00",
+   "finished_at": "2026-10-27T05:51:21.863494+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0155.json",
+   "evidence_hash": "sha256:fbc4ccc0db084e135ca3819efa19b02dd430af54c15817f6f567e541d1eb0749"
+  },
+  {
+   "observation_id": "obs-0156",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/views/Master.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.863548+00:00",
+   "finished_at": "2026-10-27T05:51:21.863549+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0156.json",
+   "evidence_hash": "sha256:eb2e1cc936f2bcf93de7e60db6510c55beb46713609fb0786b007c73b487b55a"
+  },
+  {
+   "observation_id": "obs-0157",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/views/Report.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.863590+00:00",
+   "finished_at": "2026-10-27T05:51:21.863592+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0157.json",
+   "evidence_hash": "sha256:82f0be2f36a7592f705813496b013063113c784aafab6511fb83e4dcb0761e31"
+  },
+  {
+   "observation_id": "obs-0158",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "src/views/Transaction.svelte",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.863644+00:00",
+   "finished_at": "2026-10-27T05:51:21.863645+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0158.json",
+   "evidence_hash": "sha256:8050b26f2a33ccd1d498129d1545d10df21dc9c11d9734c75893696a8d9b71b9"
+  },
+  {
+   "observation_id": "obs-0159",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "svelte.config.js",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.863678+00:00",
+   "finished_at": "2026-10-27T05:51:21.863679+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0159.json",
+   "evidence_hash": "sha256:188b869fb3869253002ca1baac281c17ff09077dd06f27279a1f13f810e2df8d"
+  },
+  {
+   "observation_id": "obs-0160",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "test-results/.last-run.json",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.863714+00:00",
+   "finished_at": "2026-10-27T05:51:21.863716+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0160.json",
+   "evidence_hash": "sha256:7bd0c28e6f27188211a137f2711ae7265030b094dc424022ffae336852e0e210"
+  },
+  {
+   "observation_id": "obs-0161",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "tsconfig.app.json",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.863816+00:00",
+   "finished_at": "2026-10-27T05:51:21.863818+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0161.json",
+   "evidence_hash": "sha256:5e20538c725b21a07b2542eeaf22871a5485620d5f67a22d3095289a6f05ce1e"
+  },
+  {
+   "observation_id": "obs-0162",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "tsconfig.json",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.863887+00:00",
+   "finished_at": "2026-10-27T05:51:21.863888+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0162.json",
+   "evidence_hash": "sha256:2665e5fcfa1b997aff89dd9e30c2b3bc5ac5a2a625a137477fb00f8584abd32e"
+  },
+  {
+   "observation_id": "obs-0163",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "tsconfig.node.json",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.863976+00:00",
+   "finished_at": "2026-10-27T05:51:21.863977+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0163.json",
+   "evidence_hash": "sha256:16102d8726af158fd838be9c3476a6ebb2c7219bd7f7e3acd2cb5d2c4d158553"
+  },
+  {
+   "observation_id": "obs-0164",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "vite.config.ts",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.864052+00:00",
+   "finished_at": "2026-10-27T05:51:21.864053+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0164.json",
+   "evidence_hash": "sha256:4a77f291b7567993cd91dc1fdbc8d1c5c5210bfe4155aad42da7abb3ec0e7660"
+  },
+  {
+   "observation_id": "obs-0165",
+   "type": "tool_run",
+   "controls": [
+    "SA-INF-01"
+   ],
+   "check_id": "inf-01.secret-collector-worktree",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": ".gitignore",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.864081+00:00",
+   "finished_at": "2026-10-27T05:51:21.864082+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0165.json",
+   "evidence_hash": "sha256:44e6d0fd99181a40d9add64a6e36aec4a89ca5868b51cf69ce91b98a8259e449"
+  },
+  {
+   "observation_id": "obs-0166",
+   "type": "tool_run",
+   "controls": [
+    "SA-AGT-05"
+   ],
+   "check_id": "agt-05.config-deny-rules",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "repo",
+   "result": "fail",
+   "started_at": "2026-10-27T05:51:21.864127+00:00",
+   "finished_at": "2026-10-27T05:51:21.864129+00:00",
+   "exit_code": 1,
+   "evidence_ref": "evidence/obs-0166.json",
+   "evidence_hash": "sha256:14c4699d4ca9def777db335536b00ec103bc38c9f4414ffdfd26856581ec5b1e"
+  },
+  {
+   "observation_id": "obs-0167",
+   "type": "tool_run",
+   "controls": [
+    "SA-AGT-05"
+   ],
+   "check_id": "agt-05.bypass-disabled",
+   "collection_method": "auto",
+   "collector": {
+    "name": "sa-collect-l0",
+    "version": "0.3.0"
+   },
+   "target": "repo",
+   "result": "pass",
+   "started_at": "2026-10-27T05:51:21.864143+00:00",
+   "finished_at": "2026-10-27T05:51:21.864145+00:00",
+   "exit_code": 0,
+   "evidence_ref": "evidence/obs-0167.json",
+   "evidence_hash": "sha256:108984a202f1c8f94ea0465ef4f06be922e7dfd84305490af1d0076699ff83c9"
+  }
+ ],
+ "exceptions": [],
+ "na_decisions": [],
+ "findings": [
+  {
+   "finding_id": "F-0001",
+   "controls": [
+    "SA-AGT-05"
+   ],
+   "severity": "HIGH",
+   "lifecycle": "open",
+   "location": ".claude/settings.json",
+   "summary": "Deny rule `Read(.env)` tidak ada.",
+   "kind": "config",
+   "owner_role": "TL",
+   "due": null,
+   "exception_id": null,
+   "observation_id": "obs-0166",
+   "check_id": "agt-05.config-deny-rules",
+   "retest_of": "verify-20261027T055105Z-67397c#F-0001"
+  },
+  {
+   "finding_id": "F-0002",
+   "controls": [
+    "SA-AGT-05"
+   ],
+   "severity": "HIGH",
+   "lifecycle": "open",
+   "location": ".claude/settings.json",
+   "summary": "Deny rule `Edit(.claude/settings.json)` tidak ada.",
+   "kind": "config",
+   "owner_role": "TL",
+   "due": null,
+   "exception_id": null,
+   "observation_id": "obs-0166",
+   "check_id": "agt-05.config-deny-rules",
+   "retest_of": "verify-20261027T055105Z-67397c#F-0002"
+  },
+  {
+   "finding_id": "F-0003",
+   "controls": [
+    "SA-AGT-05"
+   ],
+   "severity": "HIGH",
+   "lifecycle": "open",
+   "location": ".claude/settings.json",
+   "summary": "Deny rule `Edit(.mcp.json)` tidak ada.",
+   "kind": "config",
+   "owner_role": "TL",
+   "due": null,
+   "exception_id": null,
+   "observation_id": "obs-0166",
+   "check_id": "agt-05.config-deny-rules",
+   "retest_of": "verify-20261027T055105Z-67397c#F-0003"
+  },
+  {
+   "finding_id": "F-0004",
+   "controls": [
+    "SA-AGT-05"
+   ],
+   "severity": "HIGH",
+   "lifecycle": "open",
+   "location": ".claude/settings.json",
+   "summary": "Deny rule `Edit(.github/workflows/**)` tidak ada.",
+   "kind": "config",
+   "owner_role": "TL",
+   "due": null,
+   "exception_id": null,
+   "observation_id": "obs-0166",
+   "check_id": "agt-05.config-deny-rules",
+   "retest_of": "verify-20261027T055105Z-67397c#F-0004"
+  }
+ ],
+ "notes": [
+  "MVP L0: collector statis; tidak ada eksekusi kode repo, jaringan, atau akses produksi.",
+  "Label provenance=proposal: otorisasi diresolusi ke security/sa-state/trusted-context.json (sa-authorize, non-kriptografis)."
+ ]
+}

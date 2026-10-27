@@ -1,0 +1,32 @@
+{
+ "schema_version": "0.2.2",
+ "source": "sa-authorize",
+ "synthetic": false,
+ "assurance": "non-cryptographic-session-record",
+ "recorded_at": "2026-10-27T05:49:15.340251+00:00",
+ "grants": [
+  {
+   "grant_id": "G-f2af542643",
+   "who": "Arief Wicaksono",
+   "actions": [
+    "audit",
+    "verify"
+   ],
+   "level": "L0",
+   "scope": {
+    "controls": [
+     "*"
+    ],
+    "targets": [
+     "*"
+    ]
+   },
+   "subject": {
+    "repo_id": "git:https://github.com/r1efoz/Dompet-Suami.git"
+   },
+   "valid_from": "2026-10-27T05:49:15.340251+00:00",
+   "expires_at": "2026-10-27T13:49:15.340251+00:00",
+   "provenance": "session"
+  }
+ ]
+}

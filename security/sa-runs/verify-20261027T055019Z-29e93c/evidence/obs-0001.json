@@ -1,0 +1,6 @@
+{
+ "node": true,
+ "node_lock": true,
+ "python": false,
+ "python_lock": false
+}
