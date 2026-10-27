@@ -1,0 +1,20 @@
+{
+  "rules": {
+    "deny": [
+      {
+        "name": "block-secrets",
+        "description": "Block agent access to secret/config files",
+        "match": [
+          ".env*",
+          "*.pem",
+          "*.key",
+          "*.crt",
+          "credentials.json",
+          "service-account.json",
+          "*.seed",
+          "wallet/*"
+        ]
+      }
+    ]
+  }
+}
