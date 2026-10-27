@@ -1,4 +1,7 @@
 {
+  "permissions": {
+    "disableBypassPermissionsMode": "disable"
+  },
   "rules": {
     "deny": [
       {
@@ -14,6 +17,26 @@
           "*.seed",
           "wallet/*"
         ]
+      },
+      {
+        "name": "block-settings-edit",
+        "description": "Block agent edits to config files",
+        "match": [
+          ".claude/settings.json",
+          ".mcp.json",
+          ".github/workflows/**"
+        ]
+      },
+      {
+        "name": "block-read-secrets",
+        "description": "Block agent reads of secrets",
+        "match": [
+          ".env*",
+          "*.pem",
+          "*.key",
+          "*.crt"
+        ],
+        "actions": ["read"]
       }
     ]
   }
