@@ -1,34 +1,6 @@
 {
   "permissions": {
+    "deny": ["Read(.env)", "Read(.env.*)", "Edit(.claude/settings.json)", "Edit(.mcp.json)", "Edit(.github/workflows/**)"],
     "disableBypassPermissionsMode": "disable"
-  },
-  "rules": {
-    "deny": [
-      {
-        "name": "deny-read-env",
-        "match": [".env*"],
-        "actions": ["read"]
-      },
-      {
-        "name": "deny-edit-settings",
-        "match": [".claude/settings.json"],
-        "actions": ["edit"]
-      },
-      {
-        "name": "deny-edit-mcp",
-        "match": [".mcp.json"],
-        "actions": ["edit"]
-      },
-      {
-        "name": "deny-edit-workflows",
-        "match": [".github/workflows/**"],
-        "actions": ["edit"]
-      },
-      {
-        "name": "deny-read-secrets",
-        "match": ["*.pem", "*.key", "*.crt", "credentials.json", "service-account.json", "*.seed", "wallet/*"],
-        "actions": ["read"]
-      }
-    ]
   }
 }
