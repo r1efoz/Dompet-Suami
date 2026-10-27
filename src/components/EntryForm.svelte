@@ -12,7 +12,6 @@
 
   let mode: Mode = 'income';
   let amount = '';
-  let amountInput = '';
   let description = '';
   let source = 'bank';
   let destination = 'cash';
@@ -22,7 +21,18 @@
   let success = '';
   let timer: ReturnType<typeof setTimeout>;
 
-  $: amountInput = amount ? formatNumber(Number(amount)) : '';
+  function parseInput(value: string): number {
+    if (!value) return 0;
+    return Number(value.replace(/\./g, ''));
+  }
+
+  function formatInput(value: string): string {
+    const num = Number(value);
+    if (isNaN(num)) return '';
+    return formatNumber(num);
+  }
+
+  $: amountDisplay = amount ? formatInput(amount) : '';
   $: submitLabel =
     mode === 'income' ? 'Simpan pemasukan' : mode === 'expense' ? 'Simpan pengeluaran' : 'Pindahkan dana';
 
@@ -40,14 +50,14 @@
     mode = next;
     error = '';
     success = '';
-    amountInput = '';
+    amount = '';
     description = '';
     categoryId = '';
   }
 
   function handleSubmit(event: SubmitEvent) {
     event.preventDefault();
-    const value = Number(amount);
+    const value = parseInput(amount);
 
     try {
       if (mode === 'transfer') {
@@ -58,7 +68,6 @@
         notify(mode === 'income' ? 'Pemasukan dicatat.' : 'Pengeluaran dicatat.', 'success');
       }
       amount = '';
-      amountInput = '';
       description = '';
     } catch (err) {
       notify(err instanceof Error ? err.message : 'Gagal menyimpan.', 'error');
@@ -91,12 +100,16 @@
         <input
           id="entry-amount"
           class="field num pl-10 text-[15px]"
-          type="number"
-          min="1"
-          step="1"
+          type="text"
           inputmode="numeric"
           placeholder="0"
-          bind:value={amount}
+          value={amountDisplay}
+          on:input={(e) => {
+            const target = e.target as HTMLInputElement;
+            const raw = target.value.replace(/\./g, '');
+            amount = raw;
+            target.value = formatInput(raw);
+          }}
           aria-describedby={error ? 'entry-error' : undefined}
           aria-invalid={error ? 'true' : undefined}
           class:is-invalid={Boolean(error)}

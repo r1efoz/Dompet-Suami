@@ -1,11 +1,13 @@
 const idr = new Intl.NumberFormat('id-ID', {
   style: 'currency',
   currency: 'IDR',
-  maximumFractionDigits: 0
+  maximumFractionDigits: 0,
+  useGrouping: true
 });
 
 const plain = new Intl.NumberFormat('id-ID', {
-  maximumFractionDigits: 0
+  maximumFractionDigits: 0,
+  useGrouping: true
 });
 
 const shortDate = new Intl.DateTimeFormat('id-ID', {
