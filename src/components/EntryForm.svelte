@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { accounts, balances, categories, recordEntry, recordTransfer } from '../lib/store';
+  import { accounts, balances, categories, editingTransaction, recordEntry, recordTransfer, updateEntry, updateTransfer } from '../lib/store';
   import { formatIDR, formatNumber } from '../lib/format';
 
   type Mode = 'income' | 'expense' | 'transfer';
@@ -17,10 +17,30 @@
   let destination = 'cash';
   let categoryId = '';
   let adminFee = '';
+  let transactionDate = new Date().toISOString().slice(0, 10);
 
   let error = '';
   let success = '';
   let timer: ReturnType<typeof setTimeout>;
+  let loadedEditId = '';
+  $: editing = $editingTransaction;
+  $: if ($editingTransaction && loadedEditId !== $editingTransaction.id) {
+    const tx = $editingTransaction;
+    loadedEditId = tx.id;
+    mode = tx.transferId ? 'transfer' : tx.type;
+    amount = String(tx.transferId && tx.type === 'expense' ? tx.amount - transferFee(tx) : tx.amount);
+    description = tx.description;
+    source = tx.transferId && tx.type === 'income' ? tx.destination ?? tx.source : tx.source;
+    destination = tx.transferId && tx.type === 'expense' ? tx.destination ?? 'cash' : tx.source;
+    categoryId = tx.categoryId ?? '';
+    adminFee = String(tx.transferId && tx.type === 'expense' ? transferFee(tx) : 0);
+    transactionDate = tx.timestamp.slice(0, 10);
+  }
+
+  function transferFee(tx: import('../models/Transaction').Transaction): number {
+    const match = tx.description.match(/\(biaya Rp\s*([\d.]+)\)/);
+    return match ? Number(match[1].replace(/\./g, '')) : 0;
+  }
 
   function parseInput(value: string): number {
     if (!value) return 0;
@@ -56,6 +76,19 @@
     description = '';
     categoryId = '';
     adminFee = '';
+    transactionDate = new Date().toISOString().slice(0, 10);
+    editingTransaction.set(null);
+    loadedEditId = '';
+  }
+
+  function cancelEdit() {
+    editingTransaction.set(null);
+    loadedEditId = '';
+    amount = '';
+    adminFee = '';
+    description = '';
+    categoryId = '';
+    transactionDate = new Date().toISOString().slice(0, 10);
   }
 
   async function handleSubmit(event: SubmitEvent) {
@@ -64,11 +97,19 @@
     const fee = parseInput(adminFee);
 
     try {
-      if (mode === 'transfer') {
+      const timestamp = new Date(`${transactionDate}T12:00:00`).toISOString();
+      if (editing) {
+        const input = { id: editing.id, type: mode === 'transfer' ? editing.type : mode, amount: value, description, source, destination, categoryId, adminFee: fee, timestamp, transferId: editing.transferId };
+        if (editing.transferId) await updateTransfer(input);
+        else await updateEntry(input);
+        editingTransaction.set(null);
+        loadedEditId = '';
+        notify('Perubahan disimpan.', 'success');
+      } else if (mode === 'transfer') {
         await recordTransfer(source, destination, value, fee);
         notify('Transfer dicatat.', 'success');
       } else {
-        await recordEntry({ type: mode, amount: value, description, source, categoryId, adminFee: fee });
+        await recordEntry({ type: mode, amount: value, description, source, categoryId, timestamp });
         notify(mode === 'income' ? 'Pemasukan dicatat.' : 'Pengeluaran dicatat.', 'success');
       }
       amount = '';
@@ -98,6 +139,10 @@
   </div>
 
   <form class="mt-5 space-y-4" on:submit={handleSubmit} novalidate>
+    <div>
+      <label class="label" for="entry-date">Tanggal</label>
+      <input id="entry-date" class="field mt-1.5" type="date" bind:value={transactionDate} />
+    </div>
     <div>
       <label class="label" for="entry-amount">Jumlah, rupiah</label>
       <div class="relative mt-1.5">
@@ -193,7 +238,12 @@
       </div>
     {/if}
 
-    <button type="submit" class="btn-primary">{submitLabel}</button>
+    <div class="flex gap-2">
+      <button type="submit" class="btn-primary">{editing ? 'Simpan perubahan' : submitLabel}</button>
+      {#if editing}
+        <button type="button" class="btn-quiet" on:click={cancelEdit}>Batal</button>
+      {/if}
+    </div>
 
     <div aria-live="polite">
       {#if error}

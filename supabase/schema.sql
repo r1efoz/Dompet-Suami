@@ -27,11 +27,15 @@ create table transactions (
   amount numeric not null check (amount > 0),
   description text default '',
   source text not null,
+  category_id text,
   destination text,
   transfer_id text,
   timestamp timestamptz not null default now(),
   created_at timestamptz default now()
 );
+
+-- Upgrade existing databases that were created before category support.
+alter table transactions add column if not exists category_id text;
 
 -- Index untuk query cepat
 create index idx_transactions_timestamp on transactions(timestamp);

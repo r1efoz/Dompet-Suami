@@ -4,18 +4,16 @@
   import Master from './views/Master.svelte';
   import Transaction from './views/Transaction.svelte';
   import Report from './views/Report.svelte';
-  import Budget from './views/Budget.svelte';
   import { loadInitialData } from './lib/store';
 
   const views = [
     { id: 'home', label: 'Home' },
     { id: 'master', label: 'Master' },
     { id: 'transaction', label: 'Transaksi' },
-    { id: 'report', label: 'Laporan' },
-    { id: 'budget', label: 'Anggaran' }
+    { id: 'report', label: 'Laporan' }
   ];
 
-  let currentView: 'home' | 'master' | 'transaction' | 'report' | 'budget' = 'home';
+  let currentView: 'home' | 'master' | 'transaction' | 'report' = 'home';
 
   onMount(async () => {
     try {
@@ -64,8 +62,6 @@
       <Transaction />
     {:else if currentView === 'report'}
       <Report />
-    {:else if currentView === 'budget'}
-      <Budget />
     {/if}
   </main>
 

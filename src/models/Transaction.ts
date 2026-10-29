@@ -6,6 +6,7 @@ export interface Transaction {
   amount: number;
   description: string;
   source: string;
+  categoryId?: string;
   /** Set when this entry is one side of a transfer between funds. */
   destination?: string;
   /** Shared id for the two entries that make up a transfer. */

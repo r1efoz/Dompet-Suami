@@ -5,6 +5,9 @@ import type { Transaction } from '../models/Transaction';
 import { supabase, isSupabaseConfigured } from './supabase';
 import { computeBalances, startOfMonth, summarizeSince } from './ledger';
 import { formatIDR } from './format';
+import { fromDatabaseTransaction, toDatabaseTransaction } from './transaction-mapping';
+import { buildTransferEdit } from './transaction-edit';
+import { transactionIdsToDelete } from './transaction-delete';
 
 const DEFAULT_ACCOUNTS: Account[] = [
   { id: 'bank', name: 'Bank', type: 'bank' },
@@ -24,6 +27,7 @@ const DEFAULT_CATEGORIES: Category[] = [
 export const accounts = writable<Account[]>([]);
 export const categories = writable<Category[]>([]);
 export const transactions = writable<Transaction[]>([]);
+export const editingTransaction = writable<Transaction | null>(null);
 
 export const balances = derived([accounts, transactions], ([$accounts, $transactions]) =>
   computeBalances($accounts, $transactions)
@@ -73,6 +77,12 @@ export interface EntryInput {
   adminFee?: number;
 }
 
+export interface TransactionEditInput extends EntryInput {
+  id: string;
+  transferId?: string;
+  destination?: string;
+}
+
 /** Muat data awal dari Supabase ke store (panggil saat aplikasi pertama kali dimuat). */
 export async function loadInitialData(): Promise<void> {
   const [accRes, catRes, txRes] = await Promise.all([
@@ -83,7 +93,7 @@ export async function loadInitialData(): Promise<void> {
 
   if (!accRes.error) accounts.set((accRes.data as Account[]) ?? []);
   if (!catRes.error) categories.set((catRes.data as Category[]) ?? []);
-  if (!txRes.error) transactions.set((txRes.data as Transaction[]) ?? []);
+  if (!txRes.error) transactions.set(((txRes.data as Parameters<typeof fromDatabaseTransaction>[0][]) ?? []).map(fromDatabaseTransaction));
 
   // Jika tabel kosong, isi data default
   if ((accRes.data as Account[] ?? []).length === 0) {
@@ -132,7 +142,7 @@ export async function recordEntry({
     timestamp: timestamp ?? new Date().toISOString()
   };
 
-  const { error } = await supabase.from('transactions').insert(tx);
+  const { error } = await supabase.from('transactions').insert(toDatabaseTransaction(tx));
   if (error) throw error;
 
   transactions.update((items) => [...items, tx]);
@@ -182,10 +192,79 @@ export async function recordTransfer(
     timestamp
   };
 
-  const { error } = await supabase.from('transactions').insert([out, incoming]);
+  const { error } = await supabase.from('transactions').insert([out, incoming].map(toDatabaseTransaction));
   if (error) throw error;
 
   transactions.update((items) => [...items, out, incoming]);
+}
+
+export async function deleteTransaction(id: string): Promise<void> {
+  const ids = transactionIdsToDelete(get(transactions), id);
+  if (!ids.length) throw new Error('Transaksi tidak ditemukan.');
+  const { error } = await supabase.from('transactions').delete().in('id', ids);
+  if (error) throw error;
+  transactions.update((items) => items.filter((tx) => !ids.includes(tx.id)));
+}
+
+export async function updateEntry(input: TransactionEditInput): Promise<void> {
+  const original = get(transactions).find((tx) => tx.id === input.id);
+  if (!original) throw new Error('Transaksi tidak ditemukan.');
+  if (original.transferId) throw new Error('Gunakan editor transfer.');
+
+  requireAccount(input.source);
+  const amount = requireAmount(input.amount);
+  if (input.categoryId) {
+    const category = requireCategory(input.categoryId);
+    if (category.type !== input.type) throw new Error('Kategori tidak cocok dengan jenis transaksi.');
+  }
+
+  const next: Transaction = {
+    ...original,
+    type: input.type,
+    amount,
+    description: input.description?.trim() ?? '',
+    source: input.source,
+    categoryId: input.categoryId,
+    timestamp: input.timestamp ?? original.timestamp
+  };
+  const targetBalance = (get(balances)[input.source] ?? 0) +
+    (input.source === original.source ? (original.type === 'expense' ? original.amount : -original.amount) : 0);
+  if (input.type === 'expense' && targetBalance < amount + (input.adminFee ?? 0)) throw new Error('Saldo tidak cukup.');
+
+  const { error } = await supabase.from('transactions').update(toDatabaseTransaction(next)).eq('id', original.id);
+  if (error) throw error;
+  transactions.update((items) => items.map((tx) => tx.id === next.id ? next : tx));
+}
+
+export async function updateTransfer(input: TransactionEditInput): Promise<void> {
+  const original = get(transactions).find((tx) => tx.id === input.id && tx.transferId);
+  if (!original?.transferId) throw new Error('Transfer tidak ditemukan.');
+  const pair = get(transactions).filter((tx) => tx.transferId === original.transferId);
+  const out = pair.find((tx) => tx.type === 'expense');
+  const incoming = pair.find((tx) => tx.type === 'income');
+  if (!out || !incoming) throw new Error('Data transfer tidak lengkap.');
+  if (!input.destination || input.source === input.destination) throw new Error('Sumber dan tujuan harus berbeda.');
+  requireAccount(input.source);
+  requireAccount(input.destination);
+  const amount = requireAmount(input.amount);
+  const adminFee = input.adminFee ?? 0;
+  if (!Number.isFinite(adminFee) || adminFee < 0) throw new Error('Biaya admin tidak valid.');
+
+  const currentBalance = get(balances)[out.source] ?? 0;
+  const available = currentBalance + out.amount;
+  if (input.source === out.source && available < amount + adminFee) throw new Error('Saldo tidak cukup.');
+  if (input.source !== out.source && (get(balances)[input.source] ?? 0) < amount + adminFee) throw new Error('Saldo tidak cukup.');
+
+  const next = buildTransferEdit({
+    outId: out.id, inId: incoming.id, transferId: original.transferId,
+    fromId: input.source, toId: input.destination, amount, adminFee,
+    timestamp: input.timestamp ?? original.timestamp,
+    fromName: get(accounts).find((a) => a.id === input.source)?.name ?? input.source,
+    toName: get(accounts).find((a) => a.id === input.destination)?.name ?? input.destination
+  });
+  const { error } = await supabase.from('transactions').upsert(next.map(toDatabaseTransaction));
+  if (error) throw error;
+  transactions.update((items) => items.map((tx) => next.find((item) => item.id === tx.id) ?? tx));
 }
 
 /** Hapus semua data dari Supabase dan store. */
