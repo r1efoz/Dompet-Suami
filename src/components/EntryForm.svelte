@@ -58,17 +58,17 @@
     adminFee = '';
   }
 
-  function handleSubmit(event: SubmitEvent) {
+  async function handleSubmit(event: SubmitEvent) {
     event.preventDefault();
     const value = parseInput(amount);
     const fee = parseInput(adminFee);
 
     try {
       if (mode === 'transfer') {
-        recordTransfer(source, destination, value, fee);
+        await recordTransfer(source, destination, value, fee);
         notify('Transfer dicatat.', 'success');
       } else {
-        recordEntry({ type: mode, amount: value, description, source, categoryId, adminFee: fee });
+        await recordEntry({ type: mode, amount: value, description, source, categoryId, adminFee: fee });
         notify(mode === 'income' ? 'Pemasukan dicatat.' : 'Pengeluaran dicatat.', 'success');
       }
       amount = '';

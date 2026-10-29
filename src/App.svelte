@@ -1,8 +1,10 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import Home from './views/Home.svelte';
   import Master from './views/Master.svelte';
   import Transaction from './views/Transaction.svelte';
   import Report from './views/Report.svelte';
+  import { loadInitialData } from './lib/store';
 
   const views = [
     { id: 'home', label: 'Home' },
@@ -12,6 +14,14 @@
   ];
 
   let currentView: 'home' | 'master' | 'transaction' | 'report' = 'home';
+
+  onMount(async () => {
+    try {
+      await loadInitialData();
+    } catch (err) {
+      console.error('Gagal memuat data awal:', err);
+    }
+  });
 </script>
 
 <div class="min-h-screen">
@@ -53,6 +63,6 @@
   </main>
 
   <footer class="border-t border-line pt-4 font-mono text-[11px] leading-relaxed text-ink2">
-    Data tersimpan di browser ini. Unduh CSV untuk cadangan.
+    Data tersimpan di Supabase cloud. Unduh CSV untuk cadangan.
   </footer>
 </div>

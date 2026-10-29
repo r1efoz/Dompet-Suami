@@ -2,12 +2,9 @@ import { derived, get, writable } from 'svelte/store';
 import type { Account } from '../models/Account';
 import type { Category } from '../models/Category';
 import type { Transaction } from '../models/Transaction';
+import { supabase } from './supabase';
 import { computeBalances, startOfMonth, summarizeSince } from './ledger';
 import { formatIDR } from './format';
-
-const TRANSACTIONS_KEY = 'dompet-suami-transactions';
-const ACCOUNTS_KEY = 'dompet-suami-accounts';
-const CATEGORIES_KEY = 'dompet-suami-categories';
 
 const DEFAULT_ACCOUNTS: Account[] = [
   { id: 'bank', name: 'Bank', type: 'bank' },
@@ -24,32 +21,9 @@ const DEFAULT_CATEGORIES: Category[] = [
   { id: 'entertainment', name: 'Hiburan', type: 'expense' }
 ];
 
-function readStored<T>(key: string, fallback: T): T {
-  if (typeof localStorage === 'undefined') return fallback;
-  try {
-    const raw = localStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as T) : fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-function persisted<T>(key: string, initial: T) {
-  const store = writable<T>(readStored(key, initial));
-  store.subscribe((value) => {
-    if (typeof localStorage === 'undefined') return;
-    try {
-      localStorage.setItem(key, JSON.stringify(value));
-    } catch {
-      /* storage full or blocked - keep in-memory state */
-    }
-  });
-  return store;
-}
-
-export const accounts = persisted<Account[]>(ACCOUNTS_KEY, DEFAULT_ACCOUNTS);
-export const categories = persisted<Category[]>(CATEGORIES_KEY, DEFAULT_CATEGORIES);
-export const transactions = persisted<Transaction[]>(TRANSACTIONS_KEY, []);
+export const accounts = writable<Account[]>([]);
+export const categories = writable<Category[]>([]);
+export const transactions = writable<Transaction[]>([]);
 
 export const balances = derived([accounts, transactions], ([$accounts, $transactions]) =>
   computeBalances($accounts, $transactions)
@@ -99,7 +73,39 @@ export interface EntryInput {
   adminFee?: number;
 }
 
-export function recordEntry({ type, amount, description, source, categoryId, timestamp, adminFee = 0 }: EntryInput): Transaction {
+/** Muat data awal dari Supabase ke store (panggil saat aplikasi pertama kali dimuat). */
+export async function loadInitialData(): Promise<void> {
+  const [accRes, catRes, txRes] = await Promise.all([
+    supabase.from('accounts').select('*'),
+    supabase.from('categories').select('*'),
+    supabase.from('transactions').select('*')
+  ]);
+
+  if (!accRes.error) accounts.set((accRes.data as Account[]) ?? []);
+  if (!catRes.error) categories.set((catRes.data as Category[]) ?? []);
+  if (!txRes.error) transactions.set((txRes.data as Transaction[]) ?? []);
+
+  // Jika tabel kosong,isi data default
+  if ((accRes.data as Account[] ?? []).length === 0) {
+    accounts.set(DEFAULT_ACCOUNTS);
+    await supabase.from('accounts').insert(DEFAULT_ACCOUNTS);
+  }
+  if ((catRes.data as Category[] ?? []).length === 0) {
+    categories.set(DEFAULT_CATEGORIES);
+    await supabase.from('categories').insert(DEFAULT_CATEGORIES);
+  }
+}
+
+/** Catat pemasukan atau pengeluaran ke Supabase dan store. */
+export async function recordEntry({
+  type,
+  amount,
+  description,
+  source,
+  categoryId,
+  timestamp,
+  adminFee = 0
+}: EntryInput): Promise<Transaction> {
   requireAccount(source);
   const value = requireAmount(amount);
   const note = description?.trim() ?? '';
@@ -126,11 +132,20 @@ export function recordEntry({ type, amount, description, source, categoryId, tim
     timestamp: timestamp ?? new Date().toISOString()
   };
 
+  const { error } = await supabase.from('transactions').insert(tx);
+  if (error) throw error;
+
   transactions.update((items) => [...items, tx]);
   return tx;
 }
 
-export function recordTransfer(from: string, to: string, amount: number, adminFee: number = 0): void {
+/** Catat transfer antar akun ke Supabase dan store. */
+export async function recordTransfer(
+  from: string,
+  to: string,
+  amount: number,
+  adminFee: number = 0
+): Promise<void> {
   if (from === to) throw new Error('Sumber dan tujuan sama.');
   requireAccount(from);
   requireAccount(to);
@@ -167,9 +182,19 @@ export function recordTransfer(from: string, to: string, amount: number, adminFe
     timestamp
   };
 
+  const { error } = await supabase.from('transactions').insert([out, incoming]);
+  if (error) throw error;
+
   transactions.update((items) => [...items, out, incoming]);
 }
 
-export function clearAll(): void {
+/** Hapus semua data dari Supabase dan store. */
+export async function clearAll(): Promise<void> {
+  await supabase.from('transactions').delete().neq('id', '');
+  await supabase.from('accounts').delete().neq('id', '');
+  await supabase.from('categories').delete().neq('id', '');
+
   transactions.set([]);
+  accounts.set([]);
+  categories.set([]);
 }

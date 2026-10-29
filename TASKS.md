@@ -21,7 +21,7 @@ _(tidak ada)_
 ### Fungsional
 - [x] Model data: Account, Transaction (+ transferId/destination)
 - [x] Ledger murni (`src/lib/ledger.ts`): saldo turunan, ringkasan, buku besar
-- [x] Store terpusat + persistensi localStorage (`src/lib/store.ts`)
+- [x] Store terpusat + persistensi Supabase (`src/lib/store.ts`, `src/lib/supabase.ts`)
 - [x] Catat pemasukan / pengeluaran / transfer (double-entry)
 - [x] Validasi saldo tidak cukup & input tidak valid
 - [x] Neraca saldo + buku besar per sumber dana
@@ -81,5 +81,7 @@ npx svelte-check --tsconfig ./tsconfig.app.json    # 0 error, 0 warning
 - Working directory: `/Users/ariefwicaksono/dompet-suami`
 - Stack: Svelte 5 + TypeScript + Vite 6 + Tailwind CSS v4
 - Dev: `npm run dev` → http://localhost:5173/
-- Data tersimpan di localStorage: `dompet-suami-transactions`, `dompet-suami-accounts`
+- Data tersimpan di Supabase cloud (tabel accounts, categories, transactions)
 - Jika halaman tampak blank atau tanpa style, restart Vite dan hapus `node_modules/.vite`
+- Pastikan `supabase/schema.sql` sudah dijalankan di SQL Editor Supabase sebelum develop
+- Isi `.env` dengan `VITE_SUPABASE_URL` dan `VITE_SUPABASE_ANON_KEY` dari Project Settings → API
