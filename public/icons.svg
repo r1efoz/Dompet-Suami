@@ -28,4 +28,15 @@
     <path fill="none" stroke="var(--color-ink)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 16h6"/>
     <path fill="none" stroke="var(--color-ink)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20v-2a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v2"/>
   </symbol>
+  <symbol id="bank-icon" viewBox="0 0 24 24">
+    <path fill="none" stroke="var(--color-ink)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 21h18M5 21V7l8-4 8 4v14M8 9v12M16 9v12M12 9v12"/>
+  </symbol>
+  <symbol id="cash-icon" viewBox="0 0 24 24">
+    <path fill="none" stroke="var(--color-ink)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 3v2m0 6v2m-3-3h6"/>
+  </symbol>
+  <symbol id="ewallet-icon" viewBox="0 0 24 24">
+    <path fill="none" stroke="var(--color-ink)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2 6h20v12H2z"/>
+    <path fill="none" stroke="var(--color-ink)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2 10h20"/>
+    <circle cx="17" cy="15" r="1.5" fill="var(--color-ink)"/>
+  </symbol>
 </svg>

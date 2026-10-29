@@ -153,10 +153,19 @@
               </div>
             </td>
           {:else}
-            <td class="py-3 text-[14px] text-ink">{account.name}</td>
-            <td class="py-3 text-[12px] text-ink2 capitalize">
-              {account.type}
+            <td class="py-3 text-[14px] text-ink">
+              <div class="flex items-center gap-2">
+                {#if account.type === 'bank'}
+                  <svg class="h-4 w-4"><use href="#bank-icon" /></svg>
+                {:else if account.type === 'cash'}
+                  <svg class="h-4 w-4"><use href="#cash-icon" /></svg>
+                {:else}
+                  <svg class="h-4 w-4"><use href="#ewallet-icon" /></svg>
+                {/if}
+                {account.name}
+              </div>
             </td>
+            <td class="py-3 text-[12px] text-ink2 capitalize">{account.type}</td>
             <td class="py-3 text-right">
               <div class="flex items-center justify-end gap-2">
                 <button
