@@ -198,3 +198,17 @@ export async function clearAll(): Promise<void> {
   accounts.set([]);
   categories.set([]);
 }
+
+/** Simpan akun ke Supabase (create atau update). */
+export async function saveAccount(account: Account): Promise<void> {
+  if (!account.id) throw new Error('Account ID tidak ada.');
+  const { error } = await supabase.from('accounts').upsert(account);
+  if (error) throw error;
+}
+
+/** Simpan kategori ke Supabase (create atau update). */
+export async function saveCategory(category: Category): Promise<void> {
+  if (!category.id) throw new Error('Kategori ID tidak ada.');
+  const { error } = await supabase.from('categories').upsert(category);
+  if (error) throw error;
+}

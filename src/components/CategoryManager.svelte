@@ -1,19 +1,25 @@
 <script lang="ts">
-  import { categories } from '../lib/store';
+  import { categories, saveCategory } from '../lib/store';
 
   let newName = '';
   let newType: 'income' | 'expense' = 'expense';
   let editingId: string | null = null;
   let editName = '';
   let editType: 'income' | 'expense' = 'expense';
+  let error = '';
 
-  function addCategory() {
+  async function addCategory() {
     if (!newName.trim()) return;
-    categories.update((cats) => [
-      ...cats,
-      { id: `${Date.now()}`, name: newName.trim(), type: newType }
-    ]);
-    newName = '';
+    const newCat = { id: `${Date.now()}`, name: newName.trim(), type: newType };
+    categories.update((cats) => [...cats, newCat]);
+    try {
+      await saveCategory(newCat);
+      newName = '';
+      error = '';
+    } catch (e) {
+      categories.update((cats) => cats.filter((c) => c.id !== newCat.id));
+      error = 'Gagal menyimpan: ' + (e instanceof Error ? e.message : 'Unknown error');
+    }
   }
 
   function startEdit(category: typeof categories[$type][number]) {
@@ -24,18 +30,26 @@
 
   function saveEdit() {
     if (!editingId) return;
+    const updated = categories[$categories.findIndex(c => c.id === editingId)];
+    if (!updated) return;
+    updated.name = editName.trim();
+    updated.type = editType;
     categories.update((cats) =>
-      cats.map((c) =>
-        c.id === editingId ? { ...c, name: editName.trim(), type: editType } : c
-      )
+      cats.map((c) => (c.id === editingId ? updated : c))
     );
-    editingId = null;
-    editName = '';
+    saveCategory(updated).catch((e) => {
+      error = 'Gagal menyimpan: ' + (e instanceof Error ? e.message : 'Unknown error');
+    }).finally(() => {
+      editingId = null;
+      editName = '';
+      error = '';
+    });
   }
 
   function cancelEdit() {
     editingId = null;
     editName = '';
+    error = '';
   }
 
   function deleteCategory(id: string) {
@@ -153,4 +167,8 @@
       {/each}
     </tbody>
   </table>
+
+  {#if error}
+    <p class="mt-4 text-[13px] text-red">{error}</p>
+  {/if}
 </div>

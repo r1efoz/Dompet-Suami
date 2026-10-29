@@ -1,19 +1,25 @@
 <script lang="ts">
-  import { accounts } from '../lib/store';
+  import { accounts, saveAccount } from '../lib/store';
 
   let newName = '';
   let newType: 'bank' | 'cash' | 'ewallet' = 'bank';
   let editingId: string | null = null;
   let editName = '';
   let editType: 'bank' | 'cash' | 'ewallet' = 'bank';
+  let error = '';
 
-  function addAccount() {
+  async function addAccount() {
     if (!newName.trim()) return;
-    accounts.update((accs) => [
-      ...accs,
-      { id: `${Date.now()}`, name: newName.trim(), type: newType }
-    ]);
-    newName = '';
+    const newAcc = { id: `${Date.now()}`, name: newName.trim(), type: newType };
+    accounts.update((accs) => [...accs, newAcc]);
+    try {
+      await saveAccount(newAcc);
+      newName = '';
+      error = '';
+    } catch (e) {
+      accounts.update((accs) => accs.filter((a) => a.id !== newAcc.id));
+      error = 'Gagal menyimpan: ' + (e instanceof Error ? e.message : 'Unknown error');
+    }
   }
 
   function startEdit(account: typeof accounts[$type][number]) {
@@ -22,20 +28,37 @@
     editType = account.type;
   }
 
-  function saveEdit() {
+  async function saveEdit() {
     if (!editingId) return;
-    accounts.update((accs) =>
-      accs.map((a) =>
-        a.id === editingId ? { ...a, name: editName.trim(), type: editType } : a
-      )
-    );
+    const idx = accounts.findIndex((a) => a.id === editingId);
+    if (idx === -1) return;
+    const prev = accounts[idx];
+    const updated = { ...prev, name: editName.trim(), type: editType };
+    accounts.update((accs) => {
+      const copy = [...accs];
+      copy[idx] = updated;
+      return copy;
+    });
+    try {
+      await saveAccount(updated);
+    } catch (e) {
+      accounts.update((accs) => {
+        const copy = [...accs];
+        copy[idx] = prev;
+        return copy;
+      });
+      error = 'Gagal menyimpan: ' + (e instanceof Error ? e.message : 'Unknown error');
+      return;
+    }
     editingId = null;
     editName = '';
+    error = '';
   }
 
   function cancelEdit() {
     editingId = null;
     editName = '';
+    error = '';
   }
 
   function deleteAccount(id: string) {
