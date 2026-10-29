@@ -72,3 +72,35 @@ export function getDashboardData(
     recentTransactions
   };
 }
+
+export interface MonthlyPoint {
+  month: string;
+  income: number;
+  expense: number;
+}
+
+/** Income & expense per month for the last `months` months (excluding transfers). */
+export function monthlyTrend(transactions: Transaction[], months = 12): MonthlyPoint[] {
+  const now = new Date();
+  const points: MonthlyPoint[] = [];
+
+  for (let i = months - 1; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const month = d.toISOString().slice(0, 7);
+    const start = new Date(d.getFullYear(), d.getMonth(), 1);
+    const end = new Date(d.getFullYear(), d.getMonth() + 1, 1);
+
+    let income = 0;
+    let expense = 0;
+    for (const tx of transactions) {
+      if (tx.transferId) continue;
+      const t = new Date(tx.timestamp);
+      if (t < start || t >= end) continue;
+      if (tx.type === 'income') income += tx.amount;
+      else expense += tx.amount;
+    }
+    points.push({ month, income, expense });
+  }
+
+  return points;
+}

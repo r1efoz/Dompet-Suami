@@ -7,6 +7,8 @@
 
   let tab: ReportTab = 'trial';
   let selectedAccount = 'bank';
+  let dateFrom = '';
+  let dateTo = '';
 
   $: totalDebit = $accounts.reduce((sum, account) => {
     const value = $balances[account.id] ?? 0;
@@ -18,11 +20,27 @@
     return value < 0 ? sum + Math.abs(value) : sum;
   }, 0);
 
-  $: ledgerRows = buildLedger($transactions, selectedAccount);
+  $: filteredTx = $transactions.filter((tx) => {
+    const t = new Date(tx.timestamp);
+    t.setHours(0, 0, 0, 0);
+    if (dateFrom) {
+      const f = new Date(dateFrom);
+      f.setHours(0, 0, 0, 0);
+      if (t < f) return false;
+    }
+    if (dateTo) {
+      const end = new Date(dateTo);
+      end.setHours(0, 0, 0, 0);
+      if (t > end) return false;
+    }
+    return true;
+  });
+
+  $: ledgerRows = buildLedger(filteredTx, selectedAccount);
 
   function exportCsv() {
     const header = ['Tanggal', 'Tipe', 'Jumlah', 'Sumber', 'Tujuan', 'Keterangan'];
-    const rows = [...$transactions]
+    const rows = [...filteredTx]
       .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
       .map((tx) =>
         [
@@ -55,6 +73,19 @@
       </svg>
       CSV
     </button>
+  </div>
+
+  <div class="mt-2 flex flex-wrap items-baseline gap-3 border-b border-line pb-2" role="group" aria-label="Filter rentang tanggal">
+    <label class="label text-[12px]" for="report-date-from">Dari</label>
+    <input type="date" id="report-date-from" class="field mt-1" bind:value={dateFrom} />
+    <label class="label text-[12px]" for="report-date-to">Sampai</label>
+    <input type="date" id="report-date-to" class="field mt-1" bind:value={dateTo} />
+    {#if dateFrom || dateTo}
+      <span class="font-mono text-[11px] text-ink2">{dateFrom} → {dateTo}</span>
+      <button type="button" class="btn-quiet text-[12px]" on:click={() => { dateFrom = ''; dateTo = ''; }}>
+        Reset filter
+      </button>
+    {/if}
   </div>
 
   <div class="mt-2 flex gap-2 border-b border-line" role="tablist" aria-label="Jenis laporan">

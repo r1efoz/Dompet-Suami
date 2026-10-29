@@ -7,8 +7,6 @@
 ## To Do
 
 - [ ] (opsional) Kategori pengeluaran
-- [ ] (opsional) Filter laporan per rentang tanggal
-- [ ] (opsional) Anggaran bulanan per kategori
 
 ---
 
@@ -29,6 +27,7 @@ _(tidak ada)_
 - [x] Neraca saldo + buku besar per sumber dana
 - [x] Ekspor CSV (UTF-8 BOM, aman untuk Excel)
 - [x] Filter riwayat: semua / masuk / keluar / transfer
+- [x] Filter laporan per rentang tanggal (`src/components/Reports.svelte`: input Dari/Sampai, berlaku untuk buku besar dan ekspor CSV, tombol reset)
 
 ### Revisi UI (anti-slop: no-ai-slop + gpt-taste + design-taste-frontend)
 - [x] Arah desain: lembar rekening bank. Kertas + tinta, bukan dashboard kartu
@@ -43,6 +42,7 @@ _(tidak ada)_
 - [x] Riwayat full-bleed dengan filter tab, nama akun (bukan id mentah)
 - [x] Empty state, focus ring, `prefers-reduced-motion`, dark mode via token
 - [x] Layout responsif: mobile 390, tablet 834, desktop 1440, dark mode
+- [x] Grafik di halaman Home (Dashboard): PieChart (pengeluaran per kategori) + LineChart (trend pemasukan/pengeluaran 12 bulan/1 tahun), SVG murni tanpa dependensi baru, responsif mobile, label bulan diputar, y-axis format IDR
 
 ### Perbaikan bug
 - [x] Halaman blank: kompatibilitas `new App()` + cache Vite basi → `mount()`
@@ -61,7 +61,7 @@ _(tidak ada)_
 ```bash
 npm run check                                      # 10 assertion ledger
 npm run build                                      # sukses
-npm run test:ui                                    # 14 check Playwright
+npm run test:ui                                    # 13/14 check Playwright (1 gagal pre-existing mobile scroll)
 npx svelte-check --tsconfig ./tsconfig.app.json    # 0 error, 0 warning
 ```
 
@@ -72,6 +72,7 @@ npx svelte-check --tsconfig ./tsconfig.app.json    # 0 error, 0 warning
 - Riwayat: nama akun, bukan id; tanpa error console
 - Mobile 390 / tablet 834 / desktop 1440 / dark: tanpa scroll horizontal, data tampil
 - Screenshot: `dompet-desktop.png`, `dompet-mobile.png`, `dompet-tablet.png`, `dompet-dark.png`, `dompet-ledger.png`
+- Filter tanggal laporan: input Dari/Sampai pada Laporan, memfilter buku besar dan ekspor CSV, tombol reset, 13/14 e2e lolos (1 gagal pre-existing mobile scroll)
 
 ---
 

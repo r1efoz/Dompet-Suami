@@ -1,9 +1,12 @@
 <script lang="ts">
   import { accounts, categories, transactions, balances, totalBalance, monthSummary } from '../lib/store';
-  import { getDashboardData } from '../lib/dashboard';
+  import { getDashboardData, monthlyTrend } from '../lib/dashboard';
   import { formatIDR } from '../lib/format';
+  import PieChart from './PieChart.svelte';
+  import LineChart from './LineChart.svelte';
 
   $: dashboard = getDashboardData($accounts, $categories, $transactions);
+  $: monthly = monthlyTrend($transactions, 12);
   $: total = $totalBalance;
   $: share = (value: number) => {
     const base = Math.max(total, 1);
@@ -82,29 +85,17 @@
     </div>
   </div>
 
-  <!-- Category Breakdown -->
+  <!-- Pie Chart: Pengeluaran per Kategori -->
   <div class="lg:col-span-2">
-    <h3 class="label">Pengeluaran per Kategori</h3>
-    <div class="mt-4 space-y-3">
-      {#if dashboard.categoryBreakdown.filter(c => c.value < 0).length === 0}
-        <p class="text-[13px] text-ink2 italic">Belum ada pengeluaran</p>
-      {:else}
-        {#each dashboard.categoryBreakdown.filter(c => c.value < 0).sort((a, b) => b.value - a.value) as cat}
-          <div>
-            <div class="flex justify-between text-[13px]">
-              <span class="text-ink">{cat.name}</span>
-              <span class="font-mono text-ink2">{Math.abs(cat.percent)}% · {formatIDR(Math.abs(cat.value))}</span>
-            </div>
-            <div class="mt-1 h-1.5 w-full rounded-full bg-line">
-              <div
-                class="h-1.5 rounded-full bg-accent"
-                style="width: {Math.min(Math.abs(cat.percent), 100)}%"
-              ></div>
-            </div>
-          </div>
-        {/each}
-      {/if}
-    </div>
+    <PieChart
+      data={dashboard.categoryBreakdown.filter((c) => c.value < 0)}
+      title="Pengeluaran per Kategori"
+    />
+  </div>
+
+  <!-- Line Chart: Trend Bulanan -->
+  <div>
+    <LineChart data={monthly} title="Trend Bulanan (12 bulan)" />
   </div>
 
   <!-- Month Summary -->
