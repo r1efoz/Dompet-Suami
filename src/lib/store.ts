@@ -2,7 +2,7 @@ import { derived, get, writable } from 'svelte/store';
 import type { Account } from '../models/Account';
 import type { Category } from '../models/Category';
 import type { Transaction } from '../models/Transaction';
-import { supabase } from './supabase';
+import { supabase, isSupabaseConfigured } from './supabase';
 import { computeBalances, startOfMonth, summarizeSince } from './ledger';
 import { formatIDR } from './format';
 
@@ -85,7 +85,7 @@ export async function loadInitialData(): Promise<void> {
   if (!catRes.error) categories.set((catRes.data as Category[]) ?? []);
   if (!txRes.error) transactions.set((txRes.data as Transaction[]) ?? []);
 
-  // Jika tabel kosong,isi data default
+  // Jika tabel kosong, isi data default
   if ((accRes.data as Account[] ?? []).length === 0) {
     accounts.set(DEFAULT_ACCOUNTS);
     await supabase.from('accounts').insert(DEFAULT_ACCOUNTS);
