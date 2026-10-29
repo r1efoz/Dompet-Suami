@@ -4,16 +4,18 @@
   import Master from './views/Master.svelte';
   import Transaction from './views/Transaction.svelte';
   import Report from './views/Report.svelte';
+  import Budget from './views/Budget.svelte';
   import { loadInitialData } from './lib/store';
 
   const views = [
     { id: 'home', label: 'Home' },
     { id: 'master', label: 'Master' },
     { id: 'transaction', label: 'Transaksi' },
-    { id: 'report', label: 'Laporan' }
+    { id: 'report', label: 'Laporan' },
+    { id: 'budget', label: 'Anggaran' }
   ];
 
-  let currentView: 'home' | 'master' | 'transaction' | 'report' = 'home';
+  let currentView: 'home' | 'master' | 'transaction' | 'report' | 'budget' = 'home';
 
   onMount(async () => {
     try {
@@ -27,8 +29,11 @@
 <div class="min-h-screen">
   <header class="sticky top-0 z-20 border-b border-line bg-paper/95 backdrop-blur-[3px]">
     <div class="mx-auto flex h-14 max-w-[1180px] items-center justify-between gap-4 px-5 sm:px-6">
-      <div class="flex items-baseline gap-2.5">
-        <span class="text-[15px] font-semibold tracking-[-0.01em] text-ink">Dompet Suami</span>
+      <div class="flex items-center gap-2">
+        <svg class="h-6 w-6 text-ink" aria-hidden="true">
+          <use href="/icons.svg#piggy-bank-icon"></use>
+        </svg>
+        <span class="font-semibold text-lg text-ink">Dompet Suami</span>
         <span class="hidden font-mono text-[11px] text-ink2 sm:inline">buku kas</span>
       </div>
 
@@ -59,6 +64,8 @@
       <Transaction />
     {:else if currentView === 'report'}
       <Report />
+    {:else if currentView === 'budget'}
+      <Budget />
     {/if}
   </main>
 
