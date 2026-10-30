@@ -94,3 +94,5 @@ Format: `YYYY-MM-DD HH:MM — Tugas N — status — catatan singkat (perintah v
 - 2026-10-30 21:54 — Tugas 6 — review Claude putaran 2 — VERDICT: REJECT — detail: docs/handoff/reviews/task-6-review-r2.md
 - 2026-10-30 21:57 — Tugas 6 — review Claude putaran 0 — VERDICT: REJECT — detail: docs/handoff/reviews/task-6-review-r0.md
 - 2026-10-30 22:15 — Tugas 7 — selesai (626a099) — reports.ts (periodRange, accountBalanceReport, categoryReport, monthlyTable, toCsv, fullBackupRows), buildLedger param `opening`, script check + history.check & reports.check; RED teramati (module tidak ada) → `npm run check` hijau (9 check), build hijau.
+- 2026-10-30 22:13 — Tugas 6 — review Claude putaran 0 — VERDICT: REJECT — detail: docs/handoff/reviews/task-6-review-r0.md
+- 2026-10-30 22:25 — Tugas 6 — GREEN — Postgres lokal hidup: `npm run test:ui` semua check lulus (termasuk e2e Tugas 6), `npm run check` hijau.
