@@ -148,6 +148,21 @@ await shoot("mobile", 390, 844);
 await shoot("tablet", 834, 1112);
 await shoot("dark", 1440, 1200, "dark");
 
+// Task 5 Home acceptance checks.
+const homePage = await context.newPage();
+await homePage.setViewportSize({ width: 375, height: 812 });
+await homePage.goto("http://localhost:5173/", { waitUntil: "networkidle" });
+check("Home menyapa Pak Arief", await homePage.getByText("Halo, Pak Arief", { exact: true }).count() > 0);
+check("rail akun bisa scroll horizontal", await homePage.locator('[data-testid="account-rail"]').evaluate((el) => el.scrollWidth > el.clientWidth));
+const insightCount = await homePage.locator('[data-testid="insight-row"]').count();
+check("Home menampilkan 1–3 insight", insightCount >= 1 && insightCount <= 3, String(insightCount));
+check("tren Home menampilkan 12 bulan", await homePage.locator('svg[aria-label="Tren 12 bulan"] text[data-month]').count() === 12);
+const homeWidth = await homePage.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }));
+check("Home tanpa scroll horizontal halaman", homeWidth.scroll === homeWidth.client, `${homeWidth.scroll} !== ${homeWidth.client}`);
+const homeTotalValue = await homePage.locator('[data-testid="home-total"]').getAttribute("data-value");
+check("total Home bernilai 4.750.000", homeTotalValue === "4750000", homeTotalValue ?? "missing");
+await homePage.close();
+
 // UI primitives demo: selection, dialog keyboard dismissal, and toast lifecycle.
 const demoPage = await context.newPage();
 await demoPage.goto("http://localhost:5173/#demo", { waitUntil: "networkidle" });

@@ -49,6 +49,7 @@ Dibuat: 2026-10-30 oleh Claude (sesi desain bersama Arief). Dikerjakan oleh: Ope
 - Tugas 1 e2e tampaknya perlu lokal Postgres aktif karena seed dijalankan via `psql` pada awal `scripts/e2e.mjs`; memakai DB lokal port 55322, sesuai aturan project. **Dijawab (Claude):** ya, Postgres lokal wajib aktif.
 - Tugas 3 loading gagal/skeleton belum diimplementasikan: rencana mengizinkan `store.ts` untuk `loading` dan perlindungan seeding/error, namun “Jangan sentuh: views, store” berkonflik; dipatuhi larangan eksplisit, perlu keputusan pemilik sebelum melanjutkan bagian ini.
 - Tugas 4 helper `topCategories`: bila jumlah gabungan sisanya mengandung tanpa kategori, gunakan `id: null`, nama `Tanpa kategori`, dan ikon default `🧾` sesuai §2.7; persentase tiap kategori dibulatkan ke bilangan terdekat.
+- Tugas 5: ketika semua akun bersaldo 0 dan tak punya transaksi bulan ini, rail menampilkan semua akun (termasuk kartu "Tambah"); ini tafsir langsung dari §2.3 "Jika semua akun kosong → tampilkan semua akun", supaya rail tidak kosong.
 
 ## Log
 
@@ -75,4 +76,8 @@ Format: `YYYY-MM-DD HH:MM — Tugas N — status — catatan singkat (perintah v
 - 2026-10-30 — Tugas 4 — RED — `TZ=Asia/Jakarta npx tsx src/lib/dashboard.check.ts`: `2026-09 !== 2026-10` (bug WIB); dashboard helpers belum diekspor.
 - 2026-10-30 — Tugas 4 — implementasi — insights lokal, trend month-key lokal, balance/account/category stats; added dua self-check ke `npm run check`.
 - 2026-10-30 — Tugas 4 — verifikasi — `TZ=Asia/Jakarta npm run check` / `TZ=UTC npm run check`: semua passed; `npm run build`: berhasil.
+- 2026-10-30 — Tugas 5 — RED — `npm run test:ui`: gagal pada `[data-testid="account-rail"]` yang belum ada, sesuai layar Home lama.
+- 2026-10-30 — Tugas 5 — implementasi — Home baru, kartu/rail akun, insight, kategori, transaksi terbaru, dan chart batang SVG; hapus Dashboard/LineChart/PieChart lama; tambah acceptance Home ke e2e.
+- 2026-10-30 — Tugas 5 — verifikasi — `npm run check`, `npm run test:ui`, `npm run build`: semua lulus; e2e semua check lulus.
 - 2026-10-30 17:40 — Tugas 4 — review Claude putaran 0 — VERDICT: ACCEPT — detail: docs/handoff/reviews/task-4-review-r0.md
+- 2026-10-30 17:57 — Tugas 5 — selesai (commit oleh Claude) — OpenCode menyelesaikan Home + 6 acceptance e2e (check/build/test:ui hijau menurut lognya) tapi berhenti sebelum `git rm`/commit: satu perintah gabungan `git status && git log && sed` ditolak kebijakan metakarakter, lalu ia menyimpulkan "shell git ditolak". Claude menghapus 3 stub lama, cek check+build, dan commit. Prompt tugas ditambah aturan "satu perintah per panggilan".
