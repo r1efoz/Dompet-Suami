@@ -10,19 +10,19 @@ import { buildTransferEdit } from './transaction-edit';
 import { transactionIdsToDelete } from './transaction-delete';
 import { isReferenced } from './master';
 
-const DEFAULT_ACCOUNTS: Account[] = [
-  { id: 'bank', name: 'Bank', type: 'bank' },
-  { id: 'cash', name: 'Tunai', type: 'cash' },
-  { id: 'ewallet', name: 'E-Wallet', type: 'ewallet' }
+const DEFAULT_ACCOUNTS: Omit<Account, 'id'>[] = [
+  { name: 'Bank', type: 'bank' },
+  { name: 'Tunai', type: 'cash' },
+  { name: 'E-Wallet', type: 'ewallet' }
 ];
 
-const DEFAULT_CATEGORIES: Category[] = [
-  { id: 'salary', name: 'Gaji', type: 'income' },
-  { id: 'freelance', name: 'Freelance', type: 'income' },
-  { id: 'food', name: 'Makanan', type: 'expense' },
-  { id: 'transport', name: 'Transport', type: 'expense' },
-  { id: 'utilities', name: 'Listrik/Air', type: 'expense' },
-  { id: 'entertainment', name: 'Hiburan', type: 'expense' }
+const DEFAULT_CATEGORIES: Omit<Category, 'id'>[] = [
+  { name: 'Gaji', type: 'income' },
+  { name: 'Freelance', type: 'income' },
+  { name: 'Makanan', type: 'expense' },
+  { name: 'Transport', type: 'expense' },
+  { name: 'Listrik/Air', type: 'expense' },
+  { name: 'Hiburan', type: 'expense' }
 ];
 
 export const accounts = writable<Account[]>([]);
@@ -45,7 +45,7 @@ export const monthSummary = derived(transactions, ($transactions) =>
   )
 );
 
-function newId(prefix: string): string {
+export function newId(prefix: string): string {
   return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
 }
 
@@ -98,12 +98,15 @@ export async function loadInitialData(): Promise<void> {
 
   // Jika tabel kosong, isi data default
   if ((accRes.data as Account[] ?? []).length === 0) {
-    accounts.set(DEFAULT_ACCOUNTS);
-    await supabase.from('accounts').insert(DEFAULT_ACCOUNTS);
+    // ids are global primary keys, so each user's defaults need their own
+    const seeded = DEFAULT_ACCOUNTS.map((a) => ({ ...a, id: newId('acc') }));
+    accounts.set(seeded);
+    await supabase.from('accounts').insert(seeded);
   }
   if ((catRes.data as Category[] ?? []).length === 0) {
-    categories.set(DEFAULT_CATEGORIES);
-    await supabase.from('categories').insert(DEFAULT_CATEGORIES);
+    const seeded = DEFAULT_CATEGORIES.map((c) => ({ ...c, id: newId('cat') }));
+    categories.set(seeded);
+    await supabase.from('categories').insert(seeded);
   }
 }
 

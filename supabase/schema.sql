@@ -10,6 +10,7 @@ create table accounts (
   name text not null,
   type text not null check (type in ('bank', 'cash', 'ewallet')),
   icon text,
+  user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
   created_at timestamptz default now()
 );
 
@@ -19,6 +20,7 @@ create table categories (
   name text not null,
   type text not null check (type in ('income', 'expense')),
   icon text,
+  user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
   created_at timestamptz default now()
 );
 
@@ -33,7 +35,8 @@ create table transactions (
   destination text,
   transfer_id text,
   timestamp timestamptz not null default now(),
-  created_at timestamptz default now()
+  created_at timestamptz default now(),
+  user_id uuid not null default auth.uid() references auth.users(id) on delete cascade
 );
 
 -- Upgrade existing databases that were created before category support.
@@ -44,15 +47,15 @@ create index idx_transactions_timestamp on transactions(timestamp);
 create index idx_transactions_source on transactions(source);
 create index idx_transactions_transfer_id on transactions(transfer_id);
 
--- Row Level Security: hanya pengguna yang sudah login (Supabase Auth) yang boleh akses.
+-- Row Level Security: tiap pengguna hanya melihat/mengubah barisnya sendiri (user_id = auth.uid()).
 alter table accounts enable row level security;
-create policy "Authenticated all accounts" on accounts for all to authenticated using (true) with check (true);
+create policy "Own rows accounts" on accounts for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
 
 alter table categories enable row level security;
-create policy "Authenticated all categories" on categories for all to authenticated using (true) with check (true);
+create policy "Own rows categories" on categories for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
 
 alter table transactions enable row level security;
-create policy "Authenticated all transactions" on transactions for all to authenticated using (true) with check (true);
+create policy "Own rows transactions" on transactions for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
 
 -- Catatan: Jika ingin menambahkan autentikasi (per-user data), tambahkan kolom user_id uuid
 -- ke setiap tabel dan ganti kebijakan RLS dengan auth.uid() = user_id.

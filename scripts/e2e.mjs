@@ -2,7 +2,7 @@ import { chromium } from "playwright";
 import { execSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 
-execSync('psql -h 127.0.0.1 -p 55322 -U postgres -d postgres -v ON_ERROR_STOP=1 -f supabase/seed.e2e.sql', { env: { ...process.env, PGPASSWORD: 'postgres' }, stdio: 'inherit' });
+const psql = (args) => execSync(`psql -h 127.0.0.1 -p 55322 -U postgres -d postgres -v ON_ERROR_STOP=1 -At ${args}`, { env: { ...process.env, PGPASSWORD: "postgres" } }).toString().trim();
 
 const OUT = "/private/var/folders/bd/z0zk8jyn4kddph4bgxkctfhw0000gn/T/opencode";
 const failures = [];
@@ -40,7 +40,10 @@ const envLocal = Object.fromEntries(readFileSync(".env.local", "utf8").split("\n
 const SB_URL = envLocal.VITE_SUPABASE_URL;
 const SB_KEY = envLocal.VITE_SUPABASE_ANON_KEY;
 const E2E_USER = { email: "e2e@example.com", password: "e2e-pass-123" };
-await fetch(`${SB_URL}/auth/v1/signup`, { method: "POST", headers: { apikey: SB_KEY, "content-type": "application/json" }, body: JSON.stringify(E2E_USER) });
+const OTHER_USER = { email: "other@example.com", password: "other-pass-123" };
+for (const u of [E2E_USER, OTHER_USER]) await fetch(`${SB_URL}/auth/v1/signup`, { method: "POST", headers: { apikey: SB_KEY, "content-type": "application/json" }, body: JSON.stringify(u) });
+const uidOf = (email) => psql(`-c "select id from auth.users where email='${email}'"`);
+execSync(`psql -h 127.0.0.1 -p 55322 -U postgres -d postgres -v ON_ERROR_STOP=1 -v uid=${uidOf(E2E_USER.email)} -v other=${uidOf(OTHER_USER.email)} -f supabase/seed.e2e.sql`, { env: { ...process.env, PGPASSWORD: "postgres" }, stdio: "inherit" });
 const anonRows = await (await fetch(`${SB_URL}/rest/v1/accounts?select=id`, { headers: { apikey: SB_KEY } })).json();
 check("anon tidak bisa membaca akun", Array.isArray(anonRows) && anonRows.length === 0, JSON.stringify(anonRows).slice(0, 80));
 
@@ -56,6 +59,10 @@ errors.length = 0; // the 400 from the deliberate bad login is expected
 await page.getByLabel("Kata sandi").fill(E2E_USER.password);
 await page.getByRole("button", { name: "Masuk", exact: true }).click();
 await page.locator('nav[aria-label="Navigasi atas"]').waitFor();
+check("data orang lain tidak tampil", (await page.getByText("Akun Orang Lain").count()) === 0);
+const tokenRes = await (await fetch(`${SB_URL}/auth/v1/token?grant_type=password`, { method: "POST", headers: { apikey: SB_KEY, "content-type": "application/json" }, body: JSON.stringify(E2E_USER) })).json();
+const mine = await (await fetch(`${SB_URL}/rest/v1/accounts?select=id`, { headers: { apikey: SB_KEY, authorization: `Bearer ${tokenRes.access_token}` } })).json();
+check("RLS: hanya akun milik sendiri", Array.isArray(mine) && mine.length === 3 && !mine.some((a) => a.id === "other-acc"), JSON.stringify(mine).slice(0, 100));
 const authState = await context.storageState();
 const newContext = browser.newContext.bind(browser);
 browser.newContext = (opts = {}) => newContext({ storageState: authState, ...opts });
@@ -204,7 +211,36 @@ await page.reload();
 await topNav.getByRole("button", { name: "Master", exact: true }).click();
 check("akun terhapus setelah reload", (await page.getByText("Dompet Uji", { exact: true }).count()) === 0);
 
+check("Master menampilkan email", await page.getByText(E2E_USER.email).isVisible());
 check("Master punya tombol Keluar", await page.getByRole("button", { name: "Keluar", exact: true }).isVisible());
+
+// First login of a new user seeds private defaults with unique ids.
+const FRESH = { email: `fresh${Date.now()}@example.com`, password: "fresh-pass-123" };
+await fetch(`${SB_URL}/auth/v1/signup`, { method: "POST", headers: { apikey: SB_KEY, "content-type": "application/json" }, body: JSON.stringify(FRESH) });
+const freshCtx = await newContext({ storageState: { cookies: [], origins: [] }, viewport: { width: 1440, height: 900 } });
+const freshPage = await freshCtx.newPage();
+await freshPage.goto("http://localhost:5173/", { waitUntil: "networkidle" });
+await freshPage.getByLabel("Email").fill(FRESH.email);
+await freshPage.getByLabel("Kata sandi").fill(FRESH.password);
+await freshPage.getByRole("button", { name: "Masuk", exact: true }).click();
+await freshPage.locator('nav[aria-label="Navigasi atas"]').waitFor();
+await freshPage.waitForTimeout(1500);
+const freshToken = await (await fetch(`${SB_URL}/auth/v1/token?grant_type=password`, { method: "POST", headers: { apikey: SB_KEY, "content-type": "application/json" }, body: JSON.stringify(FRESH) })).json();
+const freshAccs = await (await fetch(`${SB_URL}/rest/v1/accounts?select=id,name`, { headers: { apikey: SB_KEY, authorization: `Bearer ${freshToken.access_token}` } })).json();
+check("pengguna baru dapat 3 akun default", Array.isArray(freshAccs) && freshAccs.length === 3, JSON.stringify(freshAccs).slice(0, 100));
+check("id default unik (bukan 'bank')", Array.isArray(freshAccs) && !freshAccs.some((a) => ["bank", "cash", "ewallet"].includes(a.id)));
+// Invite/recovery landing: hash type=recovery with a live session asks for a (different) new password.
+await freshPage.goto("http://localhost:5173/#type=recovery");
+await freshPage.reload({ waitUntil: "networkidle" }); // hash-only goto does not reload, and real links open a fresh load
+check("recovery menampilkan buat kata sandi", await freshPage.getByRole("heading", { name: "Buat kata sandi" }).isVisible());
+await freshPage.getByLabel("Kata sandi baru").fill("pendek");
+await freshPage.getByRole("button", { name: "Simpan dan lanjut" }).click();
+check("kata sandi pendek ditolak", await freshPage.getByText("Kata sandi minimal 8 karakter.").isVisible());
+await freshPage.getByLabel("Kata sandi baru").fill("fresh-pass-456");
+await freshPage.getByRole("button", { name: "Simpan dan lanjut" }).click();
+await freshPage.locator('nav[aria-label="Navigasi atas"]').waitFor();
+check("setelah set sandi masuk aplikasi", true);
+await freshCtx.close();
 
 // Task 10: PWA assets (Vite dev answers HTML 200 for any path, so inspect content).
 const mf = await page.request.get("http://localhost:5173/manifest.webmanifest");

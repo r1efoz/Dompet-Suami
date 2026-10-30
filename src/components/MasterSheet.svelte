@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import { accounts, categories, transactions, saveAccount, saveCategory, deleteAccount, deleteCategory } from '../lib/store';
+  import { accounts, categories, transactions, newId, saveAccount, saveCategory, deleteAccount, deleteCategory } from '../lib/store';
   import { isReferenced, validateName } from '../lib/master';
   import { showToast } from '../lib/ui';
   import ConfirmDialog from './ui/ConfirmDialog.svelte';
@@ -43,7 +43,7 @@
     const problem = validateName(kind === 'account' ? $accounts : $categories, name, type, item?.id);
     if (problem) { error = problem; return; }
     try {
-      const row = { id: item?.id ?? String(Date.now()), name: name.trim(), type: type as never, icon: icon || undefined };
+      const row = { id: item?.id ?? newId(kind === 'account' ? 'acc' : 'cat'), name: name.trim(), type: type as never, icon: icon || undefined };
       if (kind === 'account') { await saveAccount(row); accounts.update((l) => (item ? l.map((a) => (a.id === row.id ? row : a)) : [...l, row])); }
       else { await saveCategory(row); categories.update((l) => (item ? l.map((c) => (c.id === row.id ? row : c)) : [...l, row])); }
       showToast('Disimpan.');

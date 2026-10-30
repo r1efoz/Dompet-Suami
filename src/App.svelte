@@ -5,8 +5,9 @@
   import Transaction from './views/Transaction.svelte';
   import Report from './views/Report.svelte';
   import Login from './views/Login.svelte';
+  import SetPassword from './views/SetPassword.svelte';
   import { loadInitialData } from './lib/store';
-  import { session } from './lib/auth';
+  import { needsPassword, session } from './lib/auth';
   import { currentView } from './lib/ui';
   import BottomNav from './components/ui/BottomNav.svelte';
   import TopNav from './components/ui/TopNav.svelte';
@@ -30,6 +31,8 @@
 
 {#if $session === undefined}
   <div class="min-h-dvh bg-paper"></div>
+{:else if $session && $needsPassword}
+  <div class="min-h-dvh bg-paper text-ink"><SetPassword /></div>
 {:else if $session === null}
   <div class="min-h-dvh bg-paper text-ink"><Login /></div>
 {:else}
