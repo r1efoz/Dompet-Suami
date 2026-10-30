@@ -179,6 +179,18 @@ await page.reload();
 await topNav.getByRole("button", { name: "Master", exact: true }).click();
 check("akun terhapus setelah reload", (await page.getByText("Dompet Uji", { exact: true }).count()) === 0);
 
+// Task 10: PWA assets (Vite dev answers HTML 200 for any path, so inspect content).
+const mf = await page.request.get("http://localhost:5173/manifest.webmanifest");
+const mfBody = await mf.text();
+let mfIcons = 0;
+try { mfIcons = JSON.parse(mfBody).icons.length; } catch {}
+check("manifest JSON dengan 3 ikon", (mf.headers()["content-type"] ?? "").includes("json") && mfIcons === 3, mf.headers()["content-type"]);
+const png = await page.request.get("http://localhost:5173/icons/icon-512.png");
+const pngBytes = Buffer.from(await png.body());
+check("icon-512.png adalah PNG", (png.headers()["content-type"] ?? "") === "image/png" && pngBytes.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])));
+check("link manifest ada", (await page.locator('link[rel="manifest"]').count()) === 1);
+check("tidak ada service worker di dev", (await page.evaluate(async () => (await navigator.serviceWorker.getRegistrations()).length)) === 0);
+
 // Responsive layout uses the database seed loaded at startup.
 async function shoot(name, width, height, colorScheme = "light") {
   const ctx = await browser.newContext({
