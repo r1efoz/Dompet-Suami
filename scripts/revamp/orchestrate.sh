@@ -10,6 +10,7 @@ set -u
 FROM="${1:?dari tugas}"; TO="${2:-11}"
 MAX_TRY="${MAX_TRY:-10}"; CLAUDE_TASKS="${CLAUDE_TASKS:-2}"; WAIT="${WAIT:-60}"
 DIR="$(cd "$(dirname "$0")" && pwd)"; ROOT="$(cd "$DIR/../.." && pwd)"; cd "$ROOT"
+export POLICY_START="$(git rev-parse HEAD)"   # baseline kebijakan dipatok sekali untuk semua tugas
 STATE="docs/handoff/reviews/orchestrate.log"; mkdir -p docs/handoff/reviews
 note() { printf '%s %s\n' "$(date '+%H:%M:%S')" "$*" | tee -a "$STATE"; }
 

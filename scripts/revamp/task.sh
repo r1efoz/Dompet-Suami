@@ -23,13 +23,21 @@ if ! lsof -nP -iTCP:5173 -sTCP:LISTEN >/dev/null 2>&1; then
 fi
 
 
-# Kebijakan pekerja tidak boleh diubah oleh pekerja: bandingkan hash terhadap versi yang di-commit sebelum tiap pemanggilan.
+# Kebijakan & skrip tidak boleh diubah oleh pekerja. Baseline dipatok SEKALI di awal (bukan HEAD yang bisa digeser oleh commit pekerja):
+# POLICY_START diwariskan dari orchestrate.sh bila ada. Pemeriksaan: (1) tidak ada commit sejak START yang menyentuh jalur terlindungi,
+# (2) berkas di disk sama dengan versi di START, (3) berkas terkunci immutable (chflags uchg) selama pekerja berjalan.
+PROTECTED=(scripts/revamp opencode.json .gitignore package-lock.json)
+POLICY_START="${POLICY_START:-$(git rev-parse HEAD)}"
+LOCK_FILES=(scripts/revamp/agy-settings.json opencode.json scripts/revamp/task.sh scripts/revamp/review-prompt.md scripts/revamp/task-prompt.md scripts/revamp/orchestrate.sh scripts/revamp/all.sh)
+lock_policy()   { chflags uchg "${LOCK_FILES[@]}" 2>/dev/null || true; }
+unlock_policy() { chflags nouchg "${LOCK_FILES[@]}" 2>/dev/null || true; }
+trap unlock_policy EXIT
 check_policy() {
-  for f in scripts/revamp/agy-settings.json opencode.json; do
-    if ! git diff --quiet HEAD -- "$f" 2>/dev/null; then
-      echo "[task $N] ABORT: $f berubah dari versi ter-commit (kemungkinan diubah pekerja). Periksa 'git diff $f', pulihkan dengan 'git checkout HEAD -- $f'."; exit 4
-    fi
-  done
+  if ! git diff --quiet "$POLICY_START" HEAD -- "${PROTECTED[@]}" 2>/dev/null || ! git diff --quiet HEAD -- "${PROTECTED[@]}" 2>/dev/null; then
+    echo "[task $N] ABORT: jalur terlindungi (${PROTECTED[*]}) berubah sejak $POLICY_START. Periksa 'git diff $POLICY_START -- ${PROTECTED[*]}' lalu pulihkan dengan 'git checkout $POLICY_START -- <berkas>'."
+    unlock_policy; exit 4
+  fi
+  lock_policy
 }
 
 # Jalankan agen pekerja. new = sesi baru, continue = lanjutkan sesi tugas ini.
