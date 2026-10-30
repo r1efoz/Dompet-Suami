@@ -27,9 +27,9 @@ run_worker() {
   local mode="$1" msg="$2"
   if [ "$WORKER" = agy ]; then
     if [ "$mode" = new ]; then
-      agy -p "$msg" --mode auto --sandbox --model "$AGY_MODEL" --output-format text 2>&1
+      agy -p "$msg" --mode auto --sandbox --settings scripts/revamp/agy-settings.json --model "$AGY_MODEL" --output-format text 2>&1
     else
-      agy --continue -p "$msg" --mode auto --sandbox --model "$AGY_MODEL" --output-format text 2>&1
+      agy --continue -p "$msg" --mode auto --sandbox --settings scripts/revamp/agy-settings.json --model "$AGY_MODEL" --output-format text 2>&1
     fi
   else
     if [ "$mode" = new ]; then

@@ -64,6 +64,6 @@ Jika provider gratis 9Router habis kuota/rusak (`Unsupported model …`, `FreeUs
 WORKER=agy scripts/revamp/all.sh 6 11
 ```
 
-`task.sh` lalu memanggil `agy -p … --mode auto --sandbox --model gemini-3.8-flash-high` (ganti dengan `AGY_MODEL=claude-sonnet-4-6` bila perlu model lebih kuat; `agy models` menampilkan daftar). Putaran perbaikan memakai `agy --continue`. Prompt tugas dan reviewer sama persis. Catatan: `agy` tidak membaca `opencode.json`; pembatas yang berlaku adalah `--sandbox` milik agy, larangan di prompt, dan reviewer. Log tetap di `docs/handoff/reviews/task-N-opencode-rK.log`.
+`task.sh` lalu memanggil `agy -p … --mode auto --sandbox --model gemini-3.8-flash-high` (ganti dengan `AGY_MODEL=claude-sonnet-4-6` bila perlu model lebih kuat; `agy models` menampilkan daftar). Putaran perbaikan memakai `agy --continue`. Prompt tugas dan reviewer sama persis. Catatan: `agy` tidak membaca `opencode.json`; pembatasnya `--sandbox`, daftar deny di `scripts/revamp/agy-settings.json` (.env/.envrc/.temp, curl/wget, git push/reset/checkout, install dependency, vercel/supabase/direnv, rm -rf, psql -c, WebFetch), larangan di prompt, dan reviewer. Log tetap di `docs/handoff/reviews/task-N-opencode-rK.log`.
 
 Model cadangan 9Router (`cx/gpt-6-luna[1m]`, `kr/auto`) didaftarkan di `opencode.json` dan bisa dipakai lewat `OC_MODEL="9router/cx/gpt-6-luna[1m]" scripts/revamp/all.sh …` — hanya berguna bila backend itu sendiri sedang hidup.
