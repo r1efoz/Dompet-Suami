@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mockup revamp Dompet Suami</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f4f3ef;--card:#ffffff;--ink:#15181a;--ink2:#5c6267;--line:#dedcd5;
+  --accent:#d9541e;--accent-soft:#fbe9e0;--pos:#2f8f5b;--pos-soft:#e3f2e9;--chip:#ebe9e2;
+}
+[data-theme=dark]{
+  --paper:#101312;--card:#191d1b;--ink:#eceeec;--ink2:#a0a6a2;--line:#2c322f;
+  --accent:#ee7a4a;--accent-soft:#33211a;--pos:#5cbb86;--pos-soft:#1b2d23;--chip:#232826;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#1c1c1c;color:#eee;font-family:'IBM Plex Sans',system-ui,sans-serif;padding:24px}
+h1{font-size:18px;font-weight:600;margin:0 0 4px}
+.sub{color:#aaa;font-size:13px;margin:0 0 20px;max-width:900px;line-height:1.5}
+.toolbar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.toolbar button{background:#2b2b2b;color:#eee;border:1px solid #444;border-radius:6px;padding:8px 14px;font:inherit;font-size:13px;cursor:pointer}
+.toolbar button.on{background:#eee;color:#111}
+.row{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start;margin-bottom:40px}
+.cap{font-size:12px;color:#aaa;margin:10px 0 0;width:375px;line-height:1.5}
+.cap b{color:#eee}
+
+/* phone frame */
+.phone{width:375px;height:812px;background:var(--paper);color:var(--ink);border-radius:36px;border:8px solid #0a0a0a;overflow:hidden;position:relative;font-size:14px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.scr{height:100%;overflow:auto;padding:52px 16px 92px;scrollbar-width:none}
+.scr::-webkit-scrollbar{display:none}
+.statusbar{position:absolute;top:0;left:0;right:0;height:44px;display:flex;justify-content:space-between;align-items:center;padding:0 24px;font-size:13px;font-weight:600;z-index:3;background:linear-gradient(var(--paper),rgba(244,243,239,0))}
+[data-theme=dark] .statusbar{background:linear-gradient(var(--paper),rgba(16,19,18,0))}
+.bnav{position:absolute;bottom:0;left:0;right:0;height:78px;background:var(--card);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding:8px 8px 18px;z-index:3}
+.bnav div{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;color:var(--ink2);font-weight:500}
+.bnav div.on{color:var(--ink)}
+.bnav svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.bnav div.on svg{stroke-width:2.1}
+
+/* primitives */
+.mono{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.lbl{font-size:11px;color:var(--ink2);letter-spacing:.04em;text-transform:uppercase;font-weight:500}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.h{display:flex;justify-content:space-between;align-items:baseline;margin:22px 0 10px}
+.h h3{margin:0;font-size:15px;font-weight:600}
+.h a{font-size:12px;color:var(--ink2);text-decoration:none}
+.pos{color:var(--pos)}.neg{color:var(--accent)}.mute{color:var(--ink2)}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:500;background:var(--chip);color:var(--ink2)}
+.pill.pos{background:var(--pos-soft);color:var(--pos)}.pill.neg{background:var(--accent-soft);color:var(--accent)}
+.seg{display:flex;background:var(--chip);border-radius:10px;padding:3px;gap:3px}
+.seg div{flex:1;text-align:center;padding:8px 0;border-radius:8px;font-size:13px;font-weight:500;color:var(--ink2)}
+.seg div.on{background:var(--card);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.chips{display:flex;gap:8px;overflow:auto;padding-bottom:2px;scrollbar-width:none}
+.chips span{white-space:nowrap;padding:7px 12px;border-radius:999px;border:1px solid var(--line);font-size:12.5px;background:var(--card);color:var(--ink)}
+.chips span.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.field{height:46px;border:1px solid var(--line);border-radius:10px;background:var(--card);display:flex;align-items:center;padding:0 12px;font-size:14px;color:var(--ink);justify-content:space-between}
+.field .ph{color:var(--ink2)}
+.btn{height:48px;border-radius:12px;background:var(--accent);color:#fff;font-weight:600;font-size:15px;display:flex;align-items:center;justify-content:center}
+.btn.ink{background:var(--ink);color:var(--paper)}
+.item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}
+.ico{width:36px;height:36px;border-radius:10px;background:var(--chip);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px}
+.item .t{flex:1;min-width:0}
+.item .t b{display:block;font-weight:500;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .t small{display:block;font-size:11.5px;color:var(--ink2);margin-top:2px}
+.item .amt{font-weight:600;font-size:14px;text-align:right;white-space:nowrap}
+.item .amt small{display:block;font-size:11px;color:var(--ink2);font-weight:400}
+.bar{height:6px;border-radius:3px;background:var(--chip);overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:3px}
+.bar i.ink{background:var(--ink)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-weight:500;font-size:11px;color:var(--ink2);padding:8px 0;border-bottom:1px solid var(--line);text-transform:uppercase;letter-spacing:.04em}
+td{padding:10px 0;border-bottom:1px solid var(--line)}
+td.r,th.r{text-align:right}
+tr.tot td{font-weight:600;border-bottom:0;border-top:2px solid var(--ink)}
+.insight{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px;line-height:1.45}
+.insight:last-child{border-bottom:0}
+.insight .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:6px;flex-shrink:0}
+.insight .dot.pos{background:var(--pos)}
+.fab{position:absolute;right:16px;bottom:94px;width:52px;height:52px;border-radius:16px;background:var(--accent);color:#fff;font-size:28px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(217,84,30,.35);z-index:3;font-weight:300}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--card);border-radius:20px 20px 0 0;padding:14px 20px 30px;z-index:5;box-shadow:0 -10px 40px rgba(0,0,0,.25)}
+.sheet::before{content:"";display:block;width:36px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 14px}
+.dim{position:absolute;inset:0;background:rgba(0,0,0,.35);z-index:4}
+
+/* account card carousel */
+.rail{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -16px;padding:0 16px 4px;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.acard{flex:0 0 280px;scroll-snap-align:start;border-radius:18px;padding:16px 18px;min-height:150px;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.acard::after{content:"";position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.08)}
+.acard .ah{display:flex;justify-content:space-between;align-items:center;font-size:13.5px;font-weight:600}
+.acard .chip{font-size:10.5px;font-weight:500;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.18)}
+.acard .an{font-size:26px;font-weight:600;letter-spacing:-.03em;margin:14px 0 auto}
+.acard .af{display:flex;gap:16px;margin-top:14px;font-size:12px}
+.acard .af i{display:block;font-style:normal;font-size:10px;opacity:.7;letter-spacing:.04em;text-transform:uppercase}
+.acard .af b{font-weight:600}
+.dots{display:flex;gap:5px;justify-content:center;margin-top:10px}
+.dots i{width:6px;height:6px;border-radius:3px;background:var(--line)}
+.dots i.on{width:16px;background:var(--ink)}
+
+/* desktop frame */
+.desk{width:1180px;max-width:100%;background:var(--paper);color:var(--ink);border-radius:14px;border:1px solid #333;overflow:hidden;font-size:14px}
+.desk .top{height:60px;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 28px;gap:28px;background:var(--card)}
+.desk .top b{font-weight:600;font-size:16px}
+.desk .top nav{display:flex;gap:4px;margin-left:auto}
+.desk .top nav span{padding:8px 14px;border-radius:8px;font-size:13.5px;color:var(--ink2);font-weight:500}
+.desk .top nav span.on{background:var(--chip);color:var(--ink)}
+.desk .body{padding:28px;display:grid;grid-template-columns:repeat(12,1fr);gap:20px}
+.c3{grid-column:span 3}.c4{grid-column:span 4}.c5{grid-column:span 5}.c6{grid-column:span 6}.c7{grid-column:span 7}.c8{grid-column:span 8}.c12{grid-column:span 12}
+.big{font-size:34px;font-weight:600;letter-spacing:-.03em;line-height:1.05}
+.chart{width:100%;height:auto;display:block}
+.legend{display:flex;gap:14px;font-size:11.5px;color:var(--ink2);margin-top:10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+</style>
+</head>
+<body>
+<!-- Logo: celengan ayam jadul tanah liat, 3D (gradien + gloss), warna cat tradisional: terakota, krim, hijau sage, merah jengger -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <radialGradient id="gBody" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="#f3925f"/><stop offset=".55" stop-color="#d9541e"/><stop offset="1" stop-color="#8e2f0e"/></radialGradient>
+    <radialGradient id="gHead" cx="40%" cy="30%" r="70%"><stop offset="0" stop-color="#f3925f"/><stop offset=".6" stop-color="#d9541e"/><stop offset="1" stop-color="#8e2f0e"/></radialGradient>
+    <linearGradient id="gComb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2473a"/><stop offset="1" stop-color="#8c1d14"/></linearGradient>
+    <linearGradient id="gTail" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2f8f5b"/><stop offset="1" stop-color="#1c5a39"/></linearGradient>
+    <linearGradient id="gBeak" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6d58a"/><stop offset="1" stop-color="#c9922a"/></linearGradient>
+    <linearGradient id="gGloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <linearGradient id="gSlot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a0d04"/><stop offset="1" stop-color="#5a2410"/></linearGradient>
+  </defs>
+  <symbol id="celengan" viewBox="0 0 64 64">
+    <!-- bayangan lantai -->
+    <ellipse cx="31" cy="57" rx="20" ry="3.2" fill="#000" opacity=".22"/>
+    <!-- ekor: 3 bulu kipas hijau, melengkung ke atas -->
+    <path d="M14 34C6 32 2 24 6 16c1 5 4 8 8 10-4-5-4-11 1-15 0 5 2 9 6 12-2-6 0-11 5-13-1 5 0 10 3 14z" fill="url(#gTail)"/>
+    <path d="M12 30c-3-3-4-8-2-12 1 3 3 5 5 7" fill="none" stroke="#f4e4c1" stroke-width="1.2" stroke-linecap="round" opacity=".7"/>
+    <path d="M18 27c-2-4-1-9 2-12 0 3 1 6 3 8" fill="none" stroke="#f4e4c1" stroke-width="1.2" stroke-linecap="round" opacity=".7"/>
+    <!-- badan gendut -->
+    <ellipse cx="31" cy="38" rx="21" ry="16" fill="url(#gBody)"/>
+    <!-- motif cat sayap: garis krim + hijau (ciri celengan jadul) -->
+    <path d="M18 36c5-6 14-7 21-3-3 6-12 9-21 3z" fill="#f4e4c1" opacity=".9"/>
+    <path d="M20 36.5c4-4 11-5 17-2-3 4-10 6-17 2z" fill="#2f8f5b" opacity=".85"/>
+    <path d="M22 37c3-2.5 8-3 13-1.5-2 2.5-8 4-13 1.5z" fill="#f4e4c1" opacity=".9"/>
+    <!-- titik-titik cat di dada -->
+    <circle cx="44" cy="42" r="1.3" fill="#f4e4c1" opacity=".85"/><circle cx="47.5" cy="38" r="1.3" fill="#f4e4c1" opacity=".85"/><circle cx="41" cy="46" r="1.3" fill="#f4e4c1" opacity=".85"/>
+    <!-- gloss badan -->
+    <ellipse cx="24" cy="28" rx="9" ry="4.5" fill="url(#gGloss)" transform="rotate(-18 24 28)"/>
+    <!-- lubang koin, cekung -->
+    <rect x="24" y="22.4" width="14" height="3.4" rx="1.7" fill="url(#gSlot)"/>
+    <rect x="24" y="22" width="14" height="1.2" rx=".6" fill="#f3925f" opacity=".6"/>
+    <!-- koin masuk -->
+    <g transform="rotate(-12 31 18)"><ellipse cx="31" cy="18" rx="5" ry="5" fill="#f6d58a" stroke="#b07a1c" stroke-width="1.2"/><ellipse cx="31" cy="18" rx="3" ry="3" fill="none" stroke="#b07a1c" stroke-width=".8"/></g>
+    <!-- leher + kepala -->
+    <path d="M44 32c-1-8 2-15 8-16 5-1 9 3 8 8 0 3-2 5-5 6l-3 1c-3 1-5 3-6 7z" fill="url(#gHead)"/>
+    <ellipse cx="46" cy="24" rx="3" ry="1.6" fill="url(#gGloss)" transform="rotate(-30 46 24)"/>
+    <!-- jengger 3 lobus -->
+    <path d="M47 16c-1-4 1-7 4-7 0 2 1 3 3 2 1-3 4-3 5 0 1-2 3-2 4 0 0 3-2 5-5 5-3 1-7 1-11 0z" fill="url(#gComb)"/>
+    <!-- paruh -->
+    <path d="M59 22l6 2.5-6 2.5z" fill="url(#gBeak)"/>
+    <!-- pial -->
+    <path d="M55 27c3 0 4 3 2 5-3-1-4-3-2-5z" fill="url(#gComb)"/>
+    <!-- mata -->
+    <circle cx="55" cy="20.5" r="2" fill="#15181a"/><circle cx="55.7" cy="19.8" r=".7" fill="#fff"/>
+    <!-- kaki/alas tanah liat -->
+    <path d="M20 51h8v4a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2z" fill="#8e2f0e"/>
+    <path d="M34 51h8v4a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2z" fill="#8e2f0e"/>
+  </symbol>
+</svg>
+<h1>Revamp Dompet Suami — mockup semua menu</h1>
+<p class="sub">Logo baru — celengan ayam jadul tanah liat, 3D glossy, motif cat krim/hijau, dipakai sebagai ikon app/PWA (3 latar): <svg width="72" height="72" viewBox="0 0 64 64" style="vertical-align:middle;background:#f4f3ef;border-radius:16px;padding:6px"><use href="#celengan"/></svg> <svg width="72" height="72" viewBox="0 0 64 64" style="vertical-align:middle;background:#15181a;border-radius:16px;padding:6px"><use href="#celengan"/></svg> <svg width="72" height="72" viewBox="0 0 64 64" style="vertical-align:middle;background:#fbe9e0;border-radius:16px;padding:6px"><use href="#celengan"/></svg></p>
+<p class="sub">Palet tetap: hitam, putih/kertas, oranye. Satu warna tambahan: <b style="color:#2f8f5b">hijau sage</b> untuk pemasukan/positif (eye comfort, bukan neon). Transfer memakai abu. Tidak ada ungu/biru. Scroll setiap layar ponsel. Toggle tema untuk cek dark mode.</p>
+<div class="toolbar">
+  <button class="on" onclick="setTheme('light',this)">Light</button>
+  <button onclick="setTheme('dark',this)">Dark</button>
+</div>
+
+<div class="row">
+
+<!-- ================= HOME ================= -->
+<div>
+<div class="phone">
+  <div class="statusbar"><span>09:41</span><span>●●● ᯤ ▮</span></div>
+  <div class="scr">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div><div class="lbl">Oktober 2026</div><div style="font-size:20px;font-weight:600;margin-top:2px">Halo, Pak Arief</div></div>
+      <div class="ico" style="border-radius:50%;width:40px;height:40px;background:var(--accent-soft)"><svg width="26" height="26" viewBox="0 0 64 64"><use href="#celengan"/></svg></div>
+    </div>
+
+    <div class="lbl" style="margin-top:16px">Total semua akun</div>
+    <div class="mono" style="font-size:28px;font-weight:600;letter-spacing:-.03em;margin-top:2px">Rp 6.056.991 <span class="pill pos" style="vertical-align:middle;margin-left:4px">▲ 6,06 jt bulan ini</span></div>
+
+    <!-- carousel kartu akun, scroll horizontal, snap -->
+    <div class="rail" style="margin-top:12px">
+      <div class="acard" style="background:var(--ink);color:var(--paper)">
+        <div class="ah"><span>🏦 Bank CIMB</span><span class="chip">Bank</span></div>
+        <div class="mono an">Rp 3.100.000</div>
+        <div class="af"><span><i>Masuk</i><b class="mono" style="color:#8fd7af">+3,10 jt</b></span><span><i>Keluar</i><b class="mono" style="color:#ffa67c">0</b></span><span style="margin-left:auto;text-align:right"><i>Okt</i><b class="mono">1 trx</b></span></div>
+      </div>
+      <div class="acard" style="background:var(--accent);color:#fff">
+        <div class="ah"><span>🏦 Bank Mandiri</span><span class="chip">Bank</span></div>
+        <div class="mono an">Rp 2.337.487</div>
+        <div class="af"><span><i>Masuk</i><b class="mono">+18,34 jt</b></span><span><i>Keluar</i><b class="mono">−16,01 jt</b></span><span style="margin-left:auto;text-align:right"><i>Okt</i><b class="mono">18 trx</b></span></div>
+      </div>
+      <div class="acard" style="background:var(--card);border:1px solid var(--line)">
+        <div class="ah"><span>🛍️ Shopee</span><span class="chip" style="background:var(--chip);color:var(--ink2)">E-Wallet</span></div>
+        <div class="mono an">Rp 458.504</div>
+        <div class="af mute"><span><i>Masuk</i><b class="mono pos">+2,25 jt</b></span><span><i>Keluar</i><b class="mono neg">−1,79 jt</b></span><span style="margin-left:auto;text-align:right"><i>Okt</i><b class="mono">7 trx</b></span></div>
+      </div>
+      <div class="acard" style="background:var(--card);border:1px solid var(--line)">
+        <div class="ah"><span>💵 Tunai</span><span class="chip" style="background:var(--chip);color:var(--ink2)">Tunai</span></div>
+        <div class="mono an">Rp 161.000</div>
+        <div class="af mute"><span><i>Masuk</i><b class="mono pos">+500 rb</b></span><span><i>Keluar</i><b class="mono neg">−339 rb</b></span><span style="margin-left:auto;text-align:right"><i>Okt</i><b class="mono">6 trx</b></span></div>
+      </div>
+      <div class="acard" style="background:var(--card);border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;color:var(--ink2)"><div style="font-size:26px;font-weight:300">+</div><div style="font-size:12px">Tambah sumber dana</div><div style="font-size:11px">3 akun kosong disembunyikan</div></div>
+    </div>
+    <div class="dots"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+
+    <div class="card" style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;padding:14px 12px">
+      <div><div class="lbl">Masuk · Okt</div><div class="mono pos" style="font-weight:600;margin-top:4px">18,34 jt</div></div>
+      <div style="border-left:1px solid var(--line);border-right:1px solid var(--line)"><div class="lbl">Keluar · Okt</div><div class="mono neg" style="font-weight:600;margin-top:4px">12,28 jt</div></div>
+      <div><div class="lbl">Net · Okt</div><div class="mono" style="font-weight:600;margin-top:4px">+6,06 jt</div></div>
+    </div>
+
+    <div class="h"><h3>Insight</h3></div>
+    <div class="card" style="padding:4px 16px">
+      <div class="insight"><span class="dot"></span><span><b>Transfer Ke Istri</b> adalah pengeluaran terbesar: Rp 8,5 jt (69% dari total keluar).</span></div>
+      <div class="insight"><span class="dot pos"></span><span>Rasio tabungan bulan ini <b>33%</b> — di atas target 20%.</span></div>
+      <div class="insight"><span class="dot"></span><span>Rata-rata pengeluaran harian <b>Rp 409 rb</b>. Sisa 1 hari, proyeksi akhir bulan Rp 12,7 jt.</span></div>
+    </div>
+
+    <div class="h"><h3>Tren 12 bulan</h3><a>Detail →</a></div>
+    <div class="card">
+      <svg class="chart" viewBox="0 0 340 150" aria-label="Tren 12 bulan">
+        <g stroke="var(--line)" stroke-width="1"><line x1="0" y1="30" x2="340" y2="30"/><line x1="0" y1="70" x2="340" y2="70"/><line x1="0" y1="110" x2="340" y2="110"/></g>
+        <g fill="var(--pos)">
+          <rect x="8" y="98" width="9" height="32" rx="2"/><rect x="36" y="92" width="9" height="38" rx="2"/><rect x="64" y="100" width="9" height="30" rx="2"/><rect x="92" y="88" width="9" height="42" rx="2"/><rect x="120" y="94" width="9" height="36" rx="2"/><rect x="148" y="90" width="9" height="40" rx="2"/><rect x="176" y="96" width="9" height="34" rx="2"/><rect x="204" y="86" width="9" height="44" rx="2"/><rect x="232" y="92" width="9" height="38" rx="2"/><rect x="260" y="98" width="9" height="32" rx="2"/><rect x="288" y="94" width="9" height="36" rx="2"/><rect x="316" y="22" width="9" height="108" rx="2"/>
+        </g>
+        <g fill="var(--accent)">
+          <rect x="18" y="108" width="9" height="22" rx="2"/><rect x="46" y="104" width="9" height="26" rx="2"/><rect x="74" y="110" width="9" height="20" rx="2"/><rect x="102" y="100" width="9" height="30" rx="2"/><rect x="130" y="106" width="9" height="24" rx="2"/><rect x="158" y="102" width="9" height="28" rx="2"/><rect x="186" y="108" width="9" height="22" rx="2"/><rect x="214" y="98" width="9" height="32" rx="2"/><rect x="242" y="104" width="9" height="26" rx="2"/><rect x="270" y="110" width="9" height="20" rx="2"/><rect x="298" y="106" width="9" height="24" rx="2"/><rect x="326" y="58" width="9" height="72" rx="2"/>
+        </g>
+        <g font-family="IBM Plex Mono" font-size="9" fill="var(--ink2)" text-anchor="middle">
+          <text x="17" y="145">Nov</text><text x="45" y="145">Des</text><text x="73" y="145">Jan</text><text x="101" y="145">Feb</text><text x="129" y="145">Mar</text><text x="157" y="145">Apr</text><text x="185" y="145">Mei</text><text x="213" y="145">Jun</text><text x="241" y="145">Jul</text><text x="269" y="145">Agu</text><text x="297" y="145">Sep</text><text x="325" y="145" fill="var(--ink)" font-weight="600">Okt</text>
+        </g>
+        <g font-family="IBM Plex Mono" font-size="9" fill="var(--ink2)" text-anchor="start"><text x="0" y="26">18 jt</text><text x="0" y="66">12 jt</text><text x="0" y="106">6 jt</text></g>
+      </svg>
+      <div class="legend"><span><i style="background:var(--pos)"></i>Masuk</span><span><i style="background:var(--accent)"></i>Keluar</span><span style="margin-left:auto">Ketuk bulan untuk angka</span></div>
+    </div>
+
+    <div class="h"><h3>Pengeluaran bulan ini</h3><a>Semua →</a></div>
+    <div class="card" style="padding:6px 16px">
+      <div class="item"><div class="ico">💝</div><div class="t"><b>Transfer Ke Istri</b><div class="bar"><i style="width:69%"></i></div></div><div class="amt mono">8,50 jt<small>69%</small></div></div>
+      <div class="item"><div class="ico">🏠</div><div class="t"><b>Operasional Rumah</b><div class="bar"><i style="width:27%"></i></div></div><div class="amt mono">3,24 jt<small>26%</small></div></div>
+      <div class="item"><div class="ico">🛒</div><div class="t"><b>Sembako</b><div class="bar"><i style="width:2%"></i></div></div><div class="amt mono">188 rb<small>1,5%</small></div></div>
+      <div class="item"><div class="ico">▶️</div><div class="t"><b>Youtube premium</b><div class="bar"><i style="width:1.5%"></i></div></div><div class="amt mono">154 rb<small>1,3%</small></div></div>
+      <div class="item"><div class="ico">⋯</div><div class="t"><b>3 kategori lain</b><div class="bar"><i style="width:1.5%"></i></div></div><div class="amt mono">151 rb<small>1,2%</small></div></div>
+    </div>
+
+    <div class="h"><h3>Transaksi terbaru</h3><a>Riwayat →</a></div>
+    <div class="card" style="padding:6px 16px">
+      <div class="item"><div class="ico">🏠</div><div class="t"><b>Beli LPG</b><small>30 Okt · Bank Mandiri · Operasional Rumah</small></div><div class="amt mono neg">−147.500</div></div>
+      <div class="item"><div class="ico">🛒</div><div class="t"><b>Sembako</b><small>30 Okt · Tunai</small></div><div class="amt mono neg">−165.000</div></div>
+      <div class="item"><div class="ico">⇄</div><div class="t"><b>Transfer ke Shopee</b><small>30 Okt · Bank Mandiri → Shopee · biaya 1.000</small></div><div class="amt mono mute">1.000.000</div></div>
+    </div>
+    <div style="height:10px"></div>
+  </div>
+  <div class="fab">+</div>
+  <div class="bnav">
+    <div class="on"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</div>
+    <div><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Transaksi</div>
+    <div><svg viewBox="0 0 24 24"><path d="M4 19V10m5 9V5m5 14v-7m5 7V8"/></svg>Laporan</div>
+    <div><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M16 15h2"/></svg>Master</div>
+  </div>
+</div>
+<p class="cap"><b>Home (v2).</b> Total di atas, lalu <b>carousel kartu per sumber dana</b> (geser horizontal, snap, indikator titik) seperti app banking. Warna kartu: hitam untuk bank utama, oranye untuk kartu kedua, sisanya putih bergaris. Kartu terakhir = tambah akun. Akun saldo 0 disembunyikan dari carousel. Bagian "Saldo per akun" lama dihapus karena sudah terwakili kartu. Insight otomatis (3 kalimat, tanpa grafik). Tren 12 bulan pakai batang berpasangan, bukan garis, karena bulan tidak kontinu. Pengeluaran per kategori pakai bar horizontal (lebih mudah dibanding pie). Akun kosong disembunyikan. FAB oranye = catat transaksi dari mana saja.</p>
+</div>
+
+<!-- ================= TRANSAKSI ================= -->
+<div>
+<div class="phone">
+  <div class="statusbar"><span>09:41</span><span>●●● ᯤ ▮</span></div>
+  <div class="scr">
+    <div style="font-size:20px;font-weight:600">Catat transaksi, Pak</div>
+    <div class="seg" style="margin-top:14px"><div class="on">Keluar</div><div>Masuk</div><div>Transfer</div></div>
+
+    <div class="card" style="margin-top:14px;text-align:center;padding:22px 16px">
+      <div class="lbl">Jumlah</div>
+      <div class="mono" style="font-size:36px;font-weight:600;margin-top:4px;letter-spacing:-.03em"><span class="mute" style="font-size:18px;vertical-align:14px;margin-right:4px">Rp</span>147.500</div>
+    </div>
+
+    <div class="lbl" style="margin:16px 0 8px">Kategori</div>
+    <div class="chips"><span>🛒 Sembako</span><span class="on">🏠 Operasional</span><span>🍜 Makanan</span><span>☕ Ngopi</span><span>🚗 Transport</span><span>+</span></div>
+
+    <div class="lbl" style="margin:16px 0 8px">Dari akun</div>
+    <div class="field"><span>🏦 Bank Mandiri</span><span class="mono mute" style="font-size:12px">Rp 2.337.487 ▾</span></div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+      <div><div class="lbl" style="margin-bottom:8px">Tanggal</div><div class="field"><span>Hari ini, 30 Okt</span><span class="mute">▾</span></div></div>
+      <div><div class="lbl" style="margin-bottom:8px">Keterangan</div><div class="field"><span class="ph">Beli LPG</span></div></div>
+    </div>
+
+    <div class="btn" style="margin-top:18px">Simpan pengeluaran</div>
+
+    <div class="h" style="margin-top:28px"><h3>Riwayat</h3><span class="mute" style="font-size:12px">22 entri</span></div>
+    <div class="field" style="height:40px;margin-bottom:10px"><span class="ph">🔍 Cari keterangan…</span></div>
+    <div class="chips"><span class="on">Semua</span><span>Keluar</span><span>Masuk</span><span>Transfer</span><span>Bulan ini ▾</span></div>
+
+    <div style="display:flex;justify-content:space-between;margin:16px 0 4px;font-size:12px" class="mute"><span>Kamis, 30 Okt</span><span class="mono">−1.346.500</span></div>
+    <div class="card" style="padding:4px 16px">
+      <div class="item"><div class="ico">🏠</div><div class="t"><b>Beli LPG</b><small>Bank Mandiri · Operasional Rumah</small></div><div class="amt mono neg">−147.500</div></div>
+      <div class="item"><div class="ico">🛒</div><div class="t"><b>Sembako</b><small>Tunai</small></div><div class="amt mono neg">−165.000</div></div>
+      <div class="item"><div class="ico">⇄</div><div class="t"><b>Bank Mandiri → Shopee</b><small>Transfer · biaya 1.000</small></div><div class="amt mono mute">1.000.000</div></div>
+      <div class="item"><div class="ico">⋯</div><div class="t"><b>Miscellaneous</b><small>Tunai</small></div><div class="amt mono neg">−34.000</div></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin:16px 0 4px;font-size:12px" class="mute"><span>Rabu, 29 Okt</span><span class="mono">−1.525.500</span></div>
+    <div class="card" style="padding:4px 16px">
+      <div class="item"><div class="ico">🏠</div><div class="t"><b>Pasang Tangga Monyet</b><small>Bank Mandiri · Operasional Rumah</small></div><div class="amt mono neg">−1.502.500</div></div>
+      <div class="item"><div class="ico">🛒</div><div class="t"><b>beli telor</b><small>Tunai · Sembako</small></div><div class="amt mono neg">−23.000</div></div>
+    </div>
+  </div>
+  <div class="dim"></div>
+  <div class="sheet">
+    <div style="display:flex;gap:12px;align-items:center"><div class="ico" style="width:44px;height:44px">🏠</div><div style="flex:1"><div style="font-weight:600;font-size:16px">Beli LPG</div><div class="mute" style="font-size:12px">Kamis, 30 Okt 2026</div></div><div class="mono neg" style="font-size:18px;font-weight:600">−147.500</div></div>
+    <table style="margin-top:14px"><tr><td class="mute">Akun</td><td class="r">Bank Mandiri</td></tr><tr><td class="mute">Kategori</td><td class="r">Operasional Rumah</td></tr><tr><td class="mute" style="border:0">Dicatat</td><td class="r" style="border:0">30 Okt, 07:59</td></tr></table>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px"><div class="btn ink" style="height:44px;font-size:14px">Edit</div><div class="btn" style="height:44px;font-size:14px;background:var(--accent-soft);color:var(--accent)">Hapus</div></div>
+  </div>
+  <div class="bnav">
+    <div><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</div>
+    <div class="on"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Transaksi</div>
+    <div><svg viewBox="0 0 24 24"><path d="M4 19V10m5 9V5m5 14v-7m5 7V8"/></svg>Laporan</div>
+    <div><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M16 15h2"/></svg>Master</div>
+  </div>
+</div>
+<p class="cap"><b>Transaksi.</b> "Keluar" jadi tab pertama (paling sering). Jumlah besar di tengah, kategori sebagai chip (1 ketuk, bukan dropdown), akun menampilkan saldo. Riwayat dikelompokkan per hari dengan subtotal, ada pencarian. Ketuk baris membuka <b>sheet detail</b> (ditampilkan) berisi Edit/Hapus, jadi tabel tidak sesak tombol.</p>
+</div>
+
+<!-- ================= LAPORAN ================= -->
+<div>
+<div class="phone">
+  <div class="statusbar"><span>09:41</span><span>●●● ᯤ ▮</span></div>
+  <div class="scr">
+    <div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:20px;font-weight:600">Laporan</div><span class="pill">⤓ CSV</span></div>
+    <div class="chips" style="margin-top:12px"><span>‹</span><span class="on">Okt 2026</span><span>Sep</span><span>Agu</span><span>Jul</span><span>Tahun ini</span><span>Rentang…</span></div>
+    <div class="chips" style="margin-top:12px"><span class="on">Arus kas</span><span>Kategori</span><span>Saldo akun</span><span>Buku besar</span></div>
+
+    <div class="card" style="margin-top:14px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
+        <div><div class="lbl">Masuk</div><div class="mono pos" style="font-weight:600;margin-top:4px">18,34 jt</div></div>
+        <div><div class="lbl">Keluar</div><div class="mono neg" style="font-weight:600;margin-top:4px">12,28 jt</div></div>
+        <div><div class="lbl">Net</div><div class="mono" style="font-weight:600;margin-top:4px">+6,06 jt</div></div>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:14px;height:10px;border-radius:5px;overflow:hidden"><i style="flex:69;background:var(--accent)"></i><i style="flex:26;background:var(--accent);opacity:.65"></i><i style="flex:5;background:var(--accent);opacity:.35"></i></div>
+      <div class="mute" style="font-size:11.5px;margin-top:8px">Rasio tabungan 33% · Keluar/Masuk 67%</div>
+    </div>
+
+    <div class="h"><h3>Per bulan, 2026</h3></div>
+    <div class="card" style="padding:4px 16px">
+      <table>
+        <tr><th>Bulan</th><th class="r">Masuk</th><th class="r">Keluar</th><th class="r">Net</th></tr>
+        <tr><td>Okt</td><td class="r mono">18,34 jt</td><td class="r mono">12,28 jt</td><td class="r mono pos">+6,06 jt</td></tr>
+        <tr><td>Sep</td><td class="r mono">8,20 jt</td><td class="r mono">7,41 jt</td><td class="r mono pos">+0,79 jt</td></tr>
+        <tr><td>Agu</td><td class="r mono">8,20 jt</td><td class="r mono">8,90 jt</td><td class="r mono neg">−0,70 jt</td></tr>
+        <tr><td>Jul</td><td class="r mono">8,20 jt</td><td class="r mono">6,15 jt</td><td class="r mono pos">+2,05 jt</td></tr>
+        <tr class="tot"><td>Total</td><td class="r mono">42,94 jt</td><td class="r mono">34,74 jt</td><td class="r mono pos">+8,20 jt</td></tr>
+      </table>
+    </div>
+
+    <div class="h"><h3>Saldo akun — Okt 2026</h3><span class="pill">tab "Saldo akun"</span></div>
+    <div class="card" style="padding:4px 16px;overflow:auto">
+      <table style="min-width:330px">
+        <tr><th>Akun</th><th class="r">Awal</th><th class="r">Masuk</th><th class="r">Keluar</th><th class="r">Akhir</th></tr>
+        <tr><td>Mandiri</td><td class="r mono">0</td><td class="r mono">18,34</td><td class="r mono">16,01</td><td class="r mono" style="font-weight:600">2,34</td></tr>
+        <tr><td>CIMB</td><td class="r mono">0</td><td class="r mono">3,10</td><td class="r mono">0</td><td class="r mono" style="font-weight:600">3,10</td></tr>
+        <tr><td>Shopee</td><td class="r mono">0</td><td class="r mono">2,25</td><td class="r mono">1,79</td><td class="r mono" style="font-weight:600">0,46</td></tr>
+        <tr><td>Tunai</td><td class="r mono">0</td><td class="r mono">0,50</td><td class="r mono">0,34</td><td class="r mono" style="font-weight:600">0,16</td></tr>
+        <tr class="tot"><td>Total</td><td class="r mono">0</td><td class="r mono">24,19</td><td class="r mono">18,14</td><td class="r mono">6,06</td></tr>
+      </table>
+      <div class="mute" style="font-size:11px;margin:8px 0 6px">Dalam juta rupiah. Masuk/Keluar termasuk transfer antar akun; Net arus kas di tab "Arus kas" tidak.</div>
+    </div>
+
+    <div class="h"><h3>Kategori — Okt 2026</h3><span class="pill">tab "Kategori"</span></div>
+    <div class="card" style="padding:4px 16px">
+      <table>
+        <tr><th>Pengeluaran</th><th class="r">Jumlah</th><th class="r">%</th><th class="r">vs Sep</th></tr>
+        <tr><td>Transfer Ke Istri</td><td class="r mono">8,50 jt</td><td class="r mono">69%</td><td class="r mono mute">baru</td></tr>
+        <tr><td>Operasional Rumah</td><td class="r mono">3,24 jt</td><td class="r mono">26%</td><td class="r mono neg">▲ 41%</td></tr>
+        <tr><td>Sembako</td><td class="r mono">188 rb</td><td class="r mono">1,5%</td><td class="r mono pos">▼ 12%</td></tr>
+        <tr class="tot"><td>Total</td><td class="r mono">12,28 jt</td><td class="r mono">100%</td><td class="r mono neg">▲ 66%</td></tr>
+      </table>
+    </div>
+    <div style="height:10px"></div>
+  </div>
+  <div class="bnav">
+    <div><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</div>
+    <div><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Transaksi</div>
+    <div class="on"><svg viewBox="0 0 24 24"><path d="M4 19V10m5 9V5m5 14v-7m5 7V8"/></svg>Laporan</div>
+    <div><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M16 15h2"/></svg>Master</div>
+  </div>
+</div>
+<p class="cap"><b>Laporan.</b> Satu pemilih periode di atas berlaku untuk semua tab. 4 laporan: <b>Arus kas</b> (masuk/keluar/net + tabel per bulan), <b>Kategori</b> (jumlah, %, perbandingan periode sebelumnya), <b>Saldo akun</b> (awal, masuk, keluar, akhir — pengganti "Neraca" yang salah, karena app ini tidak punya kewajiban/liabilitas), <b>Buku besar</b> (mutasi per akun dengan saldo berjalan, seperti sekarang tapi rapi). Di mockup ini 3 tab digambar menumpuk agar terlihat semua.</p>
+</div>
+
+<!-- ================= MASTER ================= -->
+<div>
+<div class="phone">
+  <div class="statusbar"><span>09:41</span><span>●●● ᯤ ▮</span></div>
+  <div class="scr">
+    <div style="font-size:20px;font-weight:600">Master</div>
+    <div class="seg" style="margin-top:14px"><div class="on">Sumber dana</div><div>Kategori</div></div>
+
+    <div class="h"><h3>Akun <span class="mute" style="font-weight:400;font-size:13px">· 7</span></h3><span class="pill" style="background:var(--ink);color:var(--paper)">+ Tambah</span></div>
+
+    <div class="lbl" style="margin:6px 0 6px">Bank</div>
+    <div class="card" style="padding:4px 16px">
+      <div class="item"><div class="ico">🏦</div><div class="t"><b>Bank Mandiri</b><small>18 transaksi bulan ini</small></div><div class="amt mono">Rp 2.337.487</div><span class="mute">›</span></div>
+      <div class="item"><div class="ico">🏦</div><div class="t"><b>Bank CIMB</b><small>1 transaksi bulan ini</small></div><div class="amt mono">Rp 3.100.000</div><span class="mute">›</span></div>
+    </div>
+    <div class="lbl" style="margin:14px 0 6px">E-Wallet</div>
+    <div class="card" style="padding:4px 16px">
+      <div class="item"><div class="ico">🛍️</div><div class="t"><b>Shopee</b><small>7 transaksi bulan ini</small></div><div class="amt mono">Rp 458.504</div><span class="mute">›</span></div>
+      <div class="item"><div class="ico">💳</div><div class="t"><b>Gopay</b><small>Belum dipakai</small></div><div class="amt mono mute">Rp 0</div><span class="mute">›</span></div>
+      <div class="item"><div class="ico">💳</div><div class="t"><b>Ovo</b><small>Belum dipakai</small></div><div class="amt mono mute">Rp 0</div><span class="mute">›</span></div>
+      <div class="item"><div class="ico">💳</div><div class="t"><b>E-Wallet</b><small>Belum dipakai</small></div><div class="amt mono mute">Rp 0</div><span class="mute">›</span></div>
+    </div>
+    <div class="lbl" style="margin:14px 0 6px">Tunai</div>
+    <div class="card" style="padding:4px 16px">
+      <div class="item"><div class="ico">💵</div><div class="t"><b>Tunai</b><small>6 transaksi bulan ini</small></div><div class="amt mono">Rp 161.000</div><span class="mute">›</span></div>
+    </div>
+
+    <div class="h" style="margin-top:30px"><h3 class="mute" style="font-weight:500">Tab "Kategori" terlihat seperti ini ↓</h3></div>
+    <div class="lbl" style="margin:6px 0 6px">Pengeluaran · 12</div>
+    <div class="card" style="padding:4px 16px">
+      <div class="item"><div class="ico">🏠</div><div class="t"><b>Operasional Rumah</b><small>Rp 3,24 jt bulan ini</small></div><span class="mute">›</span></div>
+      <div class="item"><div class="ico">🛒</div><div class="t"><b>Sembako</b><small>Rp 188 rb bulan ini</small></div><span class="mute">›</span></div>
+      <div class="item"><div class="ico">🍜</div><div class="t"><b>Makanan</b><small>Rp 30 rb bulan ini</small></div><span class="mute">›</span></div>
+      <div class="item"><div class="ico">🚗</div><div class="t"><b>Transport</b><small>Belum dipakai</small></div><span class="mute">›</span></div>
+    </div>
+    <div class="lbl" style="margin:14px 0 6px">Pemasukan · 3</div>
+    <div class="card" style="padding:4px 16px">
+      <div class="item"><div class="ico">💼</div><div class="t"><b>Gaji</b><small>Rp 18,2 jt bulan ini</small></div><span class="mute">›</span></div>
+      <div class="item"><div class="ico">🤝</div><div class="t"><b>Transfer dari orang lain</b><small>Rp 130 rb bulan ini</small></div><span class="mute">›</span></div>
+    </div>
+  </div>
+  <div class="dim"></div>
+  <div class="sheet">
+    <div style="font-weight:600;font-size:16px">Edit akun</div>
+    <div class="lbl" style="margin:14px 0 8px">Nama</div><div class="field"><span>Bank Mandiri</span></div>
+    <div class="lbl" style="margin:12px 0 8px">Jenis</div><div class="seg"><div class="on">Bank</div><div>Tunai</div><div>E-Wallet</div></div>
+    <div class="lbl" style="margin:12px 0 8px">Ikon</div><div class="chips"><span class="on">🏦</span><span>💳</span><span>💵</span><span>🛍️</span><span><svg width="16" height="16" viewBox="0 0 64 64" style="vertical-align:-3px"><use href="#celengan"/></svg></span><span>📱</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px"><div class="btn ink" style="height:44px;font-size:14px">Simpan</div><div class="btn" style="height:44px;font-size:14px;background:var(--chip);color:var(--ink2)">Batal</div></div>
+    <div class="mute" style="font-size:12px;text-align:center;margin-top:12px;color:var(--accent)">Hapus akun (hanya bila tidak ada transaksi)</div>
+  </div>
+  <div class="bnav">
+    <div><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</div>
+    <div><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Transaksi</div>
+    <div><svg viewBox="0 0 24 24"><path d="M4 19V10m5 9V5m5 14v-7m5 7V8"/></svg>Laporan</div>
+    <div class="on"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M16 15h2"/></svg>Master</div>
+  </div>
+</div>
+<p class="cap"><b>Master.</b> Dua tab (Sumber dana / Kategori). Daftar dikelompokkan per jenis, tiap baris menampilkan saldo atau pemakaian bulan ini, jadi master jadi informatif, bukan sekadar tabel nama. Tambah/Edit lewat sheet (ditampilkan), ada pilihan ikon. Hapus hanya bila belum ada transaksi — mencegah saldo rusak.</p>
+</div>
+
+</div>
+
+<!-- ================= DESKTOP HOME ================= -->
+<h1 style="margin-top:10px">Desktop — Home (≥1024px)</h1>
+<p class="sub">Komponen sama persis, hanya ditata ulang ke grid 12 kolom. Nav pindah ke atas. Tidak ada komponen khusus desktop.</p>
+<div class="desk">
+  <div class="top"><b style="display:flex;align-items:center;gap:10px"><svg width="30" height="30" viewBox="0 0 64 64"><use href="#celengan"/></svg>Dompet Suami</b><nav><span class="on">Home</span><span>Transaksi</span><span>Laporan</span><span>Master</span></nav><span class="pill" style="margin-left:14px">+ Catat</span></div>
+  <div class="body">
+    <div class="c12" style="display:flex;justify-content:space-between;align-items:flex-end"><div><div class="lbl">Total semua akun · Okt 2026</div><div class="mono big" style="margin-top:4px">Rp 6.056.991 <span class="pill pos" style="vertical-align:middle;font-size:12px">▲ 6,06 jt</span></div></div><div class="legend" style="margin:0"><span><i style="background:var(--pos)"></i>Masuk 18,34 jt</span><span><i style="background:var(--accent)"></i>Keluar 12,28 jt</span><span>Net +6,06 jt</span></div></div>
+    <div class="c12 rail" style="margin:0;padding:0;overflow:visible">
+      <div class="acard" style="background:var(--ink);color:var(--paper);flex:1 1 0"><div class="ah"><span>🏦 Bank CIMB</span><span class="chip">Bank</span></div><div class="mono an">Rp 3.100.000</div><div class="af"><span><i>Masuk</i><b class="mono" style="color:#8fd7af">+3,10 jt</b></span><span><i>Keluar</i><b class="mono" style="color:#ffa67c">0</b></span></div></div>
+      <div class="acard" style="background:var(--accent);color:#fff;flex:1 1 0"><div class="ah"><span>🏦 Bank Mandiri</span><span class="chip">Bank</span></div><div class="mono an">Rp 2.337.487</div><div class="af"><span><i>Masuk</i><b class="mono">+18,34 jt</b></span><span><i>Keluar</i><b class="mono">−16,01 jt</b></span></div></div>
+      <div class="acard" style="background:var(--card);border:1px solid var(--line);flex:1 1 0"><div class="ah"><span>🛍️ Shopee</span><span class="chip" style="background:var(--chip);color:var(--ink2)">E-Wallet</span></div><div class="mono an">Rp 458.504</div><div class="af mute"><span><i>Masuk</i><b class="mono pos">+2,25 jt</b></span><span><i>Keluar</i><b class="mono neg">−1,79 jt</b></span></div></div>
+      <div class="acard" style="background:var(--card);border:1px solid var(--line);flex:1 1 0"><div class="ah"><span>💵 Tunai</span><span class="chip" style="background:var(--chip);color:var(--ink2)">Tunai</span></div><div class="mono an">Rp 161.000</div><div class="af mute"><span><i>Masuk</i><b class="mono pos">+500 rb</b></span><span><i>Keluar</i><b class="mono neg">−339 rb</b></span></div></div>
+    </div>
+    <div class="card c8">
+      <div class="h" style="margin:0 0 8px"><h3>Tren 12 bulan</h3><span class="legend" style="margin:0"><span><i style="background:var(--pos)"></i>Masuk</span><span><i style="background:var(--accent)"></i>Keluar</span></span></div>
+      <svg class="chart" viewBox="0 0 700 150">
+        <g stroke="var(--line)"><line x1="0" y1="30" x2="700" y2="30"/><line x1="0" y1="70" x2="700" y2="70"/><line x1="0" y1="110" x2="700" y2="110"/></g>
+        <g fill="var(--pos)"><rect x="20" y="98" width="18" height="32" rx="3"/><rect x="76" y="92" width="18" height="38" rx="3"/><rect x="132" y="100" width="18" height="30" rx="3"/><rect x="188" y="88" width="18" height="42" rx="3"/><rect x="244" y="94" width="18" height="36" rx="3"/><rect x="300" y="90" width="18" height="40" rx="3"/><rect x="356" y="96" width="18" height="34" rx="3"/><rect x="412" y="86" width="18" height="44" rx="3"/><rect x="468" y="92" width="18" height="38" rx="3"/><rect x="524" y="98" width="18" height="32" rx="3"/><rect x="580" y="94" width="18" height="36" rx="3"/><rect x="636" y="22" width="18" height="108" rx="3"/></g>
+        <g fill="var(--accent)"><rect x="40" y="108" width="18" height="22" rx="3"/><rect x="96" y="104" width="18" height="26" rx="3"/><rect x="152" y="110" width="18" height="20" rx="3"/><rect x="208" y="100" width="18" height="30" rx="3"/><rect x="264" y="106" width="18" height="24" rx="3"/><rect x="320" y="102" width="18" height="28" rx="3"/><rect x="376" y="108" width="18" height="22" rx="3"/><rect x="432" y="98" width="18" height="32" rx="3"/><rect x="488" y="104" width="18" height="26" rx="3"/><rect x="544" y="110" width="18" height="20" rx="3"/><rect x="600" y="106" width="18" height="24" rx="3"/><rect x="656" y="58" width="18" height="72" rx="3"/></g>
+        <g font-family="IBM Plex Mono" font-size="10" fill="var(--ink2)" text-anchor="middle"><text x="39" y="145">Nov</text><text x="95" y="145">Des</text><text x="151" y="145">Jan</text><text x="207" y="145">Feb</text><text x="263" y="145">Mar</text><text x="319" y="145">Apr</text><text x="375" y="145">Mei</text><text x="431" y="145">Jun</text><text x="487" y="145">Jul</text><text x="543" y="145">Agu</text><text x="599" y="145">Sep</text><text x="655" y="145" fill="var(--ink)" font-weight="600">Okt</text></g>
+      </svg>
+    </div>
+    <div class="card c4" style="padding:6px 16px"><div class="h" style="margin:10px 0 4px"><h3>Insight</h3></div>
+      <div class="insight"><span class="dot"></span><span><b>Transfer Ke Istri</b> pengeluaran terbesar: 8,5 jt (69%).</span></div>
+      <div class="insight"><span class="dot pos"></span><span>Rasio tabungan <b>33%</b>, di atas target 20%.</span></div>
+      <div class="insight"><span class="dot"></span><span>Rata-rata harian <b>409 rb</b>; proyeksi akhir bulan 12,7 jt.</span></div>
+    </div>
+    <div class="card c4" style="padding:6px 16px"><div class="h" style="margin:10px 0 4px"><h3>Pengeluaran bulan ini</h3><a>Semua →</a></div>
+      <div class="item"><div class="ico">💝</div><div class="t"><b>Transfer Ke Istri</b><div class="bar"><i style="width:69%"></i></div></div><div class="amt mono">8,50 jt<small>69%</small></div></div>
+      <div class="item"><div class="ico">🏠</div><div class="t"><b>Operasional Rumah</b><div class="bar"><i style="width:27%"></i></div></div><div class="amt mono">3,24 jt<small>26%</small></div></div>
+      <div class="item"><div class="ico">🛒</div><div class="t"><b>Sembako</b><div class="bar"><i style="width:2%"></i></div></div><div class="amt mono">188 rb<small>1,5%</small></div></div>
+      <div class="item"><div class="ico">⋯</div><div class="t"><b>4 kategori lain</b><div class="bar"><i style="width:2%"></i></div></div><div class="amt mono">305 rb<small>2,5%</small></div></div>
+    </div>
+    <div class="card c12" style="padding:6px 20px"><div class="h" style="margin:10px 0 4px"><h3>Transaksi terbaru</h3><a>Riwayat →</a></div>
+      <table>
+        <tr><th>Tanggal</th><th>Keterangan</th><th>Kategori</th><th>Akun</th><th class="r">Jumlah</th></tr>
+        <tr><td class="mono mute">30 Okt</td><td>Beli LPG</td><td class="mute">Operasional Rumah</td><td class="mute">Bank Mandiri</td><td class="r mono neg">−147.500</td></tr>
+        <tr><td class="mono mute">30 Okt</td><td>Sembako</td><td class="mute">Sembako</td><td class="mute">Tunai</td><td class="r mono neg">−165.000</td></tr>
+        <tr><td class="mono mute">30 Okt</td><td>Bank Mandiri → Shopee</td><td class="mute">Transfer</td><td class="mute">biaya 1.000</td><td class="r mono mute">1.000.000</td></tr>
+        <tr><td class="mono mute">27 Okt</td><td>Gaji</td><td class="mute">Gaji</td><td class="mute">Bank Mandiri</td><td class="r mono pos" style="border:0">+18.214.145</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+function setTheme(t,b){document.documentElement.setAttribute('data-theme',t);document.querySelectorAll('.toolbar button').forEach(x=>x.classList.remove('on'));b.classList.add('on')}
+</script>
+</body>
+</html>
