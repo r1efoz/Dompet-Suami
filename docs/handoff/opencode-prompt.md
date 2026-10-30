@@ -34,3 +34,24 @@ Baseline sudah dicatat di Log. Baca Log terakhir di docs/handoff/revamp-ui.md, l
 - **Dev server tidak di 5173** → jawab: "Hentikan proses yang memakai 5173 (`lsof -i :5173`), lalu `npm run dev` lagi. Jangan ubah port di scripts/e2e.mjs."
 - **Mengusulkan library** → jawab: "Tidak. design-system.md §9 melarang dependency baru. Pakai SVG/CSS tangan sesuai spesifikasi."
 - **Mengusulkan migrasi ke runes** → jawab: "Tidak. AGENTS.md: sintaks legacy."
+
+## Mode otomatis (tanpa copy-paste)
+
+`scripts/revamp/task.sh <N>` menjalankan satu tugas end-to-end: OpenCode mengerjakan (`opencode run --auto`), Claude headless mereview (`claude -p`, hanya baca + perintah verifikasi), dan bila ditolak OpenCode memperbaiki (maks 2 putaran). `scripts/revamp/all.sh <dari> [sampai]` menjalankan berurutan dan berhenti di tugas pertama yang gagal.
+
+```bash
+scripts/revamp/task.sh 2        # satu tugas
+scripts/revamp/all.sh 3 11      # sisanya berurutan
+```
+
+Prasyarat: `.env.local` mengarah ke `127.0.0.1:55321` (skrip menolak jalan jika tidak), Supabase lokal aktif, `opencode` dan `claude` ada di PATH. Dev server :5173 dinyalakan skrip bila belum ada.
+
+Hasil tiap putaran: `docs/handoff/reviews/task-N-opencode-rK.log` (keluaran OpenCode) dan `task-N-review-rK.md` (review Claude; baris pertama `VERDICT: ACCEPT|REJECT`). Setiap verdict juga ditulis ke bagian Log `docs/handoff/revamp-ui.md`. Review yang ACCEPT di-commit otomatis sebagai `chore(revamp): review log task N`.
+
+Jika skrip berakhir `GAGAL`: baca `task-N-review-r2.md`, putuskan sendiri (perbaiki manual, atau jalankan ulang `task.sh N` setelah commit perbaikan).
+
+Tambahan catatan ke OpenCode untuk satu tugas: `EXTRA="…" scripts/revamp/task.sh N`. Tugas yang sudah di-commit tapi belum direview: `SKIP_WORK=1 scripts/revamp/task.sh N` (langsung review HEAD, perbaikan tetap lewat OpenCode bila ditolak).
+
+### Batas izin OpenCode saat `--auto`
+
+`opencode.json` di root repo membatasi tool bash OpenCode dengan allowlist (deny-by-default): hanya `git` baca/add/commit (tanpa push/reset/checkout), `npm run check|build|test:ui`, `npx tsx`, `psql` ke 127.0.0.1:55322, perintah baca file, dan `node scripts/make-icons.mjs`. Tidak ada `curl`, `npm install`, `vercel`, `supabase`, `direnv`, `rm -rf`, atau membaca `.env*`. `webfetch` dimatikan. Jika sebuah tugas butuh perintah di luar daftar, OpenCode akan melaporkan "denied" — tambahkan pola spesifik ke `opencode.json`, jangan `"*": "allow"`. Allowlist ini belum diuji oleh Claude (sandbox menolak menjalankan agen otonom); cek log putaran pertama untuk pesan denied yang tidak diharapkan.
