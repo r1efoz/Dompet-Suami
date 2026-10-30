@@ -3,6 +3,10 @@
 # Pakai: scripts/revamp/task.sh <N>      (maks 2 putaran perbaikan)
 set -uo pipefail
 N="${1:?nomor tugas}"; MAX_FIX="${MAX_FIX:-2}"; EXTRA="${EXTRA:-}"; SKIP_WORK="${SKIP_WORK:-0}"  # SKIP_WORK=1: tugas sudah di-commit, langsung review
+WORKER="${WORKER:-opencode}"   # opencode | agy  (agy = Antigravity CLI, dipakai saat provider gratis OpenCode habis kuota)
+AGY_MODEL="${AGY_MODEL:-gemini-3.8-flash-high}"
+OC_MODEL="${OC_MODEL:-}"       # opsional: provider/model untuk OpenCode, mis. "9router/cx/gpt-6-luna[1m]" saat combo default rusak
+OC_FLAGS=(); [ -n "$OC_MODEL" ] && OC_FLAGS=(--model "$OC_MODEL")
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"; cd "$ROOT"
 REV_DIR="docs/handoff/reviews"; mkdir -p "$REV_DIR"
 LOG="docs/handoff/revamp-ui.md"
@@ -17,6 +21,25 @@ if ! lsof -nP -iTCP:5173 -sTCP:LISTEN >/dev/null 2>&1; then
   for _ in $(seq 1 30); do lsof -nP -iTCP:5173 -sTCP:LISTEN >/dev/null 2>&1 && break; sleep 1; done
 fi
 
+
+# Jalankan agen pekerja. new = sesi baru, continue = lanjutkan sesi tugas ini.
+run_worker() {
+  local mode="$1" msg="$2"
+  if [ "$WORKER" = agy ]; then
+    if [ "$mode" = new ]; then
+      agy -p "$msg" --mode auto --sandbox --model "$AGY_MODEL" --output-format text 2>&1
+    else
+      agy --continue -p "$msg" --mode auto --sandbox --model "$AGY_MODEL" --output-format text 2>&1
+    fi
+  else
+    if [ "$mode" = new ]; then
+      opencode run "${OC_FLAGS[@]}" --title "Revamp Tugas $N" --session "$OC_SESSION" --auto "$msg" 2>&1
+    else
+      opencode run "${OC_FLAGS[@]}" --session "$OC_SESSION" --auto "$msg" 2>&1
+    fi
+  fi
+}
+
 render() { sed -e "s/{N}/$N/g" -e "s|{EXTRA}|$2|" "$1"; }
 ts() { date '+%Y-%m-%d %H:%M'; }
 
@@ -24,9 +47,9 @@ OC_SESSION="ses_revamp_task${N}_$(date +%s)"  # OpenCode mewajibkan awalan "ses"
 if [ "$SKIP_WORK" = 1 ]; then
   echo "[task $N] SKIP_WORK=1 — lewati pengerjaan, langsung review HEAD"
 else
-  echo "[task $N] OpenCode mengerjakan…"
+  echo "[task $N] $WORKER mengerjakan…"
   HEAD_BEFORE="$(git rev-parse HEAD)"
-  opencode run --title "Revamp Tugas $N" --session "$OC_SESSION" --auto "$(render scripts/revamp/task-prompt.md "$EXTRA")" 2>&1 \
+  run_worker new "$(render scripts/revamp/task-prompt.md "$EXTRA")" \
     | tee "$REV_DIR/task-$N-opencode-r0.log"
   OC_EXIT="${PIPESTATUS[0]}"
   # Provider gratis kadang putus di tengah (mis. "Unsupported model"). Coba lanjutkan sesi yang sama, maks 2 kali.
@@ -34,7 +57,7 @@ else
     [ "$OC_EXIT" = 0 ] && break
     echo "[task $N] opencode keluar kode $OC_EXIT; tunggu 30 detik lalu lanjutkan sesi (percobaan $RETRY/2)…"
     sleep 30
-    opencode run --session "$OC_SESSION" --auto "Sesi terputus karena error penyedia model. Lanjutkan Tugas $N persis dari tempat berhenti: periksa git status dan file yang sudah kamu ubah, jangan ulangi dari nol, selesaikan sampai commit dan Log, lalu BERHENTI." 2>&1 \
+    run_worker continue "Sesi terputus karena error penyedia model. Lanjutkan Tugas $N persis dari tempat berhenti: periksa git status dan file yang sudah kamu ubah, jangan ulangi dari nol, selesaikan sampai commit dan Log, lalu BERHENTI." \
       | tee -a "$REV_DIR/task-$N-opencode-r0.log"
     OC_EXIT="${PIPESTATUS[0]}"
   done
@@ -58,10 +81,10 @@ for ROUND in $(seq 0 "$MAX_FIX"); do
     echo "[task $N] SELESAI"; exit 0
   fi
   [ "$ROUND" -ge "$MAX_FIX" ] && break
-  echo "[task $N] OpenCode memperbaiki…"
+  echo "[task $N] $WORKER memperbaiki…"
   FIX_MSG="Review independen MENOLAK Tugas $N. Isi review ada di $OUT — baca seluruhnya. Perbaiki setiap butir di bagian Temuan tanpa melanggar aturan yang sama, jalankan ulang verifikasi tugas, tempel outputnya, commit perbaikan sebagai commit baru dengan pesan 'fix(revamp): task $N review round $((ROUND+1))', tambah 1 baris Log, lalu BERHENTI."
   HEAD_BEFORE="$(git rev-parse HEAD)"
-  opencode run --session "$OC_SESSION" --auto "$FIX_MSG" 2>&1 | tee "$REV_DIR/task-$N-opencode-r$((ROUND+1)).log"
+  run_worker continue "$FIX_MSG" | tee "$REV_DIR/task-$N-opencode-r$((ROUND+1)).log"
   if [ "$(git rev-parse HEAD)" = "$HEAD_BEFORE" ]; then echo "[task $N] ABORT: OpenCode tidak meng-commit perbaikan."; exit 3; fi
 done
 

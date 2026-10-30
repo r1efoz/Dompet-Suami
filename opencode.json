@@ -138,5 +138,17 @@
       "*|*sh*": "deny",
       "*>*.env*": "deny"
     }
+  },
+  "provider": {
+    "9router": {
+      "models": {
+        "cx/gpt-6-luna[1m]": {
+          "name": "gpt-6-luna (Codex, cadangan)"
+        },
+        "kr/auto": {
+          "name": "Kiro auto (cadangan)"
+        }
+      }
+    }
   }
 }

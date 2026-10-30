@@ -55,3 +55,15 @@ Tambahan catatan ke OpenCode untuk satu tugas: `EXTRA="…" scripts/revamp/task.
 ### Batas izin OpenCode saat `--auto`
 
 `opencode.json` di root repo membatasi tool bash OpenCode dengan allowlist (deny-by-default): hanya `git` baca/add/commit (tanpa push/reset/checkout), `npm run check|build|test:ui`, `npx tsx`, `psql` ke 127.0.0.1:55322, perintah baca file, dan `node scripts/make-icons.mjs`. Tidak ada `curl`, `npm install`, `vercel`, `supabase`, `direnv`, `rm -rf`, atau membaca `.env*`. `webfetch` dimatikan. Jika sebuah tugas butuh perintah di luar daftar, OpenCode akan melaporkan "denied" — tambahkan pola spesifik ke `opencode.json`, jangan `"*": "allow"`. Allowlist ini belum diuji oleh Claude (sandbox menolak menjalankan agen otonom); cek log putaran pertama untuk pesan denied yang tidak diharapkan.
+
+### Pekerja pengganti: Antigravity CLI (`agy`)
+
+Jika provider gratis 9Router habis kuota/rusak (`Unsupported model …`, `FreeUsageLimitError`), ganti pekerja tanpa mengubah alur review:
+
+```bash
+WORKER=agy scripts/revamp/all.sh 6 11
+```
+
+`task.sh` lalu memanggil `agy -p … --mode auto --sandbox --model gemini-3.8-flash-high` (ganti dengan `AGY_MODEL=claude-sonnet-4-6` bila perlu model lebih kuat; `agy models` menampilkan daftar). Putaran perbaikan memakai `agy --continue`. Prompt tugas dan reviewer sama persis. Catatan: `agy` tidak membaca `opencode.json`; pembatas yang berlaku adalah `--sandbox` milik agy, larangan di prompt, dan reviewer. Log tetap di `docs/handoff/reviews/task-N-opencode-rK.log`.
+
+Model cadangan 9Router (`cx/gpt-6-luna[1m]`, `kr/auto`) didaftarkan di `opencode.json` dan bisa dipakai lewat `OC_MODEL="9router/cx/gpt-6-luna[1m]" scripts/revamp/all.sh …` — hanya berguna bila backend itu sendiri sedang hidup.
