@@ -23,9 +23,19 @@ if ! lsof -nP -iTCP:5173 -sTCP:LISTEN >/dev/null 2>&1; then
 fi
 
 
+# Kebijakan pekerja tidak boleh diubah oleh pekerja: bandingkan hash terhadap versi yang di-commit sebelum tiap pemanggilan.
+check_policy() {
+  for f in scripts/revamp/agy-settings.json opencode.json; do
+    if ! git diff --quiet HEAD -- "$f" 2>/dev/null; then
+      echo "[task $N] ABORT: $f berubah dari versi ter-commit (kemungkinan diubah pekerja). Periksa 'git diff $f', pulihkan dengan 'git checkout HEAD -- $f'."; exit 4
+    fi
+  done
+}
+
 # Jalankan agen pekerja. new = sesi baru, continue = lanjutkan sesi tugas ini.
 run_worker() {
   local mode="$1" msg="$2"
+  check_policy
   if [ "$WORKER" = claude ]; then
     local tools=(Read Edit Write Glob Grep "Bash(git status*)" "Bash(git diff*)" "Bash(git log*)" "Bash(git show*)" "Bash(git add *)" "Bash(git commit*)" "Bash(git rm *)" "Bash(git mv *)" "Bash(npm run check)" "Bash(npm run build)" "Bash(npm run test:ui)" "Bash(npx tsx src/lib/*.check.ts)" "Bash(npx tsx scripts/*.check.ts)" "Bash(TZ=* npx tsx src/lib/*.check.ts)" "Bash(TZ=* npm run check)" "Bash(node scripts/make-icons.mjs)" "Bash(PGPASSWORD=postgres psql -h 127.0.0.1 -p 55322 -U postgres -d postgres -f supabase/*.sql)" "Bash(ls *)" "Bash(mkdir *)" "Bash(lsof *)")
     if [ "$mode" = new ]; then
