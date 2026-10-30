@@ -30,9 +30,9 @@
 
   async function saveEdit() {
     if (!editingId) return;
-    const idx = accounts.findIndex((a) => a.id === editingId);
+    const idx = $accounts.findIndex((a) => a.id === editingId);
     if (idx === -1) return;
-    const prev = accounts[idx];
+    const prev = $accounts[idx];
     const updated = { ...prev, name: editName.trim(), type: editType };
     accounts.update((accs) => {
       const copy = [...accs];

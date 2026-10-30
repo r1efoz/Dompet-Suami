@@ -30,7 +30,7 @@
 
   function saveEdit() {
     if (!editingId) return;
-    const updated = categories[$categories.findIndex(c => c.id === editingId)];
+    const updated = $categories[$categories.findIndex(c => c.id === editingId)];
     if (!updated) return;
     updated.name = editName.trim();
     updated.type = editType;
