@@ -3,7 +3,8 @@
 # Pakai: scripts/revamp/task.sh <N>      (maks 2 putaran perbaikan)
 set -uo pipefail
 N="${1:?nomor tugas}"; MAX_FIX="${MAX_FIX:-2}"; EXTRA="${EXTRA:-}"; SKIP_WORK="${SKIP_WORK:-0}"  # SKIP_WORK=1: tugas sudah di-commit, langsung review
-WORKER="${WORKER:-opencode}"   # opencode | agy  (agy = Antigravity CLI, dipakai saat provider gratis OpenCode habis kuota)
+WORKER="${WORKER:-opencode}"   # opencode | agy | claude  (agy = Antigravity CLI; claude = Claude Code headless, pekerja terakhir)
+CLAUDE_MODEL="${CLAUDE_MODEL:-sonnet}"
 AGY_MODEL="${AGY_MODEL:-gemini-3.8-flash-high}"
 OC_MODEL="${OC_MODEL:-}"       # opsional: provider/model untuk OpenCode, mis. "9router/cx/gpt-6-luna[1m]" saat combo default rusak
 OC_FLAGS=(); [ -n "$OC_MODEL" ] && OC_FLAGS=(--model "$OC_MODEL")
@@ -25,7 +26,14 @@ fi
 # Jalankan agen pekerja. new = sesi baru, continue = lanjutkan sesi tugas ini.
 run_worker() {
   local mode="$1" msg="$2"
-  if [ "$WORKER" = agy ]; then
+  if [ "$WORKER" = claude ]; then
+    local tools=(Read Edit Write Glob Grep "Bash(git status*)" "Bash(git diff*)" "Bash(git log*)" "Bash(git show*)" "Bash(git add *)" "Bash(git commit*)" "Bash(git rm *)" "Bash(git mv *)" "Bash(npm run check)" "Bash(npm run build)" "Bash(npm run test:ui)" "Bash(npx tsx src/lib/*.check.ts)" "Bash(npx tsx scripts/*.check.ts)" "Bash(TZ=* npx tsx src/lib/*.check.ts)" "Bash(TZ=* npm run check)" "Bash(node scripts/make-icons.mjs)" "Bash(PGPASSWORD=postgres psql -h 127.0.0.1 -p 55322 -U postgres -d postgres -f supabase/*.sql)" "Bash(ls *)" "Bash(mkdir *)" "Bash(lsof *)")
+    if [ "$mode" = new ]; then
+      claude -p "$msg" --model "$CLAUDE_MODEL" --permission-mode acceptEdits --output-format text --max-turns 150 --allowedTools "${tools[@]}" 2>&1
+    else
+      claude -p -c "$msg" --model "$CLAUDE_MODEL" --permission-mode acceptEdits --output-format text --max-turns 150 --allowedTools "${tools[@]}" 2>&1
+    fi
+  elif [ "$WORKER" = agy ]; then
     if [ "$mode" = new ]; then
       agy -p "$msg" --sandbox --settings scripts/revamp/agy-settings.json --model "$AGY_MODEL" --output-format text 2>&1
     else
@@ -49,7 +57,7 @@ if [ "$SKIP_WORK" = 1 ]; then
 else
   echo "[task $N] $WORKER mengerjakan…"
   AGY_NOTE=""
-  if [ "$WORKER" = agy ]; then
+  if [ "$WORKER" = agy ] || [ "$WORKER" = claude ]; then
     AGY_NOTE="PENTING untuk sesi headless ini: perintah shell yang TIDAK ada di daftar izin akan MEMBATALKAN seluruh sesi tanpa peringatan. Hanya pakai: git status/diff/log/show/add/commit/rm/mv, npm run check|build|test:ui, npx tsx <file>.check.ts, node scripts/make-icons.mjs, psql … -f supabase/*.sql, ls/cat/head/tail/grep/rg/wc/echo/mkdir. Satu perintah per panggilan, tanpa &&/;/|. Untuk membaca/mengubah file pakai tool read/edit_file/write_file, bukan shell."
   fi
   HEAD_BEFORE="$(git rev-parse HEAD)"

@@ -67,3 +67,13 @@ WORKER=agy scripts/revamp/all.sh 6 11
 `task.sh` lalu memanggil `agy -p … --mode auto --sandbox --model gemini-3.8-flash-high` (ganti dengan `AGY_MODEL=claude-sonnet-4-6` bila perlu model lebih kuat; `agy models` menampilkan daftar). Putaran perbaikan memakai `agy --continue`. Prompt tugas dan reviewer sama persis. Catatan: `agy` tidak membaca `opencode.json`; pembatasnya `--sandbox`, daftar deny di `scripts/revamp/agy-settings.json` (.env/.envrc/.temp, curl/wget, git push/reset/checkout, install dependency, vercel/supabase/direnv, rm -rf, psql -c, WebFetch), larangan di prompt, dan reviewer. Log tetap di `docs/handoff/reviews/task-N-opencode-rK.log`.
 
 Model cadangan 9Router (`cx/gpt-6-luna[1m]`, `kr/auto`) didaftarkan di `opencode.json` dan bisa dipakai lewat `OC_MODEL="9router/cx/gpt-6-luna[1m]" scripts/revamp/all.sh …` — hanya berguna bila backend itu sendiri sedang hidup.
+
+### Orkestrasi failover (dipakai sekarang)
+
+```bash
+scripts/revamp/orchestrate.sh 6 11
+```
+
+Urutan per tugas: **opencode** sampai 10 percobaan → **agy** sampai 10 percobaan → **claude** (Claude Code headless, `claude -p --permission-mode acceptEdits` dengan allow-list yang sama) mengerjakan 2 tugas berturut-turut, lalu kembali ke opencode untuk tugas berikutnya. Berulang sampai semua tugas ACCEPT, atau berhenti bila claude pun gagal. Tiap percobaan diawali health check 90 detik (prompt "SIAP") supaya pekerja yang mati tidak membakar waktu; jeda antar percobaan 60 detik. Satu percobaan = satu `task.sh` (yang sudah berisi 2× lanjut sesi + 2× perbaikan review).
+
+Variabel: `MAX_TRY` (default 10), `CLAUDE_TASKS` (2), `WAIT` (60 detik), `CLAUDE_MODEL` (sonnet), `AGY_MODEL`, `OC_MODEL`, `EXTRA`. Jejak keputusan: `docs/handoff/reviews/orchestrate.log`. Saat provider OpenCode diketahui mati, `MAX_TRY=2` mempersingkat ~20 menit tunggu.
