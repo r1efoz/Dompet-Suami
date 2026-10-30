@@ -48,7 +48,8 @@ run_worker() {
   fi
 }
 
-render() { sed -e "s/{N}/$N/g" -e "s|{EXTRA}|$2|" "$1"; }
+# render <file> <extra>: ganti {N} dan {EXTRA}. Pakai python agar karakter khusus di EXTRA (| & / \\) aman.
+render() { python3 -c 'import sys;print(open(sys.argv[1]).read().replace("{N}",sys.argv[2]).replace("{EXTRA}",sys.argv[3]),end="")' "$1" "$N" "$2"; }
 ts() { date '+%Y-%m-%d %H:%M'; }
 
 OC_SESSION="ses_revamp_task${N}_$(date +%s)"  # OpenCode mewajibkan awalan "ses"
