@@ -34,7 +34,6 @@
     else if (id === 'year') dispatch('change', { kind: 'year', y: now.getFullYear() });
     else if (id === 'range') rangeOpen = true;
     else dispatch('change', months.find((m) => m.id === id)!.p);
-    value = value; // keep chip highlight tied to `period`, not the clicked id
   }
 
   function apply() {

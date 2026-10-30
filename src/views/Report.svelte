@@ -35,7 +35,7 @@
   // ponytail: a range spanning two years lists months of its start year only
   $: year = period.kind === 'range' ? range.start.getFullYear() : period.y;
   $: monthly = (() => {
-    const all = monthlyTable($transactions, year);
+    const all = monthlyTable(period.kind === 'range' ? flow : $transactions, year);
     if (period.kind !== 'range') return all;
     const rows = all.rows.filter((r) => range.start < new Date(year, r.month + 1, 1) && range.end > new Date(year, r.month, 1));
     const income = rows.reduce((s, r) => s + r.income, 0), expense = rows.reduce((s, r) => s + r.expense, 0);
@@ -57,7 +57,7 @@
     }
     if (tab === 'balance') return [['Akun', 'Jenis', 'Awal', 'Masuk', 'Keluar', 'Akhir'], ...balRows.map((r) => [r.name, r.type, r.awal, r.masuk, r.keluar, r.akhir])];
     const open = balRows.find((r) => r.id === accountId)?.awal ?? 0;
-    const rows = buildLedger(inPeriod, accountId, open).map((l) => [l.tx.timestamp.slice(0, 10), l.tx.description, l.tx.transferId ? 'transfer' : l.tx.type, l.tx.type === 'income' ? l.tx.amount : -l.tx.amount, l.runningBalance]);
+    const rows = buildLedger(inPeriod, accountId, open).map((l) => [new Date(l.tx.timestamp).toLocaleDateString('sv-SE'), l.tx.description, l.tx.transferId ? 'transfer' : l.tx.type, l.tx.type === 'income' ? l.tx.amount : -l.tx.amount, l.runningBalance]);
     return [['Tanggal', 'Keterangan', 'Tipe', 'Mutasi', 'Saldo'], ...rows];
   }
 

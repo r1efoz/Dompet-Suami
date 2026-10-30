@@ -168,6 +168,7 @@ await dlg.getByRole("button", { name: "Simpan" }).click();
 await toastOf("Disimpan.").waitFor();
 check("akun baru muncul", (await accSection.getByText("Dompet Uji", { exact: true }).count()) === 1);
 await accSection.locator("button", { hasText: "Bank" }).first().click();
+check("edit akun mengisi nama", (await page.getByRole("dialog").getByLabel("Nama").inputValue()) === "Bank");
 check("hapus akun bertransaksi disabled", await page.getByRole("dialog").getByRole("button", { name: /^Hapus akun/ }).isDisabled());
 await page.keyboard.press("Escape");
 await accSection.locator("button", { hasText: "Dompet Uji" }).click();

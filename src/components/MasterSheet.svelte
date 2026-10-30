@@ -29,9 +29,8 @@
   let icon = '';
   let error = '';
   let confirmOpen = false;
-  let wasOpen = false;
-  $: if (open && !wasOpen) { name = item?.name ?? ''; type = item?.type ?? TYPES[0].id; icon = item?.icon ?? ''; error = ''; }
-  $: wasOpen = open;
+  function reset(src: typeof item) { name = src?.name ?? ''; type = src?.type ?? TYPES[0].id; icon = src?.icon ?? ''; error = ''; }
+  $: if (open) reset(item);
 
   $: ref = kind === 'account' ? { accountId: item?.id } : { categoryId: item?.id };
   $: used = item ? isReferenced($transactions, ref) : false;

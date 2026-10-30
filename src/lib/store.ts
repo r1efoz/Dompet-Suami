@@ -268,17 +268,6 @@ export async function updateTransfer(input: TransactionEditInput): Promise<void>
   transactions.update((items) => items.map((tx) => next.find((item) => item.id === tx.id) ?? tx));
 }
 
-/** Hapus semua data dari Supabase dan store. */
-export async function clearAll(): Promise<void> {
-  await supabase.from('transactions').delete().neq('id', '');
-  await supabase.from('accounts').delete().neq('id', '');
-  await supabase.from('categories').delete().neq('id', '');
-
-  transactions.set([]);
-  accounts.set([]);
-  categories.set([]);
-}
-
 /** Simpan akun ke Supabase (create atau update). */
 export async function saveAccount(account: Account): Promise<void> {
   if (!account.id) throw new Error('Account ID tidak ada.');

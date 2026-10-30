@@ -5,7 +5,6 @@ export type View = 'home' | 'transaction' | 'report' | 'master';
 
 export const currentView = writable<View>('home');
 export const reportState = writable<{ tab: 'cashflow' | 'category' | 'balance' | 'ledger'; accountId?: string; period?: Period }>({ tab: 'cashflow' });
-export const selectedTxId = writable<string | null>(null);
 export const toast = writable<{ text: string; kind: 'ok' | 'err' } | null>(null);
 export const APP_OWNER_NAME = 'Pak Arief';
 
