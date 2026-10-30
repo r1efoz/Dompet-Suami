@@ -50,6 +50,8 @@ check("anon tidak bisa membaca akun", Array.isArray(anonRows) && anonRows.length
 await page.goto("http://localhost:5173/", { waitUntil: "networkidle" });
 check("tanpa sesi tampil halaman masuk", await page.getByRole("button", { name: "Masuk", exact: true }).isVisible());
 check("tanpa sesi nav tidak tampil", (await page.locator('nav[aria-label="Navigasi atas"]').count()) === 0);
+await page.getByRole("button", { name: "Lupa kata sandi?" }).click();
+check("lupa sandi minta email dulu", await page.getByText("Isi email dulu.").isVisible());
 await page.getByLabel("Email").fill(E2E_USER.email);
 await page.getByLabel("Kata sandi").fill("salah-total");
 await page.getByRole("button", { name: "Masuk", exact: true }).click();
@@ -258,6 +260,33 @@ await freshPage.getByRole("menuitem", { name: "Keluar" }).click();
 await freshPage.getByRole("button", { name: "Masuk", exact: true }).waitFor();
 check("keluar kembali ke halaman masuk", true);
 await freshCtx.close();
+
+// The Queen: owner shares read-only access with the wife (OTHER_USER), who logs in and only sees.
+check("Master punya seksi The Queen", await page.getByText("The Queen", { exact: false }).first().isVisible());
+await page.getByLabel("Email istri").fill(OTHER_USER.email);
+await page.getByRole("button", { name: "Simpan", exact: true }).click();
+await toastOf("Tersimpan.").waitFor();
+const wifeCtx = await newContext({ storageState: { cookies: [], origins: [] }, viewport: { width: 1440, height: 900 } });
+const wifePage = await wifeCtx.newPage();
+await wifePage.goto("http://localhost:5173/", { waitUntil: "networkidle" });
+await wifePage.getByLabel("Email").fill(OTHER_USER.email);
+await wifePage.getByLabel("Kata sandi").fill(OTHER_USER.password);
+await wifePage.getByRole("button", { name: "Masuk", exact: true }).click();
+await wifePage.locator('nav[aria-label="Navigasi atas"]').waitFor();
+await wifePage.waitForTimeout(1200);
+check("istri melihat banner mode lihat", await wifePage.getByText("Mode lihat", { exact: false }).isVisible());
+check("istri melihat data suami", await wifePage.getByText("4.750.000").first().isVisible());
+check("istri tanpa tombol catat", (await wifePage.getByRole("button", { name: "+ Catat" }).count()) === 0);
+check("istri tidak melihat datanya sendiri", (await wifePage.getByText("Akun Orang Lain").count()) === 0);
+const wifeTok = (await (await fetch(`${SB_URL}/auth/v1/token?grant_type=password`, { method: "POST", headers: { apikey: SB_KEY, "content-type": "application/json" }, body: JSON.stringify(OTHER_USER) })).json()).access_token;
+const wifeHdr = { apikey: SB_KEY, authorization: `Bearer ${wifeTok}`, "content-type": "application/json", prefer: "return=representation" };
+const wifeEdit = await (await fetch(`${SB_URL}/rest/v1/accounts?id=eq.bank`, { method: "PATCH", headers: wifeHdr, body: JSON.stringify({ name: "Diubah istri" }) })).json();
+check("RLS: istri tidak bisa mengubah data suami", Array.isArray(wifeEdit) && wifeEdit.length === 0, JSON.stringify(wifeEdit).slice(0, 80));
+await wifeCtx.close();
+await page.getByRole("button", { name: "Cabut akses" }).click();
+await toastOf("Akses dicabut.").waitFor();
+const afterRevoke = await (await fetch(`${SB_URL}/rest/v1/accounts?select=id`, { headers: wifeHdr })).json();
+check("RLS: setelah dicabut istri hanya melihat miliknya", Array.isArray(afterRevoke) && afterRevoke.length === 1 && afterRevoke[0].id === "other-acc", JSON.stringify(afterRevoke).slice(0, 80));
 
 // Task 10: PWA assets (Vite dev answers HTML 200 for any path, so inspect content).
 const mf = await page.request.get("http://localhost:5173/manifest.webmanifest");

@@ -3,6 +3,8 @@
   import CategoryManager from '../components/CategoryManager.svelte';
   import Segmented from '../components/ui/Segmented.svelte';
   import { isDesktop } from '../lib/ui';
+  import QueenSection from '../components/QueenSection.svelte';
+  import { viewer } from '../lib/queen';
   import { session, signOut } from '../lib/auth';
 
   let tab = 'account';
@@ -15,4 +17,5 @@
   <Segmented ariaLabel="Jenis master" items={[{ id: 'account', label: 'Sumber dana' }, { id: 'category', label: 'Kategori' }]} bind:value={tab} />
   <div class="mt-4">{#if tab === 'account'}<AccountsManager />{:else}<CategoryManager />{/if}</div>
 {/if}
+{#if !$viewer}<QueenSection />{/if}
 <div class="mt-8 text-center">{#if $session?.user.email}<p class="mb-1 text-[11.5px] text-ink2">{$session.user.email}</p>{/if}<button type="button" class="text-[12px] leading-[1.4] text-accent" on:click={signOut}>Keluar</button></div>

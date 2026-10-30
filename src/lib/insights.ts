@@ -8,6 +8,7 @@ export interface Insight {
   segments: Array<{ t: string; b?: boolean }>;
 }
 export function insightText(insight: Insight): string { return insight.segments.map(({ t }) => t).join(''); }
+const isWife = (name: string) => /istri/i.test(name);
 const make = (id: Insight['id'], tone: Insight['tone'], parts: Array<[string, boolean?]>): Insight => ({ id, tone, segments: parts.map(([t, b]) => ({ t, ...(b ? { b: true } : {}) })) });
 export function buildInsights(transactions: Transaction[], categories: Category[], now: Date): Insight[] {
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -23,7 +24,10 @@ export function buildInsights(transactions: Transaction[], categories: Category[
   const results: Insight[] = [];
   if (expense > 0 && top) {
     const name = categories.find((category) => category.id === top[0])?.name ?? 'Tanpa kategori';
-    results.push(make('top-category', 'neg', [[name, true], [' adalah pengeluaran terbesar: Rp ' + formatCompact(top[1]) + ` (${Math.round(top[1] / expense * 100)}% dari total keluar).`]]));
+    const share = ` (${Math.round(top[1] / expense * 100)}% dari total keluar).`;
+    results.push(isWife(name)
+      ? make('top-category', 'neg', [['Tanggung jawab ke istri sebesar ', false], ['Rp ' + formatCompact(top[1]), true], [share]])
+      : make('top-category', 'neg', [[name, true], [' adalah pengeluaran terbesar: Rp ' + formatCompact(top[1]) + share]]));
   }
   if (income > 0) {
     const ratio = Math.round((income - expense) / income * 100);
@@ -46,6 +50,11 @@ export function buildInsights(transactions: Transaction[], categories: Category[
   }
   const previousCategories = new Set(lastMonth.filter((tx) => tx.type === 'expense').map((tx) => tx.categoryId));
   const fresh = [...byCat].filter(([id]) => id && !previousCategories.has(id)).sort((a, b) => b[1] - a[1])[0];
-  if (fresh) results.push(make('new-category', 'neutral', [['Kategori baru bulan ini: '], [categories.find((category) => category.id === fresh[0])?.name ?? 'Tanpa kategori', true], [` Rp ${formatCompact(fresh[1])}.`]]));
+  if (fresh) {
+    const name = categories.find((category) => category.id === fresh[0])?.name ?? 'Tanpa kategori';
+    results.push(isWife(name)
+      ? make('new-category', 'neutral', [['Tanggung jawab ke istri sebesar '], ['Rp ' + formatCompact(fresh[1]), true], [' bulan ini.']])
+      : make('new-category', 'neutral', [['Kategori baru bulan ini: '], [name, true], [` Rp ${formatCompact(fresh[1])}.`]]));
+  }
   return results.slice(0, 3);
 }

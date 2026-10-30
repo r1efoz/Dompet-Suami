@@ -85,16 +85,20 @@ export interface TransactionEditInput extends EntryInput {
 }
 
 /** Muat data awal dari Supabase ke store (panggil saat aplikasi pertama kali dimuat). */
-export async function loadInitialData(): Promise<void> {
+export async function loadInitialData(ownerId?: string): Promise<void> {
+  // a spouse (ownerId set) only reads the owner's rows, never seeds
+  const mine = <T extends { eq: (c: string, v: string) => T }>(q: T) => (ownerId ? q.eq('user_id', ownerId) : q);
   const [accRes, catRes, txRes] = await Promise.all([
-    supabase.from('accounts').select('*'),
-    supabase.from('categories').select('*'),
-    supabase.from('transactions').select('*')
+    mine(supabase.from('accounts').select('*')),
+    mine(supabase.from('categories').select('*')),
+    mine(supabase.from('transactions').select('*'))
   ]);
 
   if (!accRes.error) accounts.set((accRes.data as Account[]) ?? []);
   if (!catRes.error) categories.set((catRes.data as Category[]) ?? []);
   if (!txRes.error) transactions.set(((txRes.data as Parameters<typeof fromDatabaseTransaction>[0][]) ?? []).map(fromDatabaseTransaction));
+
+  if (ownerId) return;
 
   // Jika tabel kosong, isi data default
   if ((accRes.data as Account[] ?? []).length === 0) {

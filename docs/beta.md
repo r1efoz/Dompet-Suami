@@ -9,6 +9,14 @@ Aplikasi invite-only: pendaftaran publik mati, tiap pengguna hanya melihat datan
 3. Authentication → Sign In / Providers: "Allow new users to sign up" tetap **mati**.
 4. (Disarankan) Authentication → SMTP: pasang SMTP sendiri. Bawaan Supabase hanya mengirim beberapa email per jam, cukup untuk 3–5 undangan saja.
 
+## The Queen (istri melihat dompet suami)
+
+1. Jalankan `supabase/migrations/2026-10-31-shares.sql` di SQL Editor (sekali).
+2. Undang istri seperti pengguna biasa (Users → Add user → Send invitation) dan pastikan ia sudah bisa masuk.
+3. Di aplikasi: Master → **The Queen 👑** → isi email istri → Simpan. Istri masuk dengan akunnya sendiri dan melihat dompet suami dalam **mode lihat** (hanya baca, tanpa tombol catat/ubah). "Cabut akses" menghentikannya.
+
+Satu pengguna = satu istri. Template email undangan/reset ada di `docs/email-templates.md`.
+
 ## Mengundang seseorang
 
 Authentication → Users → **Invite user** → isi email. Penerima membuka tautan di email, membuat kata sandi, lalu masuk. Akun baru otomatis mendapat akun & kategori bawaan sendiri.

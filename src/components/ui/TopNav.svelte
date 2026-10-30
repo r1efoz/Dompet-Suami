@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { currentView, type View } from '../../lib/ui';
   import Pill from './Pill.svelte';
+  import { viewer } from '../../lib/queen';
   import AccountMenu from '../AccountMenu.svelte';
   let desktop = typeof window !== 'undefined' && window.matchMedia('(min-width:1024px)').matches;
   onMount(() => {
@@ -25,7 +26,7 @@
           <button type="button" aria-current={$currentView === item.id ? 'page' : undefined} class="rounded-seg px-3.5 py-2 text-[13.5px] font-medium {$currentView === item.id ? 'bg-chip text-ink' : 'text-ink2'}" on:click={() => currentView.set(item.id)}>{item.label}</button>
         {/each}
       </nav>
-      <button type="button" on:click={() => currentView.set('transaction')}><Pill variant="ink">+ Catat</Pill></button>
+      {#if !$viewer}<button type="button" on:click={() => currentView.set('transaction')}><Pill variant="ink">+ Catat</Pill></button>{/if}
       <AccountMenu />
     </div>
   </header>

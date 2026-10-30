@@ -6,8 +6,8 @@
   import Report from './views/Report.svelte';
   import Login from './views/Login.svelte';
   import SetPassword from './views/SetPassword.svelte';
-  import { loadInitialData } from './lib/store';
   import { needsPassword, session } from './lib/auth';
+  import { bootstrap, viewer } from './lib/queen';
   import { currentView } from './lib/ui';
   import BottomNav from './components/ui/BottomNav.svelte';
   import TopNav from './components/ui/TopNav.svelte';
@@ -25,7 +25,7 @@
   let loadedFor = '';
   $: if ($session && $session.user.id !== loadedFor) {
     loadedFor = $session.user.id;
-    loadInitialData().catch((err) => console.error('Gagal memuat data awal:', err));
+    bootstrap($session.user.id, $session.user.email ?? '').catch((err) => console.error('Gagal memuat data awal:', err));
   }
 </script>
 
@@ -39,6 +39,7 @@
 <div class="min-h-dvh bg-paper text-ink">
   {#if desktop}<TopNav />{/if}
   <OfflineBanner />
+  {#if $viewer}<p class="bg-chip px-4 py-2 text-center text-[12px] text-ink2">Mode lihat — dompet {$viewer.ownerEmail}</p>{/if}
   <main class="mx-auto max-w-[1180px] px-4 pt-3 pb-[92px] lg:px-7 lg:pt-7 lg:pb-14">
       {#if $currentView === 'home'}<Home />
       {:else if $currentView === 'transaction'}<Transaction />

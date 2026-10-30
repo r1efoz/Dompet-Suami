@@ -3,6 +3,7 @@
   import { formatCompact, formatIDR } from '../lib/format';
   import { filterHistory, groupByDay } from '../lib/history';
   import { showToast } from '../lib/ui';
+  import { viewer } from '../lib/queen';
   import type { Transaction } from '../models/Transaction';
   import Card from './ui/Card.svelte';
   import Chips from './ui/Chips.svelte';
@@ -206,14 +207,14 @@
         <dt class="text-ink2">Kategori</dt><dd class="text-right">{categoryName(detail.categoryId) || '-'}</dd>
       {/if}
     </dl>
-    <div class="mt-4 grid grid-cols-2 gap-2">
+    {#if !$viewer}<div class="mt-4 grid grid-cols-2 gap-2">
       {#if !detail.transferId || detail.type === 'expense'}
         <button type="button" class="{btn} h-11 rounded-btn bg-ink text-on-ink font-semibold text-[14px]" on:click={edit}>Edit</button>
       {:else}
         <span></span>
       {/if}
       <button type="button" class="{btn} h-11 rounded-btn bg-accent-soft text-accent font-semibold text-[14px]" on:click={askDelete}>Hapus</button>
-    </div>
+    </div>{/if}
   {/if}
 </Sheet>
 

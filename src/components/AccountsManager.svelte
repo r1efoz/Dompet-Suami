@@ -3,6 +3,7 @@
   import { formatIDR } from '../lib/format';
   import { isReferenced } from '../lib/master';
   import type { Account } from '../models/Account';
+  import { viewer } from '../lib/queen';
   import Card from './ui/Card.svelte';
   import ListItem from './ui/ListItem.svelte';
   import Pill from './ui/Pill.svelte';
@@ -20,14 +21,14 @@
 </script>
 
 <section>
-  <div class="mb-2.5 flex items-baseline justify-between"><h2 class="text-[15px] leading-[1.3] font-semibold">Akun · {$accounts.length}</h2><button type="button" class="h-7" on:click={() => edit(null)}><Pill variant="ink">+ Tambah</Pill></button></div>
+  <div class="mb-2.5 flex items-baseline justify-between"><h2 class="text-[15px] leading-[1.3] font-semibold">Akun · {$accounts.length}</h2>{#if !$viewer}<button type="button" class="h-7" on:click={() => edit(null)}><Pill variant="ink">+ Tambah</Pill></button>{/if}</div>
   {#each GROUPS as g}
     {@const list = sorted(g.type)}
     {#if list.length}
       <div class="lbl mt-3.5 mb-1.5">{g.label}</div>
       <Card dense>
         {#each list as a (a.id)}
-          <button type="button" class="block w-full text-left" on:click={() => edit(a)}><ListItem icon={a.icon || g.icon} title={a.name} subtitle={sub(a.id)} amount={formatIDR($balances[a.id] ?? 0)} /></button>
+          <button type="button" class="block w-full text-left" on:click={() => !$viewer && edit(a)}><ListItem icon={a.icon || g.icon} title={a.name} subtitle={sub(a.id)} amount={formatIDR($balances[a.id] ?? 0)} /></button>
         {/each}
       </Card>
     {/if}
