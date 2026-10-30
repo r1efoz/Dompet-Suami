@@ -83,7 +83,13 @@
       "command(sed *)",
       "command(* -exec *)",
       "write_file(package.json)",
-      "edit_file(package.json)"
+      "edit_file(package.json)",
+      "command(*|*)",
+      "command(*>*)",
+      "command(*<*)",
+      "command(*-exec*)",
+      "command(*-delete*)",
+      "command(*\n*)"
     ]
   }
 }
