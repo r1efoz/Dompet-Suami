@@ -50,7 +50,7 @@ else
   echo "[task $N] $WORKER mengerjakan…"
   AGY_NOTE=""
   if [ "$WORKER" = agy ]; then
-    AGY_NOTE="PENTING untuk sesi headless ini: perintah shell yang TIDAK ada di daftar izin akan MEMBATALKAN seluruh sesi tanpa peringatan. Hanya pakai: git status/diff/log/show/add/commit/rm/mv, npm run check|build|test:ui, npx tsx <file>.check.ts, node scripts/make-icons.mjs, psql … -f supabase/*.sql, ls/cat/head/tail/grep/rg/wc/sed -n/find/echo/mkdir. Satu perintah per panggilan, tanpa &&/;/|. Untuk membaca/mengubah file pakai tool read/edit_file/write_file, bukan shell."
+    AGY_NOTE="PENTING untuk sesi headless ini: perintah shell yang TIDAK ada di daftar izin akan MEMBATALKAN seluruh sesi tanpa peringatan. Hanya pakai: git status/diff/log/show/add/commit/rm/mv, npm run check|build|test:ui, npx tsx <file>.check.ts, node scripts/make-icons.mjs, psql … -f supabase/*.sql, ls/cat/head/tail/grep/rg/wc/echo/mkdir. Satu perintah per panggilan, tanpa &&/;/|. Untuk membaca/mengubah file pakai tool read/edit_file/write_file, bukan shell."
   fi
   HEAD_BEFORE="$(git rev-parse HEAD)"
   run_worker new "$(render scripts/revamp/task-prompt.md "$EXTRA $AGY_NOTE")" \
