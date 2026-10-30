@@ -81,3 +81,4 @@ Format: `YYYY-MM-DD HH:MM — Tugas N — status — catatan singkat (perintah v
 - 2026-10-30 — Tugas 5 — verifikasi — `npm run check`, `npm run test:ui`, `npm run build`: semua lulus; e2e semua check lulus.
 - 2026-10-30 17:40 — Tugas 4 — review Claude putaran 0 — VERDICT: ACCEPT — detail: docs/handoff/reviews/task-4-review-r0.md
 - 2026-10-30 17:57 — Tugas 5 — selesai (commit oleh Claude) — OpenCode menyelesaikan Home + 6 acceptance e2e (check/build/test:ui hijau menurut lognya) tapi berhenti sebelum `git rm`/commit: satu perintah gabungan `git status && git log && sed` ditolak kebijakan metakarakter, lalu ia menyimpulkan "shell git ditolak". Claude menghapus 3 stub lama, cek check+build, dan commit. Prompt tugas ditambah aturan "satu perintah per panggilan".
+- 2026-10-30 18:00 — Tugas 5 — review Claude putaran 0 — VERDICT: ACCEPT — detail: docs/handoff/reviews/task-5-review-r0.md
