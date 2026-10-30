@@ -45,8 +45,8 @@ export interface LedgerRow {
 }
 
 /** Running balance of one fund source, oldest entry first. */
-export function buildLedger(transactions: Transaction[], accountId: string): LedgerRow[] {
-  let running = 0;
+export function buildLedger(transactions: Transaction[], accountId: string, opening = 0): LedgerRow[] {
+  let running = opening;
   const rows: LedgerRow[] = [];
 
   const ordered = [...transactions].sort(
