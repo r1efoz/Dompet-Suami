@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <radialGradient id="gBody" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="#f3925f"/><stop offset=".55" stop-color="#d9541e"/><stop offset="1" stop-color="#8e2f0e"/></radialGradient>
+    <radialGradient id="gHead" cx="40%" cy="30%" r="70%"><stop offset="0" stop-color="#f3925f"/><stop offset=".6" stop-color="#d9541e"/><stop offset="1" stop-color="#8e2f0e"/></radialGradient>
+    <linearGradient id="gComb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2473a"/><stop offset="1" stop-color="#8c1d14"/></linearGradient>
+    <linearGradient id="gTail" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2f8f5b"/><stop offset="1" stop-color="#1c5a39"/></linearGradient>
+    <linearGradient id="gBeak" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6d58a"/><stop offset="1" stop-color="#c9922a"/></linearGradient>
+    <linearGradient id="gGloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <linearGradient id="gSlot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a0d04"/><stop offset="1" stop-color="#5a2410"/></linearGradient>
+  </defs>
+  <ellipse cx="31" cy="57" rx="20" ry="3.2" fill="#000" opacity=".22"/>
+  <path d="M14 34C6 32 2 24 6 16c1 5 4 8 8 10-4-5-4-11 1-15 0 5 2 9 6 12-2-6 0-11 5-13-1 5 0 10 3 14z" fill="url(#gTail)"/>
+  <path d="M12 30c-3-3-4-8-2-12 1 3 3 5 5 7" fill="none" stroke="#f4e4c1" stroke-width="1.2" stroke-linecap="round" opacity=".7"/>
+  <path d="M18 27c-2-4-1-9 2-12 0 3 1 6 3 8" fill="none" stroke="#f4e4c1" stroke-width="1.2" stroke-linecap="round" opacity=".7"/>
+  <ellipse cx="31" cy="38" rx="21" ry="16" fill="url(#gBody)"/>
+  <path d="M18 36c5-6 14-7 21-3-3 6-12 9-21 3z" fill="#f4e4c1" opacity=".9"/>
+  <path d="M20 36.5c4-4 11-5 17-2-3 4-10 6-17 2z" fill="#2f8f5b" opacity=".85"/>
+  <path d="M22 37c3-2.5 8-3 13-1.5-2 2.5-8 4-13 1.5z" fill="#f4e4c1" opacity=".9"/>
+  <circle cx="44" cy="42" r="1.3" fill="#f4e4c1" opacity=".85"/><circle cx="47.5" cy="38" r="1.3" fill="#f4e4c1" opacity=".85"/><circle cx="41" cy="46" r="1.3" fill="#f4e4c1" opacity=".85"/>
+  <ellipse cx="24" cy="28" rx="9" ry="4.5" fill="url(#gGloss)" transform="rotate(-18 24 28)"/>
+  <rect x="24" y="22.4" width="14" height="3.4" rx="1.7" fill="url(#gSlot)"/><rect x="24" y="22" width="14" height="1.2" rx=".6" fill="#f3925f" opacity=".6"/>
+  <g transform="rotate(-12 31 18)"><ellipse cx="31" cy="18" rx="5" ry="5" fill="#f6d58a" stroke="#b07a1c" stroke-width="1.2"/><ellipse cx="31" cy="18" rx="3" ry="3" fill="none" stroke="#b07a1c" stroke-width=".8"/></g>
+  <path d="M44 32c-1-8 2-15 8-16 5-1 9 3 8 8 0 3-2 5-5 6l-3 1c-3 1-5 3-6 7z" fill="url(#gHead)"/>
+  <ellipse cx="46" cy="24" rx="3" ry="1.6" fill="url(#gGloss)" transform="rotate(-30 46 24)"/>
+  <path d="M47 16c-1-4 1-7 4-7 0 2 1 3 3 2 1-3 4-3 5 0 1-2 3-2 4 0 0 3-2 5-5 5-3 1-7 1-11 0z" fill="url(#gComb)"/>
+  <path d="M59 22l6 2.5-6 2.5z" fill="url(#gBeak)"/><path d="M55 27c3 0 4 3 2 5-3-1-4-3-2-5z" fill="url(#gComb)"/>
+  <circle cx="55" cy="20.5" r="2" fill="#15181a"/><circle cx="55.7" cy="19.8" r=".7" fill="#fff"/>
+  <path d="M20 51h8v4a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2z" fill="#8e2f0e"/><path d="M34 51h8v4a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2z" fill="#8e2f0e"/>
+</svg>

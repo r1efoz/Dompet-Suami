@@ -46,10 +46,13 @@ Dibuat: 2026-10-30 oleh Claude (sesi desain bersama Arief). Dikerjakan oleh: Ope
 
 ## Pertanyaan terbuka
 
-(kosong — isi di sini jika menemukan yang tidak terjawab dokumen; pilih tafsir paling sederhana dan lanjutkan)
+- Tugas 1 e2e tampaknya perlu lokal Postgres aktif karena seed dijalankan via `psql` pada awal `scripts/e2e.mjs`; memakai DB lokal port 55322, sesuai aturan project.
 
 ## Log
 
 Format: `YYYY-MM-DD HH:MM — Tugas N — status — catatan singkat (perintah verifikasi + hasil)`.
 
-- 2026-10-30 — Baseline — belum dijalankan oleh OpenCode.
+- 2026-10-30 — Baseline — `npm run check`: `ledger self-check: 10 assertions passed`; `npm run build`: berhasil.
+- 2026-10-30 — Baseline e2e — `npm run test:ui`: merah, 5 check gagal (saldo bank/tunai dan mobile/tablet/dark data tampil); sesuai ekspektasi Tugas 1.
+- 2026-10-30 — Tugas 1 — selesai — check 5 file dan build berhasil; e2e deterministik hijau, 13 check lulus.
+

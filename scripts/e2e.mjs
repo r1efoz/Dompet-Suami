@@ -1,4 +1,7 @@
 import { chromium } from "playwright";
+import { execSync } from "node:child_process";
+
+execSync('psql -h 127.0.0.1 -p 55322 -U postgres -d postgres -v ON_ERROR_STOP=1 -f supabase/seed.e2e.sql', { env: { ...process.env, PGPASSWORD: 'postgres' }, stdio: 'inherit' });
 
 const OUT = "/private/var/folders/bd/z0zk8jyn4kddph4bgxkctfhw0000gn/T/opencode";
 const failures = [];
@@ -23,8 +26,6 @@ page.on(
 );
 
 await page.goto("http://localhost:5173/", { waitUntil: "networkidle" });
-await page.evaluate(() => localStorage.clear());
-await page.reload({ waitUntil: "networkidle" });
 await page.getByRole("button", { name: "Transaksi" }).click();
 await page.waitForTimeout(500);
 
@@ -94,28 +95,12 @@ check(
 
 await page.screenshot({ path: `${OUT}/dompet-ledger.png`, fullPage: true });
 
-// Seeded small-screen passes so responsive layout is reviewed with real data.
-const seedTx = await page.evaluate(() =>
-  localStorage.getItem("dompet-suami-transactions"),
-);
-const seedAcc = await page.evaluate(() =>
-  localStorage.getItem("dompet-suami-accounts"),
-);
-
+// Responsive layout uses the database seed loaded at startup.
 async function shoot(name, width, height, colorScheme = "light") {
   const ctx = await browser.newContext({
     viewport: { width, height },
     colorScheme,
   });
-  await ctx.addInitScript(
-    ([tx, acc]) => {
-      if (!localStorage.getItem("dompet-suami-transactions")) {
-        localStorage.setItem("dompet-suami-transactions", tx);
-        localStorage.setItem("dompet-suami-accounts", acc);
-      }
-    },
-    [seedTx, seedAcc],
-  );
   const p = await ctx.newPage();
   const viewportErrors = [];
   p.on("pageerror", (e) => viewportErrors.push(e.message));

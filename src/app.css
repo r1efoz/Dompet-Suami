@@ -6,22 +6,83 @@
 
   --color-paper: var(--paper);
   --color-card: var(--card);
+  --color-chip: var(--chip);
+  --color-line: var(--line);
   --color-ink: var(--ink);
   --color-ink2: var(--ink-2);
-  --color-line: var(--line);
   --color-accent: var(--accent);
+  --color-accent-fill: var(--accent-fill);
+  --color-accent-soft: var(--accent-soft);
+  --color-pos: var(--pos);
+  --color-pos-fill: var(--pos-fill);
+  --color-pos-soft: var(--pos-soft);
+  --color-pos-on-dark: var(--pos-on-dark);
+  --color-neg-on-dark: var(--neg-on-dark);
+  --color-on-accent: var(--on-accent);
+  --color-on-ink: var(--on-ink);
+  --color-acard-ink: var(--acard-ink-bg);
+  --color-on-acard-ink: var(--on-acard-ink);
+  --color-overlay: rgb(255 255 255 / 0.18);
+
+  --radius-card: 14px;
+  --radius-field: 10px;
+  --radius-btn: 12px;
+  --radius-acard: 18px;
+  --radius-sheet: 20px;
+  --radius-ico: 10px;
+  --radius-seg: 8px;
+  --radius-fab: 16px;
+  --radius-pill: 999px;
+
+  --shadow-seg: 0 1px 2px rgb(0 0 0 / 0.08);
 }
 
 :root {
   color-scheme: light;
-
-  --paper: #f1f1ee;
-  --card: #fafaf8;
-  --ink: #15181a;
-  --ink-2: #565d61;
-  --line: #d5d8d4;
-  --accent: #a83417;
-
+  --p-paper-100: #f4f3ef;
+  --p-paper-0: #ffffff;
+  --p-sand-100: #ebe9e2;
+  --p-sand-200: #dedcd5;
+  --p-ink-900: #15181a;
+  --p-ink-600: #5c6267;
+  --p-ink-400: #a0a6a2;
+  --p-coal-900: #101312;
+  --p-coal-800: #191d1b;
+  --p-coal-700: #232826;
+  --p-coal-600: #2c322f;
+  --p-mist-100: #eceeec;
+  --p-orange-700: #c04415;
+  --p-orange-600: #d9541e;
+  --p-orange-400: #ee7a4a;
+  --p-orange-300: #ffa67c;
+  --p-orange-50: #fdefe8;
+  --p-orange-950: #33211a;
+  --p-sage-700: #25764a;
+  --p-sage-400: #5cbb86;
+  --p-sage-300: #8fd7af;
+  --p-sage-50: #e6f4ec;
+  --p-sage-950: #1b2d23;
+  --paper: var(--p-paper-100);
+  --card: var(--p-paper-0);
+  --chip: var(--p-sand-100);
+  --line: var(--p-sand-200);
+  --ink: var(--p-ink-900);
+  --ink-2: var(--p-ink-600);
+  --accent: var(--p-orange-700);
+  --accent-fill: var(--p-orange-600);
+  --accent-soft: var(--p-orange-50);
+  --pos: var(--p-sage-700);
+  --pos-fill: var(--p-sage-400);
+  --pos-soft: var(--p-sage-50);
+  --on-accent: #ffffff;
+  --acard-ink-bg: var(--p-ink-900);
+  --on-acard-ink: var(--p-paper-100);
+  --pos-on-dark: var(--p-sage-300);
+  --neg-on-dark: var(--p-orange-300);
+  --on-ink: var(--p-paper-100);
+  --shadow-fab: 0 8px 20px rgb(217 84 30 / .35);
+  --shadow-sheet: 0 -10px 40px rgb(0 0 0 / .18);
+  --scrim: rgb(0 0 0 / .35);
   --btn-bg: var(--ink);
   --btn-fg: var(--paper);
 }
@@ -29,16 +90,27 @@
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-
-    --paper: #101312;
-    --card: #171b19;
-    --ink: #ebeeec;
-    --ink-2: #a2a8a4;
-    --line: #2b312e;
-    --accent: #e07a5b;
-
+    --paper: var(--p-coal-900);
+    --card: var(--p-coal-800);
+    --chip: var(--p-coal-700);
+    --line: var(--p-coal-600);
+    --ink: var(--p-mist-100);
+    --ink-2: var(--p-ink-400);
+    --accent: var(--p-orange-400);
+    --accent-fill: var(--p-orange-400);
+    --accent-soft: var(--p-orange-950);
+    --pos: var(--p-sage-400);
+    --pos-fill: var(--p-sage-400);
+    --pos-soft: var(--p-sage-950);
+    --on-accent: var(--p-coal-900);
+    --acard-ink-bg: var(--p-coal-700);
+    --on-acard-ink: var(--p-mist-100);
+    --on-ink: var(--p-coal-900);
+    --shadow-fab: 0 8px 20px rgb(0 0 0 / .5);
+    --shadow-sheet: 0 -10px 40px rgb(0 0 0 / .6);
+    --scrim: rgb(0 0 0 / .6);
     --btn-bg: var(--ink);
-    --btn-fg: #101312;
+    --btn-fg: var(--p-coal-900);
   }
 }
 
@@ -108,6 +180,33 @@
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.02em;
+  }
+
+  .lbl {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    line-height: 1.4;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink-2);
+  }
+
+  .h {
+    margin: 22px 0 10px;
+  }
+
+  .rail {
+    scrollbar-width: none;
+  }
+
+  .rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .dots {
+    display: flex;
+    justify-content: center;
   }
 
   .label {
