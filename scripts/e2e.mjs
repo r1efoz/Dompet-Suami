@@ -42,11 +42,15 @@ const amount = page.locator("#entry-amount");
 const entryTabs = page.getByRole("tablist", { name: "Jenis transaksi" });
 const reportTabs = page.getByRole("tablist", { name: "Jenis laporan" });
 
+const toastOf = (text) => page.getByRole("status").getByText(text);
+
 // 1. Income
+check("mode default Keluar", (await entryTabs.getByRole("tab", { name: "Keluar" }).getAttribute("aria-selected")) === "true");
+await entryTabs.getByRole("tab", { name: "Masuk" }).click();
 await amount.fill("5000000");
 await page.locator("#entry-description").fill("Gaji bulanan");
 await page.getByRole("button", { name: "Simpan pemasukan" }).click();
-await page.locator("[aria-live]").getByText("Pemasukan dicatat.").waitFor();
+await toastOf("Pemasukan dicatat.").waitFor();
 
 // 2. Transfer bank -> cash
 await entryTabs.getByRole("tab", { name: "Transfer" }).click();
@@ -54,15 +58,34 @@ await amount.fill("1000000");
 await page.locator("#entry-source").selectOption("bank");
 await page.locator("#entry-destination").selectOption("cash");
 await page.getByRole("button", { name: "Pindahkan dana" }).click();
-await page.locator("[aria-live]").getByText("Transfer dicatat.").waitFor();
+await toastOf("Transfer dicatat.").waitFor();
+
+// 2b. Transfer ke akun yang sama ditolak
+await amount.fill("1000");
+await page.locator("#entry-destination").selectOption("bank");
+await page.getByRole("button", { name: "Pindahkan dana" }).click();
+check("transfer akun sama ditolak", await page.getByText("Akun tujuan harus berbeda.").isVisible());
 
 // 3. Expense from cash
-await entryTabs.getByRole("tab", { name: "Pengeluaran" }).click();
+await entryTabs.getByRole("tab", { name: "Keluar" }).click();
 await amount.fill("250000");
 await page.locator("#entry-source").selectOption("cash");
 await page.locator("#entry-description").fill("Belanja pasar");
 await page.getByRole("button", { name: "Simpan pengeluaran" }).click();
-await page.locator("[aria-live]").getByText("Pengeluaran dicatat.").waitFor();
+await toastOf("Pengeluaran dicatat.").waitFor();
+
+// 3b. Hapus lewat sheet detail → konfirmasi
+await amount.fill("1000");
+await page.locator("#entry-description").fill("Uji hapus");
+await page.getByRole("button", { name: "Simpan pengeluaran" }).click();
+await toastOf("Pengeluaran dicatat.").waitFor();
+await page.getByText("Uji hapus", { exact: true }).click();
+const detail = page.getByRole("dialog");
+check("detail sheet punya tombol Hapus", await detail.getByRole("button", { name: "Hapus", exact: true }).isVisible());
+await detail.getByRole("button", { name: "Hapus", exact: true }).click();
+await page.getByRole("dialog").getByRole("button", { name: "Hapus permanen" }).click();
+await toastOf("Transaksi dihapus.").waitFor();
+check("baris terhapus tanpa reload", (await page.getByText("Uji hapus", { exact: true }).count()) === 0);
 
 await page.waitForTimeout(400);
 

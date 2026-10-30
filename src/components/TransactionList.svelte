@@ -1,126 +1,228 @@
 <script lang="ts">
-  import { accounts, deleteTransaction, editingTransaction, transactions } from '../lib/store';
-  import { formatDate, formatIDR } from '../lib/format';
+  import { accounts, categories, deleteTransaction, editingTransaction, transactions } from '../lib/store';
+  import { formatCompact, formatIDR } from '../lib/format';
+  import { filterHistory, groupByDay } from '../lib/history';
+  import { showToast } from '../lib/ui';
+  import type { Transaction } from '../models/Transaction';
+  import Button from './ui/Button.svelte';
+  import Card from './ui/Card.svelte';
+  import Chips from './ui/Chips.svelte';
+  import ConfirmDialog from './ui/ConfirmDialog.svelte';
+  import ListItem from './ui/ListItem.svelte';
+  import Sheet from './ui/Sheet.svelte';
 
   type Filter = 'all' | 'income' | 'expense' | 'transfer';
+  type Range = 'month' | 'last' | 'three' | 'all';
 
-  const filters: { id: Filter; label: string }[] = [
+  const filters = [
     { id: 'all', label: 'Semua' },
-    { id: 'income', label: 'Masuk' },
     { id: 'expense', label: 'Keluar' },
+    { id: 'income', label: 'Masuk' },
     { id: 'transfer', label: 'Transfer' }
   ];
+  const ranges: { id: Range; label: string }[] = [
+    { id: 'month', label: 'Bulan ini' },
+    { id: 'last', label: 'Bulan lalu' },
+    { id: 'three', label: '3 bulan' },
+    { id: 'all', label: 'Semua' }
+  ];
+  const PAGE = 50;
 
   let filter: Filter = 'all';
-  let deletingId = '';
-  let error = '';
+  let range: Range = 'month';
+  let query = '';
+  let limit = PAGE;
+  let rangeOpen = false;
+  let detail: Transaction | null = null;
+  let deleting: Transaction | null = null;
 
-  async function removeTransaction(id: string) {
-    try {
-      await deleteTransaction(id);
-      deletingId = '';
-      error = '';
-    } catch (err) {
-      error = err instanceof Error ? err.message : 'Gagal menghapus transaksi.';
+  const accountName = (id: string | undefined) => $accounts.find((account) => account.id === id)?.name ?? id ?? '';
+  const categoryName = (id: string | undefined) => $categories.find((category) => category.id === id)?.name ?? '';
+  const dayKey = (date: Date) => date.toLocaleDateString('en-CA');
+
+  function inRange(tx: Transaction, kind: Range): boolean {
+    if (kind === 'all') return true;
+    const now = new Date();
+    const time = new Date(tx.timestamp);
+    if (kind === 'month') return time.getFullYear() === now.getFullYear() && time.getMonth() === now.getMonth();
+    if (kind === 'last') {
+      const last = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      return time.getFullYear() === last.getFullYear() && time.getMonth() === last.getMonth();
     }
+    return time >= new Date(now.getFullYear(), now.getMonth() - 2, 1);
   }
 
-  $: ordered = [...$transactions].sort(
-    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-  );
+  function matches(tx: Transaction, text: string): boolean {
+    const needle = text.trim().toLocaleLowerCase();
+    return !needle || [tx.description, categoryName(tx.categoryId), accountName(tx.source), accountName(tx.destination)].some((value) => value.toLocaleLowerCase().includes(needle));
+  }
 
-  $: visible = ordered.filter((tx) => {
-    if (filter === 'all') return true;
-    if (filter === 'transfer') return Boolean(tx.transferId);
-    if (filter === 'income') return tx.type === 'income' && !tx.transferId;
-    return tx.type === 'expense' && !tx.transferId;
-  });
+  $: typed = filterHistory($transactions.filter((tx) => inRange(tx, range)), { filter });
+  $: filtered = typed.filter((tx) => matches(tx, query));
+  $: ordered = filtered.filter((tx) => !tx.transferId || tx.type === 'expense').sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime() || b.id.localeCompare(a.id));
+  $: days = groupByDay(ordered);
+  $: total = days.reduce((sum, day) => sum + day.transactions.length, 0);
+  $: shown = limitDays(days, limit);
+  $: filtering = Boolean(query.trim()) || filter !== 'all';
+  $: if (filter || range || query) limit = PAGE;
 
-  $: shown = visible.slice(0, 50);
+  function limitDays(source: typeof days, max: number) {
+    let left = max;
+    const out: typeof days = [];
+    for (const day of source) {
+      if (left <= 0) break;
+      out.push({ ...day, transactions: day.transactions.slice(0, left) });
+      left -= day.transactions.length;
+    }
+    return out;
+  }
 
-  $: accountName = (id: string) => $accounts.find((account) => account.id === id)?.name ?? id;
+  function dayLabel(date: string): string {
+    const parsed = new Date(`${date}T12:00:00`);
+    const short = parsed.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+    if (date === dayKey(new Date())) return `Hari ini, ${short}`;
+    if (date === dayKey(new Date(Date.now() - 86400000))) return `Kemarin, ${short}`;
+    return parsed.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short' });
+  }
+
+  function titleOf(tx: Transaction): string {
+    return tx.description || categoryName(tx.categoryId) || 'Tanpa keterangan';
+  }
+
+  function tone(tx: Transaction): 'income' | 'expense' | 'transfer' {
+    return tx.transferId ? 'transfer' : tx.type;
+  }
+
+  function amountOf(tx: Transaction): string {
+    if (tx.transferId) return formatCompact(tx.type === 'expense' ? pairAmount(tx) : tx.amount);
+    return `${tx.type === 'income' ? '+' : '−'}${formatCompact(tx.amount)}`;
+  }
+
+  function pairAmount(tx: Transaction): number {
+    const match = tx.description.match(/\(biaya Rp\s*([\d.]+)\)/);
+    return tx.amount - (match ? Number(match[1].replace(/\./g, '')) : 0);
+  }
+
+  function subtitleOf(tx: Transaction): string {
+    return tx.transferId ? `${accountName(tx.source)} → ${accountName(tx.destination)}` : [categoryName(tx.categoryId), accountName(tx.source)].filter(Boolean).join(' · ');
+  }
+
+  function signed(value: number): string {
+    return value === 0 ? '0' : `${value > 0 ? '+' : '−'}${formatCompact(value)}`;
+  }
+
+  function edit() {
+    if (!detail) return;
+    editingTransaction.set(detail);
+    detail = null;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    requestAnimationFrame(() => document.getElementById('entry-amount')?.focus());
+  }
+
+  function askDelete() {
+    deleting = detail;
+    detail = null;
+  }
+
+  async function confirmDelete() {
+    if (!deleting) return;
+    try {
+      await deleteTransaction(deleting.id);
+      showToast('Transaksi dihapus.');
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : 'Gagal menghapus transaksi.', 'err');
+    }
+    deleting = null;
+  }
 </script>
 
-<section aria-labelledby="ledger-heading">
-  <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
-    <h2 id="ledger-heading" class="text-[15px] text-ink">Riwayat</h2>
-    <span class="font-mono text-[11px] text-ink2">{visible.length} entri</span>
+<section aria-label="Riwayat transaksi" class="min-w-0">
+  <div class="flex items-baseline justify-between">
+    <h3 id="ledger-heading" class="text-[15px] leading-[1.3] font-semibold">Riwayat</h3>
+    <span class="text-[11.5px] text-ink2">{total} entri</span>
   </div>
 
-  {#if error}
-    <p class="mt-2 font-mono text-[12px] text-accent" role="alert">{error}</p>
-  {/if}
-
-  <div class="mt-2 flex gap-3 border-b border-line" role="tablist" aria-label="Filter transaksi">
-    {#each filters as item (item.id)}
-      <button type="button" role="tab" aria-selected={filter === item.id} class="tab text-[13px] px-3" on:click={() => (filter = item.id)}>
-        {item.label}
-      </button>
-    {/each}
+  <div class="mt-2.5">
+    <input
+      type="search"
+      bind:value={query}
+      placeholder="🔍 Cari keterangan…"
+      aria-label="Cari keterangan"
+      class="h-10 w-full rounded-field border border-line bg-card px-3 text-[14px] leading-[1.45] text-ink hover:border-ink2 focus:border-ink focus:ring-1 focus:ring-ink focus:outline-none"
+    />
   </div>
 
-  {#if deletingId}
-    {@const selected = $transactions.find((tx) => tx.id === deletingId)}
-    <div class="fixed inset-0 z-50 grid place-items-center bg-black/40 p-5" role="presentation">
-      <div class="w-full max-w-sm border border-line bg-paper p-5" role="alertdialog" aria-modal="true" aria-labelledby="delete-title" aria-describedby="delete-description" tabindex="-1">
-        <h3 id="delete-title" class="text-[15px] text-ink">Hapus transaksi?</h3>
-        <p id="delete-description" class="mt-2 text-[13px] text-ink2">
-          {selected?.transferId ? 'Kedua catatan transfer akan dihapus.' : 'Transaksi ini akan dihapus permanen.'}
-        </p>
-        <div class="mt-5 flex justify-end gap-4">
-          <button type="button" class="btn-quiet" on:click={() => (deletingId = '')}>Batal</button>
-          <button type="button" class="min-h-11 text-[13px] font-medium text-accent underline underline-offset-4" on:click={() => removeTransaction(deletingId)}>Hapus permanen</button>
-        </div>
+  <div class="mt-2.5 flex items-center gap-2" role="group" aria-label="Filter transaksi">
+    <div class="min-w-0 flex-1"><Chips items={filters} value={filter} onChange={(id) => (filter = id as Filter)} /></div>
+    <button type="button" class="shrink-0 whitespace-nowrap rounded-pill border border-line bg-card px-3 py-[7px] text-[12.5px] text-ink" on:click={() => (rangeOpen = true)}>{ranges.find((item) => item.id === range)?.label} ▾</button>
+  </div>
+
+  {#if total === 0}
+    <div class="mt-4"><Card>
+      <div class="py-10 text-center">
+        <p class="text-[14px] leading-[1.45]">{filtering ? 'Tidak ada yang cocok.' : 'Belum ada transaksi.'}</p>
+        <p class="mt-1 text-[11.5px] leading-[1.4] text-ink2">{filtering ? 'Ubah filter atau kata kunci.' : 'Isi formulir di atas untuk mulai.'}</p>
       </div>
-    </div>
-  {/if}
-
-  {#if visible.length === 0}
-    <div class="border-b border-line py-12 text-center">
-      <p class="text-[14px] text-ink">Belum ada transaksi.</p>
-      <p class="mt-1 font-mono text-[11px] text-ink2">Isi formulir di atas untuk mulai.</p>
-    </div>
+    </Card></div>
   {:else}
-    <table class="w-full text-left">
-      <caption class="sr-only">Transaksi terbaru beserta jumlah dan sumber dana</caption>
-      <thead>
-        <tr class="cell-rule font-mono text-[11px] text-ink2">
-          <th scope="col" class="py-2 font-normal">Tanggal</th>
-          <th scope="col" class="py-2 font-normal">Keterangan</th>
-          <th scope="col" class="hidden py-2 font-normal sm:table-cell">Sumber</th>
-          <th scope="col" class="py-2 text-right font-normal">Jumlah</th>
-          <th scope="col" class="py-2 text-right font-normal">Aksi</th>
-        </tr>
-      </thead>
-      <tbody>
-        {#each shown as tx (tx.id)}
-          <tr class="cell-rule">
-            <td class="num whitespace-nowrap py-2.5 pr-4 text-[12px] text-ink2">{formatDate(tx.timestamp)}</td>
-            <td class="py-2.5 pr-4 text-[13px] text-ink">
-              {tx.description}
-              <span class="mt-0.5 block font-mono text-[11px] text-ink2 sm:hidden">{accountName(tx.source)}</span>
-            </td>
-            <td class="hidden py-2.5 pr-4 font-mono text-[11px] text-ink2 sm:table-cell">{accountName(tx.source)}</td>
-            <td class="num whitespace-nowrap py-2.5 text-right text-[13px] font-medium {tx.type === 'income' ? 'text-ink' : 'text-accent'}">
-              {tx.type === 'income' ? '+' : '−'}{formatIDR(tx.amount)}
-            </td>
-            <td class="py-2.5 pl-3 text-right">
-              {#if !tx.transferId || tx.type === 'expense'}
-                <div class="flex justify-end gap-3">
-                  <button type="button" class="min-h-11 text-[12px] text-ink2 underline underline-offset-2 hover:text-ink" aria-label="Edit transaksi {tx.description}" on:click={() => editingTransaction.set(tx)}>Edit</button>
-                  <button type="button" class="min-h-11 text-[12px] text-accent underline underline-offset-2" aria-label="Hapus transaksi {tx.description}" on:click={() => (deletingId = tx.id)}>Hapus</button>
-                </div>
-              {/if}
-            </td>
-          </tr>
+    {#each shown as day (day.date)}
+      <div class="mt-4 mb-1 flex justify-between text-[11.5px] leading-[1.4] text-ink2">
+        <span>{dayLabel(day.date)}</span>
+        <span class="num">{signed(day.subtotal)}</span>
+      </div>
+      <Card dense>
+        {#each day.transactions as tx (tx.id)}
+          <button type="button" class="block w-full text-left" aria-label="Detail {titleOf(tx)}" on:click={() => (detail = tx)}>
+            <ListItem icon={tx.transferId ? '↔' : tx.type === 'income' ? '↓' : '↑'} title={titleOf(tx)} subtitle={subtitleOf(tx)} amount={amountOf(tx)} tone={tone(tx)} />
+          </button>
         {/each}
-      </tbody>
-    </table>
-
-    {#if visible.length > shown.length}
-      <p class="border-b border-line py-2.5 text-center font-mono text-[11px] text-ink2">
-        50 entri terbaru dari {visible.length}
-      </p>
+      </Card>
+    {/each}
+    {#if total > shown.reduce((sum, day) => sum + day.transactions.length, 0)}
+      <div class="mt-3"><Button variant="ghost" on:click={() => (limit += PAGE)}><span class="block w-full">Tampilkan {PAGE} lagi</span></Button></div>
     {/if}
   {/if}
 </section>
+
+<Sheet open={rangeOpen} title="Periode" on:close={() => (rangeOpen = false)}>
+  <div class="mt-2">
+    {#each ranges as item (item.id)}
+      <button type="button" class="block w-full text-left" on:click={() => { range = item.id; rangeOpen = false; }}>
+        <ListItem title={item.label} amount={range === item.id ? '✓' : ''} />
+      </button>
+    {/each}
+  </div>
+</Sheet>
+
+<Sheet open={Boolean(detail)} title={detail ? titleOf(detail) : ''} on:close={() => (detail = null)}>
+  {#if detail}
+    <p class="mt-1 text-[11.5px] leading-[1.4] text-ink2">{new Date(detail.timestamp).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' })}</p>
+    <p class="num mt-2 text-[18px] font-semibold">{detail.transferId ? formatIDR(detail.type === 'expense' ? pairAmount(detail) : detail.amount) : `${detail.type === 'income' ? '+' : '−'}${formatIDR(detail.amount)}`}</p>
+    <dl class="mt-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-[13px] leading-[1.45]">
+      <dt class="text-ink2">Akun</dt><dd class="text-right">{accountName(detail.source)}</dd>
+      {#if detail.transferId}
+        <dt class="text-ink2">Ke</dt><dd class="text-right">{accountName(detail.destination)}</dd>
+        <dt class="text-ink2">Biaya</dt><dd class="num text-right">{formatIDR(detail.type === 'expense' ? detail.amount - pairAmount(detail) : 0)}</dd>
+      {:else}
+        <dt class="text-ink2">Kategori</dt><dd class="text-right">{categoryName(detail.categoryId) || '-'}</dd>
+      {/if}
+    </dl>
+    <div class="mt-4 grid grid-cols-2 gap-2">
+      {#if !detail.transferId || detail.type === 'expense'}
+        <Button variant="ink" on:click={edit}>Edit</Button>
+      {:else}
+        <span></span>
+      {/if}
+      <Button variant="soft-danger" on:click={askDelete}>Hapus</Button>
+    </div>
+  {/if}
+</Sheet>
+
+<ConfirmDialog
+  open={Boolean(deleting)}
+  title="Hapus transaksi?"
+  description={deleting?.transferId ? 'Kedua catatan transfer akan dihapus.' : 'Transaksi ini akan dihapus permanen.'}
+  confirmLabel="Hapus permanen"
+  on:close={() => (deleting = null)}
+  on:click={confirmDelete}
+/>

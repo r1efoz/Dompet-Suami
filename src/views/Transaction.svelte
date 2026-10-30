@@ -3,7 +3,7 @@
   import TransactionList from '../components/TransactionList.svelte';
 </script>
 
-<div class="space-y-10">
+<div class="grid min-w-0 gap-7 lg:grid-cols-[560px_1fr]">
   <EntryForm />
   <TransactionList />
 </div>

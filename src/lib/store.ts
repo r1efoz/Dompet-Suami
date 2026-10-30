@@ -154,7 +154,8 @@ export async function recordTransfer(
   from: string,
   to: string,
   amount: number,
-  adminFee: number = 0
+  adminFee: number = 0,
+  timestamp: string = new Date().toISOString()
 ): Promise<void> {
   if (from === to) throw new Error('Sumber dan tujuan sama.');
   requireAccount(from);
@@ -166,7 +167,6 @@ export async function recordTransfer(
   }
 
   const transferId = newId('tr');
-  const timestamp = new Date().toISOString();
   const fromName = get(accounts).find((a) => a.id === from)?.name ?? from;
   const toName = get(accounts).find((a) => a.id === to)?.name ?? to;
 

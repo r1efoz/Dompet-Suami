@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "check": "tsx scripts/ledger.check.ts && tsx src/lib/transaction-edit.check.ts && tsx src/lib/transaction-delete.check.ts && tsx src/lib/transaction-mapping.check.ts && tsx src/lib/format.check.ts && tsx src/lib/insights.check.ts && tsx src/lib/dashboard.check.ts",
+    "check": "tsx scripts/ledger.check.ts && tsx src/lib/transaction-edit.check.ts && tsx src/lib/transaction-delete.check.ts && tsx src/lib/transaction-mapping.check.ts && tsx src/lib/format.check.ts && tsx src/lib/insights.check.ts && tsx src/lib/dashboard.check.ts && tsx src/lib/history.check.ts",
     "test:ui": "node scripts/e2e.mjs"
   },
   "devDependencies": {

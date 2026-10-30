@@ -1,27 +1,34 @@
 <script lang="ts">
-  import { accounts, balances, categories, editingTransaction, recordEntry, recordTransfer, updateEntry, updateTransfer } from '../lib/store';
+  import { accounts, balances, categories, editingTransaction, recordEntry, recordTransfer, transactions, updateEntry, updateTransfer } from '../lib/store';
   import { formatIDR, formatNumber } from '../lib/format';
+  import { categoryUsageOrder } from '../lib/history';
+  import { showToast } from '../lib/ui';
+  import Button from './ui/Button.svelte';
+  import Card from './ui/Card.svelte';
+  import Chips from './ui/Chips.svelte';
+  import Segmented from './ui/Segmented.svelte';
 
   type Mode = 'income' | 'expense' | 'transfer';
 
   const modes: { id: Mode; label: string }[] = [
-    { id: 'income', label: 'Pemasukan' },
-    { id: 'expense', label: 'Pengeluaran' },
+    { id: 'expense', label: 'Keluar' },
+    { id: 'income', label: 'Masuk' },
     { id: 'transfer', label: 'Transfer' }
   ];
+  const fieldClass = 'h-[46px] rounded-field border border-line bg-card px-3 text-[14px] leading-[1.45] text-ink w-full focus:border-ink focus:ring-1 focus:ring-ink focus:outline-none';
 
-  let mode: Mode = 'income';
+  const today = () => new Date().toLocaleDateString('en-CA');
+
+  let mode: Mode = 'expense';
   let amount = '';
   let description = '';
   let source = 'bank';
   let destination = 'cash';
   let categoryId = '';
   let adminFee = '';
-  let transactionDate = new Date().toISOString().slice(0, 10);
+  let transactionDate = today();
 
   let error = '';
-  let success = '';
-  let timer: ReturnType<typeof setTimeout>;
   let loadedEditId = '';
   $: editing = $editingTransaction;
   $: if ($editingTransaction && loadedEditId !== $editingTransaction.id) {
@@ -34,7 +41,8 @@
     destination = tx.transferId && tx.type === 'expense' ? tx.destination ?? 'cash' : tx.source;
     categoryId = tx.categoryId ?? '';
     adminFee = String(tx.transferId && tx.type === 'expense' ? transferFee(tx) : 0);
-    transactionDate = tx.timestamp.slice(0, 10);
+    transactionDate = new Date(tx.timestamp).toLocaleDateString('en-CA');
+    error = '';
   }
 
   function transferFee(tx: import('../models/Transaction').Transaction): number {
@@ -53,30 +61,34 @@
     return formatNumber(num);
   }
 
+  function dateLabel(value: string): string {
+    const date = new Date(`${value}T12:00:00`);
+    const short = date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+    const diff = Math.round((new Date(`${today()}T12:00:00`).getTime() - date.getTime()) / 86400000);
+    if (diff === 0) return `Hari ini, ${short}`;
+    if (diff === 1) return `Kemarin, ${short}`;
+    return date.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' });
+  }
+
   $: amountDisplay = amount ? formatInput(amount) : '';
   $: adminFeeDisplay = adminFee ? formatInput(adminFee) : '';
   $: submitLabel =
     mode === 'income' ? 'Simpan pemasukan' : mode === 'expense' ? 'Simpan pengeluaran' : 'Pindahkan dana';
+  $: categoryItems = categoryUsageOrder($categories.filter((c) => c.type === mode), $transactions).map((c) => ({ id: c.id, label: c.name }));
+  $: placeholder = mode === 'income' ? 'Gaji bulanan' : mode === 'expense' ? 'Beli LPG' : 'Tarik tunai ATM';
 
-  function notify(message: string, kind: 'success' | 'error') {
-    clearTimeout(timer);
-    success = kind === 'success' ? message : '';
-    error = kind === 'error' ? message : '';
-    timer = setTimeout(() => {
-      success = '';
-      error = '';
-    }, 4000);
-  }
-
-  function switchMode(next: Mode) {
-    mode = next;
-    error = '';
-    success = '';
+  function reset() {
     amount = '';
     description = '';
-    categoryId = '';
     adminFee = '';
-    transactionDate = new Date().toISOString().slice(0, 10);
+    error = '';
+  }
+
+  function switchMode(next: string) {
+    mode = next as Mode;
+    reset();
+    categoryId = '';
+    transactionDate = today();
     editingTransaction.set(null);
     loadedEditId = '';
   }
@@ -84,17 +96,24 @@
   function cancelEdit() {
     editingTransaction.set(null);
     loadedEditId = '';
-    amount = '';
-    adminFee = '';
-    description = '';
+    reset();
     categoryId = '';
-    transactionDate = new Date().toISOString().slice(0, 10);
+    transactionDate = today();
   }
 
   async function handleSubmit(event: SubmitEvent) {
     event.preventDefault();
     const value = parseInput(amount);
     const fee = parseInput(adminFee);
+    error = '';
+    if (!(value > 0)) {
+      error = 'Jumlah harus lebih besar dari nol.';
+      return;
+    }
+    if (mode === 'transfer' && source === destination) {
+      error = 'Akun tujuan harus berbeda.';
+      return;
+    }
 
     try {
       const timestamp = new Date(`${transactionDate}T12:00:00`).toISOString();
@@ -104,152 +123,131 @@
         else await updateEntry(input);
         editingTransaction.set(null);
         loadedEditId = '';
-        notify('Perubahan disimpan.', 'success');
+        showToast('Perubahan disimpan.');
       } else if (mode === 'transfer') {
-        await recordTransfer(source, destination, value, fee);
-        notify('Transfer dicatat.', 'success');
+        await recordTransfer(source, destination, value, fee, timestamp);
+        showToast('Transfer dicatat.');
       } else {
         await recordEntry({ type: mode, amount: value, description, source, categoryId, timestamp });
-        notify(mode === 'income' ? 'Pemasukan dicatat.' : 'Pengeluaran dicatat.', 'success');
+        showToast(mode === 'income' ? 'Pemasukan dicatat.' : 'Pengeluaran dicatat.');
       }
       amount = '';
       adminFee = '';
       description = '';
     } catch (err) {
-      notify(err instanceof Error ? err.message : 'Gagal menyimpan.', 'error');
+      showToast(err instanceof Error ? err.message : 'Gagal menyimpan.', 'err');
     }
   }
 </script>
 
-<section class="border-t border-line pt-5" aria-labelledby="entry-heading">
-  <h2 id="entry-heading" class="text-[15px] text-ink">Catat transaksi</h2>
+<section aria-labelledby="entry-heading" class="min-w-0">
+  <h2 id="entry-heading" class="text-[20px] leading-[1.2] font-semibold">{editing ? 'Ubah transaksi' : 'Catat transaksi, Pak'}</h2>
 
-  <div class="mt-2 flex gap-3 border-b border-line" role="tablist" aria-label="Jenis transaksi">
-    {#each modes as item (item.id)}
-      <button
-        type="button"
-        role="tab"
-        aria-selected={mode === item.id}
-        class="tab text-[13px] px-3"
-        on:click={() => switchMode(item.id)}
-      >
-        {item.label}
-      </button>
-    {/each}
+  <div class="mt-4">
+    <Segmented ariaLabel="Jenis transaksi" items={modes} value={mode} onChange={switchMode} />
   </div>
 
-  <form class="mt-5 space-y-4" on:submit={handleSubmit} novalidate>
+  <form class="mt-4 space-y-4" on:submit={handleSubmit} novalidate>
     <div>
-      <label class="label" for="entry-date">Tanggal</label>
-      <input id="entry-date" class="field mt-1.5" type="date" bind:value={transactionDate} />
-    </div>
-    <div>
-      <label class="label" for="entry-amount">Jumlah, rupiah</label>
-      <div class="relative mt-1.5">
-        <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center font-mono text-[12px] text-ink2">Rp</span>
-        <input
-          id="entry-amount"
-          class="field num pl-10 text-[15px]"
-          type="text"
-          inputmode="numeric"
-          placeholder="0"
-          value={amountDisplay}
-          on:input={(e) => {
-            const target = e.target as HTMLInputElement;
-            const raw = target.value.replace(/\./g, '');
-            amount = raw;
-            target.value = formatInput(raw);
-          }}
-          aria-describedby={error ? 'entry-error' : undefined}
-          aria-invalid={error ? 'true' : undefined}
-          class:is-invalid={Boolean(error)}
-        />
-      </div>
-    </div>
-
-    <div class="grid gap-4 sm:grid-cols-2">
-      <div>
-        <label class="label" for="entry-source">{mode === 'transfer' ? 'Dari' : 'Sumber dana'}</label>
-        <select id="entry-source" class="field mt-1.5" bind:value={source}>
-          {#each $accounts as account (account.id)}
-            <option value={account.id}>{account.name} · {formatIDR($balances[account.id] ?? 0)}</option>
-          {/each}
-        </select>
-      </div>
-
-      {#if mode === 'transfer'}
-        <div>
-          <label class="label" for="entry-destination">Ke</label>
-          <select id="entry-destination" class="field mt-1.5" bind:value={destination}>
-            {#each $accounts as account (account.id)}
-              <option value={account.id}>{account.name} · {formatIDR($balances[account.id] ?? 0)}</option>
-            {/each}
-          </select>
-        </div>
-        <div>
-          <label class="label" for="entry-fee">Biaya admin</label>
-          <div class="relative mt-1.5">
-            <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center font-mono text-[12px] text-ink2">Rp</span>
+      <Card>
+        <div class="py-[22px] text-center">
+          <label class="lbl block" for="entry-amount">JUMLAH</label>
+          <div class="mt-1 flex items-center justify-center gap-1.5">
+            <span class="text-[18px] text-ink2">Rp</span>
             <input
-              id="entry-fee"
-              class="field num pl-10 text-[15px]"
+              id="entry-amount"
+              class="num w-full min-w-0 bg-transparent text-center text-[36px] font-semibold tracking-[-0.03em] outline-none"
               type="text"
               inputmode="numeric"
               placeholder="0"
-              value={adminFeeDisplay}
+              value={amountDisplay}
               on:input={(e) => {
                 const target = e.target as HTMLInputElement;
                 const raw = target.value.replace(/\./g, '');
-                adminFee = raw;
+                amount = raw;
                 target.value = formatInput(raw);
               }}
+              aria-describedby={error ? 'entry-error' : undefined}
+              aria-invalid={error ? 'true' : undefined}
             />
           </div>
         </div>
-      {:else}
-        <div class="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label class="label" for="entry-category">Kategori</label>
-            <select id="entry-category" class="field mt-1.5" bind:value={categoryId}>
-              <option value="">-</option>
-              {#each $categories.filter(c => c.type === mode) as cat (cat.id)}
-                <option value={cat.id}>{cat.name}</option>
-              {/each}
-            </select>
-          </div>
-          <div>
-            <label class="label" for="entry-description">Keterangan</label>
-            <input
-              id="entry-description"
-              class="field mt-1.5"
-              type="text"
-              placeholder={mode === 'income' ? 'Gaji bulanan' : 'Belanja pasar'}
-              bind:value={description}
-            />
-          </div>
+      </Card>
+      {#if error && error.startsWith('Jumlah')}<p id="entry-error" class="mt-1.5 text-[11.5px] leading-[1.4] text-accent" role="alert">{error}</p>{/if}
+    </div>
+
+    {#if mode !== 'transfer'}
+      <div>
+        <span class="lbl mb-2 block">KATEGORI</span>
+        <div id="entry-category">
+          <Chips items={categoryItems} value={categoryId} onChange={(id) => (categoryId = categoryId === id ? '' : id)} />
         </div>
-      {/if}
+        <input type="hidden" name="categoryId" value={categoryId} />
+      </div>
+    {/if}
+
+    <div>
+      <div class="mb-2 flex items-baseline justify-between">
+        <label class="lbl" for="entry-source">{mode === 'transfer' ? 'DARI' : 'DARI AKUN'}</label>
+        <span class="num text-[11.5px] text-ink2">{formatIDR($balances[source] ?? 0)}</span>
+      </div>
+      <select id="entry-source" class={fieldClass} bind:value={source}>
+        {#each $accounts as account (account.id)}
+          <option value={account.id}>{account.name} · {formatIDR($balances[account.id] ?? 0)}</option>
+        {/each}
+      </select>
     </div>
 
     {#if mode === 'transfer'}
       <div>
-        <label class="label" for="entry-note">Catatan, opsional</label>
-        <input id="entry-note" class="field mt-1.5" type="text" placeholder="Tarik tunai ATM" bind:value={description} />
+        <label class="lbl mb-2 block" for="entry-destination">KE</label>
+        <select id="entry-destination" class={fieldClass} bind:value={destination}>
+          {#each $accounts as account (account.id)}
+            <option value={account.id}>{account.name} · {formatIDR($balances[account.id] ?? 0)}</option>
+          {/each}
+        </select>
+        {#if error && !error.startsWith('Jumlah')}<p id="entry-error" class="mt-1.5 text-[11.5px] leading-[1.4] text-accent" role="alert">{error}</p>{/if}
+      </div>
+      <div>
+        <label class="lbl mb-2 block" for="entry-fee">BIAYA ADMIN</label>
+        <div class="relative">
+          <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-[14px] text-ink2">Rp</span>
+          <input
+            id="entry-fee"
+            class="{fieldClass} num pl-10"
+            type="text"
+            inputmode="numeric"
+            placeholder="0"
+            value={adminFeeDisplay}
+            on:input={(e) => {
+              const target = e.target as HTMLInputElement;
+              const raw = target.value.replace(/\./g, '');
+              adminFee = raw;
+              target.value = formatInput(raw);
+            }}
+          />
+        </div>
       </div>
     {/if}
 
-    <div class="flex gap-2">
-      <button type="submit" class="btn-primary">{editing ? 'Simpan perubahan' : submitLabel}</button>
-      {#if editing}
-        <button type="button" class="btn-quiet" on:click={cancelEdit}>Batal</button>
-      {/if}
+    <div class="grid grid-cols-2 gap-2.5">
+      <div>
+        <span class="lbl mb-2 block">TANGGAL</span>
+        <div class="relative">
+          <div class="{fieldClass} flex items-center">{dateLabel(transactionDate)}</div>
+          <input id="entry-date" class="absolute inset-0 h-full w-full opacity-0" type="date" aria-label="Tanggal" bind:value={transactionDate} />
+        </div>
+      </div>
+      <div>
+        <label class="lbl mb-2 block" for="entry-description">KETERANGAN</label>
+        <input id="entry-description" class={fieldClass} type="text" {placeholder} bind:value={description} />
+      </div>
     </div>
 
-    <div aria-live="polite">
-      {#if error}
-        <p id="entry-error" class="font-mono text-[12px] text-accent">{error}</p>
-      {:else if success}
-        <p class="font-mono text-[12px] text-ink2">{success}</p>
+    <div>
+      <Button variant="primary" type="submit">{editing ? 'Simpan perubahan' : submitLabel}</Button>
+      {#if editing}
+        <div class="mt-2"><button type="button" class="h-11 w-full rounded-btn bg-chip text-[14px] font-medium text-ink2" on:click={cancelEdit}>Batal</button></div>
       {/if}
     </div>
   </form>
