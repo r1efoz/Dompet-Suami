@@ -20,13 +20,17 @@ fi
 render() { sed -e "s/{N}/$N/g" -e "s|{EXTRA}|$2|" "$1"; }
 ts() { date '+%Y-%m-%d %H:%M'; }
 
-OC_SESSION="revamp-task-$N-$(date +%s)"
+OC_SESSION="ses_revamp_task${N}_$(date +%s)"  # OpenCode mewajibkan awalan "ses"
 if [ "$SKIP_WORK" = 1 ]; then
   echo "[task $N] SKIP_WORK=1 — lewati pengerjaan, langsung review HEAD"
 else
   echo "[task $N] OpenCode mengerjakan…"
-  opencode run --title "Revamp Tugas $N" --session "$OC_SESSION" --auto "$(render scripts/revamp/task-prompt.md "$EXTRA")" \
+  HEAD_BEFORE="$(git rev-parse HEAD)"
+  opencode run --title "Revamp Tugas $N" --session "$OC_SESSION" --auto "$(render scripts/revamp/task-prompt.md "$EXTRA")" 2>&1 \
     | tee "$REV_DIR/task-$N-opencode-r0.log"
+  OC_EXIT="${PIPESTATUS[0]}"
+  if [ "$OC_EXIT" != 0 ]; then echo "[task $N] ABORT: opencode run keluar dengan kode $OC_EXIT (lihat log)."; exit 3; fi
+  if [ "$(git rev-parse HEAD)" = "$HEAD_BEFORE" ]; then echo "[task $N] ABORT: OpenCode tidak menghasilkan commit baru; tidak ada yang direview."; exit 3; fi
 fi
 
 for ROUND in $(seq 0 "$MAX_FIX"); do
@@ -47,7 +51,9 @@ for ROUND in $(seq 0 "$MAX_FIX"); do
   [ "$ROUND" -ge "$MAX_FIX" ] && break
   echo "[task $N] OpenCode memperbaiki…"
   FIX_MSG="Review independen MENOLAK Tugas $N. Isi review ada di $OUT — baca seluruhnya. Perbaiki setiap butir di bagian Temuan tanpa melanggar aturan yang sama, jalankan ulang verifikasi tugas, tempel outputnya, commit perbaikan sebagai commit baru dengan pesan 'fix(revamp): task $N review round $((ROUND+1))', tambah 1 baris Log, lalu BERHENTI."
-  opencode run --session "$OC_SESSION" --auto "$FIX_MSG" | tee "$REV_DIR/task-$N-opencode-r$((ROUND+1)).log"
+  HEAD_BEFORE="$(git rev-parse HEAD)"
+  opencode run --session "$OC_SESSION" --auto "$FIX_MSG" 2>&1 | tee "$REV_DIR/task-$N-opencode-r$((ROUND+1)).log"
+  if [ "$(git rev-parse HEAD)" = "$HEAD_BEFORE" ]; then echo "[task $N] ABORT: OpenCode tidak meng-commit perbaikan."; exit 3; fi
 done
 
 [ "$STARTED_DEV" = 1 ] && pkill -f "vite.*--port 5173" >/dev/null 2>&1

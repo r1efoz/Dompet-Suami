@@ -60,3 +60,7 @@ Format: `YYYY-MM-DD HH:MM — Tugas N — status — catatan singkat (perintah v
 
 - 2026-10-30 14:26 — Workflow — skrip otomatis `scripts/revamp/task.sh` dan `all.sh` dibuat (OpenCode kerja → Claude headless review → OpenCode perbaiki). Lihat docs/handoff/opencode-prompt.md bagian "Mode otomatis".
 - 2026-10-30 14:34 — Tugas 2 — review Claude putaran 0 — VERDICT: ACCEPT — detail: docs/handoff/reviews/task-2-review-r0.md
+- 2026-10-30 14:35 — Tugas 3 — review Claude putaran 0 — VERDICT: REJECT — detail: docs/handoff/reviews/task-3-review-r0.md
+- 2026-10-30 14:36 — Tugas 3 — review Claude putaran 1 — VERDICT: REJECT — detail: docs/handoff/reviews/task-3-review-r1.md
+- 2026-10-30 14:36 — Tugas 3 — review Claude putaran 2 — VERDICT: REJECT — detail: docs/handoff/reviews/task-3-review-r2.md
+- 2026-10-30 14:38 — Tugas 3 — dua REJECT di atas palsu: `opencode run` gagal start (id sesi wajib berawalan `ses`), tidak ada commit Tugas 3, reviewer menilai HEAD yang salah. task.sh diperbaiki: id sesi `ses_…`, stderr ikut log, abort bila OpenCode tidak menghasilkan commit.
