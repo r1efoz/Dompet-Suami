@@ -240,6 +240,23 @@ await freshPage.getByLabel("Kata sandi baru").fill("fresh-pass-456");
 await freshPage.getByRole("button", { name: "Simpan dan lanjut" }).click();
 await freshPage.locator('nav[aria-label="Navigasi atas"]').waitFor();
 check("setelah set sandi masuk aplikasi", true);
+
+// Account menu (top right): change password, then sign out.
+await freshPage.getByRole("button", { name: "Menu akun" }).click();
+check("menu akun menampilkan email", await freshPage.getByRole("menu").getByText(FRESH.email).isVisible());
+await freshPage.getByRole("menuitem", { name: "Ubah kata sandi" }).click();
+await freshPage.getByLabel("Kata sandi baru").fill("fresh-pass-456");
+await freshPage.getByRole("dialog").getByRole("button", { name: "Simpan" }).click();
+await freshPage.getByText("Kata sandi baru harus berbeda dari yang lama.").waitFor();
+check("sandi sama ditolak", true);
+errors.length = 0; // supabase answers the rejected update with a 422
+await freshPage.getByLabel("Kata sandi baru").fill("fresh-pass-789");
+await freshPage.getByRole("dialog").getByRole("button", { name: "Simpan" }).click();
+await freshPage.getByRole("status").getByText("Kata sandi diubah.").waitFor();
+await freshPage.getByRole("button", { name: "Menu akun" }).click();
+await freshPage.getByRole("menuitem", { name: "Keluar" }).click();
+await freshPage.getByRole("button", { name: "Masuk", exact: true }).waitFor();
+check("keluar kembali ke halaman masuk", true);
 await freshCtx.close();
 
 // Task 10: PWA assets (Vite dev answers HTML 200 for any path, so inspect content).

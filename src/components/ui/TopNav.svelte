@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { currentView, type View } from '../../lib/ui';
   import Pill from './Pill.svelte';
+  import AccountMenu from '../AccountMenu.svelte';
   let desktop = typeof window !== 'undefined' && window.matchMedia('(min-width:1024px)').matches;
   onMount(() => {
     const query = window.matchMedia('(min-width:1024px)');
@@ -25,6 +26,7 @@
         {/each}
       </nav>
       <button type="button" on:click={() => currentView.set('transaction')}><Pill variant="ink">+ Catat</Pill></button>
+      <AccountMenu />
     </div>
   </header>
 {/if}

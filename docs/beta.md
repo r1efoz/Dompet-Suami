@@ -17,6 +17,14 @@ Alternatif tanpa email: **Add user → Create new user**, centang Auto Confirm, 
 
 ## Lupa kata sandi
 
+Tanpa SMTP, tautan email tidak sampai. Atur ulang manual di SQL Editor (ganti email dan kata sandi sementara, lalu minta pengguna mengubahnya lewat menu logo ayam → Ubah kata sandi):
+
+```sql
+update auth.users set encrypted_password = crypt('SandiSementara123', gen_salt('bf')) where email = 'teman@example.com';
+```
+
+Dengan SMTP aktif, pengguna cukup memakai tautan di bawah.
+
 Di halaman masuk, isi email lalu ketuk "Lupa kata sandi?". Tautan membawa pengguna ke layar buat kata sandi baru.
 
 ## Batas beta

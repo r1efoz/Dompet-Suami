@@ -4,6 +4,7 @@
   import { buildInsights } from '../lib/insights';
   import { formatCompact, formatIDR } from '../lib/format';
   import { APP_OWNER_NAME, currentView, reportState } from '../lib/ui';
+  import AccountMenu from '../components/AccountMenu.svelte';
   import AccountRail from '../components/ui/AccountRail.svelte';
   import BarChart from '../components/ui/BarChart.svelte';
   import Card from '../components/ui/Card.svelte';
@@ -35,7 +36,7 @@
 <div class="grid min-w-0 gap-0 lg:grid-cols-12 lg:gap-x-5">
   <header class="mb-5 flex items-center justify-between lg:col-span-12 lg:mb-2">
     <div><div class="lbl">{monthName}</div><h1 class="text-[20px] leading-[1.2] font-semibold">Halo, {APP_OWNER_NAME}</h1></div>
-    <span class="grid h-10 w-10 place-items-center rounded-full bg-accent-soft lg:hidden"><img src="/logo.svg" alt="" width="26" height="26" /></span>
+    <div class="lg:hidden"><AccountMenu /></div>
   </header>
   <section class="lg:col-span-12">
     <div class="flex flex-wrap items-end justify-between gap-2"><div><div class="lbl">TOTAL SEMUA AKUN</div><div class="flex flex-wrap items-center gap-2"><span data-testid="home-total" data-value={$totalBalance} class="num text-[28px] leading-[1.1] font-semibold tracking-[-0.03em] lg:text-[34px]">{formatIDR($totalBalance)}</span>{#if delta !== 0}<Pill variant={delta > 0 ? 'pos' : 'neg'}>{delta > 0 ? '▲' : '▼'} {formatCompact(delta)} bulan ini</Pill>{/if}</div></div>
