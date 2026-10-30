@@ -9,7 +9,7 @@ alter table shares enable row level security;
 
 drop policy if exists "Owner manages share" on shares;
 create policy "Owner manages share" on shares for all to authenticated
-  using (owner_id = auth.uid()) with check (owner_id = auth.uid());
+  using (owner_id = auth.uid()) with check (owner_id = auth.uid() and owner_email = (auth.jwt() ->> 'email'));
 drop policy if exists "Spouse sees share" on shares;
 create policy "Spouse sees share" on shares for select to authenticated
   using (lower(spouse_email) = lower(auth.jwt() ->> 'email'));
