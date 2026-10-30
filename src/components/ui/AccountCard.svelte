@@ -10,7 +10,7 @@
   export let monthLabel: string;
 </script>
 
-<button type="button" on:click class="relative flex min-h-[150px] w-[280px] min-w-[280px] shrink-0 flex-col overflow-hidden rounded-acard p-4 px-[18px] text-left transition-transform duration-[80ms] active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-ink focus-visible:outline-offset-2 {tone === 'ink' ? 'bg-acard-ink text-on-acard-ink' : tone === 'accent' ? 'bg-accent text-on-accent' : 'border border-line bg-card text-ink'}">
+<button type="button" on:click class="relative flex min-h-[150px] w-[280px] min-w-[280px] shrink-0 snap-start flex-col overflow-hidden rounded-acard p-4 px-[18px] text-left transition-transform duration-[80ms] active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-ink focus-visible:outline-offset-2 {tone === 'ink' ? 'bg-acard-ink text-on-acard-ink' : tone === 'accent' ? 'bg-accent text-on-accent' : 'border border-line bg-card text-ink'}">
   {#if tone !== 'card'}<span class="pointer-events-none absolute -right-[30px] -top-[30px] h-[120px] w-[120px] rounded-full bg-overlay" aria-hidden="true"></span>{/if}
   <span class="relative flex items-center justify-between gap-2">
     <span class="truncate text-[13.5px] font-semibold">{account.icon ?? (account.type === 'bank' ? '🏦' : account.type === 'cash' ? '💵' : '💳')} {account.name}</span>
