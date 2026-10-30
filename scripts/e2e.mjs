@@ -1,5 +1,6 @@
 import { chromium } from "playwright";
 import { execSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 
 execSync('psql -h 127.0.0.1 -p 55322 -U postgres -d postgres -v ON_ERROR_STOP=1 -f supabase/seed.e2e.sql', { env: { ...process.env, PGPASSWORD: 'postgres' }, stdio: 'inherit' });
 
@@ -34,7 +35,30 @@ page.on("request", (req) => {
   }
 });
 
+// Auth: local-only test user (signup is open on the local stack), then log in through the UI.
+const envLocal = Object.fromEntries(readFileSync(".env.local", "utf8").split("\n").filter((l) => l.includes("=")).map((l) => [l.slice(0, l.indexOf("=")).trim(), l.slice(l.indexOf("=") + 1).trim()]));
+const SB_URL = envLocal.VITE_SUPABASE_URL;
+const SB_KEY = envLocal.VITE_SUPABASE_ANON_KEY;
+const E2E_USER = { email: "e2e@example.com", password: "e2e-pass-123" };
+await fetch(`${SB_URL}/auth/v1/signup`, { method: "POST", headers: { apikey: SB_KEY, "content-type": "application/json" }, body: JSON.stringify(E2E_USER) });
+const anonRows = await (await fetch(`${SB_URL}/rest/v1/accounts?select=id`, { headers: { apikey: SB_KEY } })).json();
+check("anon tidak bisa membaca akun", Array.isArray(anonRows) && anonRows.length === 0, JSON.stringify(anonRows).slice(0, 80));
+
 await page.goto("http://localhost:5173/", { waitUntil: "networkidle" });
+check("tanpa sesi tampil halaman masuk", await page.getByRole("button", { name: "Masuk", exact: true }).isVisible());
+check("tanpa sesi nav tidak tampil", (await page.locator('nav[aria-label="Navigasi atas"]').count()) === 0);
+await page.getByLabel("Email").fill(E2E_USER.email);
+await page.getByLabel("Kata sandi").fill("salah-total");
+await page.getByRole("button", { name: "Masuk", exact: true }).click();
+await page.getByText("Email atau kata sandi salah.").waitFor();
+check("sandi salah ditolak", true);
+errors.length = 0; // the 400 from the deliberate bad login is expected
+await page.getByLabel("Kata sandi").fill(E2E_USER.password);
+await page.getByRole("button", { name: "Masuk", exact: true }).click();
+await page.locator('nav[aria-label="Navigasi atas"]').waitFor();
+const authState = await context.storageState();
+const newContext = browser.newContext.bind(browser);
+browser.newContext = (opts = {}) => newContext({ storageState: authState, ...opts });
 await page.locator('nav[aria-label="Navigasi atas"]').getByRole("button", { name: "Transaksi", exact: true }).click();
 await page.waitForTimeout(500);
 
@@ -179,6 +203,8 @@ check("akun terhapus", (await accSection.getByText("Dompet Uji", { exact: true }
 await page.reload();
 await topNav.getByRole("button", { name: "Master", exact: true }).click();
 check("akun terhapus setelah reload", (await page.getByText("Dompet Uji", { exact: true }).count()) === 0);
+
+check("Master punya tombol Keluar", await page.getByRole("button", { name: "Keluar", exact: true }).isVisible());
 
 // Task 10: PWA assets (Vite dev answers HTML 200 for any path, so inspect content).
 const mf = await page.request.get("http://localhost:5173/manifest.webmanifest");

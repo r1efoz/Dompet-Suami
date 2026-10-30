@@ -4,7 +4,9 @@
   import Master from './views/Master.svelte';
   import Transaction from './views/Transaction.svelte';
   import Report from './views/Report.svelte';
+  import Login from './views/Login.svelte';
   import { loadInitialData } from './lib/store';
+  import { session } from './lib/auth';
   import { currentView } from './lib/ui';
   import BottomNav from './components/ui/BottomNav.svelte';
   import TopNav from './components/ui/TopNav.svelte';
@@ -19,12 +21,18 @@
     query.addEventListener('change', update);
     return () => query.removeEventListener('change', update);
   });
-  onMount(async () => {
-    try { await loadInitialData(); }
-    catch (err) { console.error('Gagal memuat data awal:', err); }
-  });
+  let loadedFor = '';
+  $: if ($session && $session.user.id !== loadedFor) {
+    loadedFor = $session.user.id;
+    loadInitialData().catch((err) => console.error('Gagal memuat data awal:', err));
+  }
 </script>
 
+{#if $session === undefined}
+  <div class="min-h-dvh bg-paper"></div>
+{:else if $session === null}
+  <div class="min-h-dvh bg-paper text-ink"><Login /></div>
+{:else}
 <div class="min-h-dvh bg-paper text-ink">
   {#if desktop}<TopNav />{/if}
   <OfflineBanner />
@@ -37,3 +45,4 @@
   {#if !desktop}<Fab /><BottomNav />{/if}
   <Toast />
 </div>
+{/if}

@@ -44,25 +44,15 @@ create index idx_transactions_timestamp on transactions(timestamp);
 create index idx_transactions_source on transactions(source);
 create index idx_transactions_transfer_id on transactions(transfer_id);
 
--- Row Level Security (RLS) — diaktifkan, semua publik boleh akses (single-user, tanpa auth)
+-- Row Level Security: hanya pengguna yang sudah login (Supabase Auth) yang boleh akses.
 alter table accounts enable row level security;
+create policy "Authenticated all accounts" on accounts for all to authenticated using (true) with check (true);
+
 alter table categories enable row level security;
+create policy "Authenticated all categories" on categories for all to authenticated using (true) with check (true);
+
 alter table transactions enable row level security;
-
-create policy "Public read accounts" on accounts for select using (true);
-create policy "Public insert accounts" on accounts for insert with check (true);
-create policy "Public update accounts" on accounts for update using (true);
-create policy "Public delete accounts" on accounts for delete using (true);
-
-create policy "Public read categories" on categories for select using (true);
-create policy "Public insert categories" on categories for insert with check (true);
-create policy "Public update categories" on categories for update using (true);
-create policy "Public delete categories" on categories for delete using (true);
-
-create policy "Public read transactions" on transactions for select using (true);
-create policy "Public insert transactions" on transactions for insert with check (true);
-create policy "Public update transactions" on transactions for update using (true);
-create policy "Public delete transactions" on transactions for delete using (true);
+create policy "Authenticated all transactions" on transactions for all to authenticated using (true) with check (true);
 
 -- Catatan: Jika ingin menambahkan autentikasi (per-user data), tambahkan kolom user_id uuid
 -- ke setiap tabel dan ganti kebijakan RLS dengan auth.uid() = user_id.
