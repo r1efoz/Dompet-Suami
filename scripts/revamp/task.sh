@@ -27,9 +27,9 @@ run_worker() {
   local mode="$1" msg="$2"
   if [ "$WORKER" = agy ]; then
     if [ "$mode" = new ]; then
-      agy -p "$msg" --mode auto --sandbox --settings scripts/revamp/agy-settings.json --model "$AGY_MODEL" --output-format text 2>&1
+      agy -p "$msg" --sandbox --settings scripts/revamp/agy-settings.json --model "$AGY_MODEL" --output-format text 2>&1
     else
-      agy --continue -p "$msg" --mode auto --sandbox --settings scripts/revamp/agy-settings.json --model "$AGY_MODEL" --output-format text 2>&1
+      agy --continue -p "$msg" --sandbox --settings scripts/revamp/agy-settings.json --model "$AGY_MODEL" --output-format text 2>&1
     fi
   else
     if [ "$mode" = new ]; then
@@ -48,21 +48,24 @@ if [ "$SKIP_WORK" = 1 ]; then
   echo "[task $N] SKIP_WORK=1 — lewati pengerjaan, langsung review HEAD"
 else
   echo "[task $N] $WORKER mengerjakan…"
+  AGY_NOTE=""
+  if [ "$WORKER" = agy ]; then
+    AGY_NOTE="PENTING untuk sesi headless ini: perintah shell yang TIDAK ada di daftar izin akan MEMBATALKAN seluruh sesi tanpa peringatan. Hanya pakai: git status/diff/log/show/add/commit/rm/mv, npm run check|build|test:ui, npx tsx <file>.check.ts, node scripts/make-icons.mjs, psql … -f supabase/*.sql, ls/cat/head/tail/grep/rg/wc/sed -n/find/echo/mkdir. Satu perintah per panggilan, tanpa &&/;/|. Untuk membaca/mengubah file pakai tool read/edit_file/write_file, bukan shell."
+  fi
   HEAD_BEFORE="$(git rev-parse HEAD)"
-  run_worker new "$(render scripts/revamp/task-prompt.md "$EXTRA")" \
+  run_worker new "$(render scripts/revamp/task-prompt.md "$EXTRA $AGY_NOTE")" \
     | tee "$REV_DIR/task-$N-opencode-r0.log"
   OC_EXIT="${PIPESTATUS[0]}"
-  # Provider gratis kadang putus di tengah (mis. "Unsupported model"). Coba lanjutkan sesi yang sama, maks 2 kali.
+  # Sesi bisa putus (provider gratis error) atau dibatalkan (agy: perintah di luar izin). Lanjutkan sesi yang sama, maks 2 kali.
   for RETRY in 1 2; do
-    [ "$OC_EXIT" = 0 ] && break
-    echo "[task $N] opencode keluar kode $OC_EXIT; tunggu 30 detik lalu lanjutkan sesi (percobaan $RETRY/2)…"
-    sleep 30
-    run_worker continue "Sesi terputus karena error penyedia model. Lanjutkan Tugas $N persis dari tempat berhenti: periksa git status dan file yang sudah kamu ubah, jangan ulangi dari nol, selesaikan sampai commit dan Log, lalu BERHENTI." \
+    if [ "$OC_EXIT" = 0 ] && [ "$(git rev-parse HEAD)" != "$HEAD_BEFORE" ]; then break; fi
+    echo "[task $N] belum ada commit (exit $OC_EXIT); tunggu 20 detik lalu lanjutkan sesi (percobaan $RETRY/2)…"
+    sleep 20
+    run_worker continue "Sesi sebelumnya terputus atau dibatalkan (kemungkinan error penyedia model, atau perintah shell di luar daftar izin). Lanjutkan Tugas $N persis dari tempat berhenti: jalankan git status --short, lihat file yang sudah berubah, jangan ulangi dari nol, selesaikan sampai commit dan Log, lalu BERHENTI. $AGY_NOTE" \
       | tee -a "$REV_DIR/task-$N-opencode-r0.log"
     OC_EXIT="${PIPESTATUS[0]}"
   done
-  if [ "$OC_EXIT" != 0 ]; then echo "[task $N] ABORT: opencode run keluar dengan kode $OC_EXIT setelah 2 percobaan lanjut (lihat log)."; exit 3; fi
-  if [ "$(git rev-parse HEAD)" = "$HEAD_BEFORE" ]; then echo "[task $N] ABORT: OpenCode tidak menghasilkan commit baru; tidak ada yang direview."; exit 3; fi
+  if [ "$(git rev-parse HEAD)" = "$HEAD_BEFORE" ]; then echo "[task $N] ABORT: $WORKER tidak menghasilkan commit baru setelah 2 percobaan lanjut (lihat log)."; exit 3; fi
 fi
 
 for ROUND in $(seq 0 "$MAX_FIX"); do
