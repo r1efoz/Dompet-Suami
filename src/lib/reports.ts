@@ -175,7 +175,8 @@ export function monthlyTable(transactions: Transaction[], year: number): { rows:
 /** Quote a cell only when it holds a comma, quote or newline. */
 export function toCsv(rows: (string | number)[][]): string {
   const cell = (v: string | number) => {
-    const s = String(v);
+    // text cells that spreadsheets would evaluate as formulas get a leading quote; numbers stay as is
+    const s = typeof v === 'string' && /^[=+\-@\t\r]/.test(v) ? `'${v}` : String(v);
     return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
   };
   return rows.map((r) => r.map(cell).join(',')).join('\r\n');

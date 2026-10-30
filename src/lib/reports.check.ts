@@ -92,6 +92,9 @@ assert.equal(octRange.prevStart.getMonth(), 8, 'prev month is September');
 const csv = toCsv([['a', 'b"c'], ['x,y', 'z']]);
 assert.equal(csv, 'a,"b""c"\r\n"x,y",z');
 
+// formula injection: text cells starting with = + - @ get a leading quote; numbers untouched
+assert.equal(toCsv([['=1+1', '@x', -5, 'ok']]), "'=1+1,'@x,-5,ok");
+
 // --- Test 5: buildLedger with opening ---
 const bankTx = transactions.filter((t) => t.source === 'bank');
 const ledgerWithOpening = buildLedger(bankTx, 'bank', 1000);
