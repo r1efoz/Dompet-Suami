@@ -4,10 +4,8 @@
   import { filterHistory, groupByDay } from '../lib/history';
   import { showToast } from '../lib/ui';
   import type { Transaction } from '../models/Transaction';
-  import Button from './ui/Button.svelte';
   import Card from './ui/Card.svelte';
   import Chips from './ui/Chips.svelte';
-  import ConfirmDialog from './ui/ConfirmDialog.svelte';
   import ListItem from './ui/ListItem.svelte';
   import Sheet from './ui/Sheet.svelte';
 
@@ -27,6 +25,7 @@
     { id: 'all', label: 'Semua' }
   ];
   const PAGE = 50;
+  const btn = 'active:translate-y-px focus-visible:outline-2 focus-visible:outline-ink focus-visible:outline-offset-2';
 
   let filter: Filter = 'all';
   let range: Range = 'month';
@@ -179,7 +178,7 @@
       </Card>
     {/each}
     {#if total > shown.reduce((sum, day) => sum + day.transactions.length, 0)}
-      <div class="mt-3"><Button variant="ghost" on:click={() => (limit += PAGE)}><span class="block w-full">Tampilkan {PAGE} lagi</span></Button></div>
+      <div class="mt-3"><button type="button" class="{btn} h-11 w-full rounded-btn bg-chip text-ink2 font-medium text-[14px]" on:click={() => (limit += PAGE)}>Tampilkan {PAGE} lagi</button></div>
     {/if}
   {/if}
 </section>
@@ -209,20 +208,19 @@
     </dl>
     <div class="mt-4 grid grid-cols-2 gap-2">
       {#if !detail.transferId || detail.type === 'expense'}
-        <Button variant="ink" on:click={edit}>Edit</Button>
+        <button type="button" class="{btn} h-11 rounded-btn bg-ink text-on-ink font-semibold text-[14px]" on:click={edit}>Edit</button>
       {:else}
         <span></span>
       {/if}
-      <Button variant="soft-danger" on:click={askDelete}>Hapus</Button>
+      <button type="button" class="{btn} h-11 rounded-btn bg-accent-soft text-accent font-semibold text-[14px]" on:click={askDelete}>Hapus</button>
     </div>
   {/if}
 </Sheet>
 
-<ConfirmDialog
-  open={Boolean(deleting)}
-  title="Hapus transaksi?"
-  description={deleting?.transferId ? 'Kedua catatan transfer akan dihapus.' : 'Transaksi ini akan dihapus permanen.'}
-  confirmLabel="Hapus permanen"
-  on:close={() => (deleting = null)}
-  on:click={confirmDelete}
-/>
+<Sheet open={Boolean(deleting)} title="Hapus transaksi?" on:close={() => (deleting = null)}>
+  <p class="text-[13px] leading-[1.45] text-ink2 mt-2">{deleting?.transferId ? 'Kedua catatan transfer akan dihapus.' : 'Transaksi ini akan dihapus permanen.'}</p>
+  <div class="grid grid-cols-2 gap-2 mt-4">
+    <button type="button" class="h-11 rounded-btn bg-chip text-ink2 text-[14px]" on:click={() => (deleting = null)}>Batal</button>
+    <button type="button" class="h-11 rounded-btn bg-accent-soft text-accent text-[14px]" on:click={confirmDelete}>Hapus permanen</button>
+  </div>
+</Sheet>
