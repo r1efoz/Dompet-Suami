@@ -6,7 +6,7 @@ Aplikasi pencatat pengeluaran rumah tangga (dompet pasangan) berbasis **Svelte 5
 
 | Layer | Teknologi |
 |-------|-----------|
-| Framework | Svelte 5 (runes) |
+| Framework | Svelte 5 (sintaks legacy) |
 | Bahasa | TypeScript |
 | Build tool | Vite 6 |
 | Styling | Tailwind CSS v4 |
@@ -19,40 +19,34 @@ Aplikasi pencatat pengeluaran rumah tangga (dompet pasangan) berbasis **Svelte 5
 
 ```
 src/
-├── main.ts                # Entry point
-├── App.svelte             # Router sederhana + loadInitialData() on mount
-├── app.css                # Tailwind + design tokens (--paper, --ink, --accent, dll.)
-├── models/
-│   ├── Account.ts         # { id, name, type }
-│   ├── Category.ts        # { id, name, type: 'income'|'expense' }
-│   └── Transaction.ts     # { id, type, amount, source, destination?, transferId?, timestamp }
+├── main.ts                # Entry point + registrasi service worker (hanya production)
+├── App.svelte             # Shell: nav atas/bawah, FAB, toast, view aktif
+├── app.css                # Tailwind v4 + token desain
+├── models/                # Account, Category, Transaction
 ├── lib/
-│   ├── store.ts           # Svelte stores + Supabase CRUD (accounts, categories, transactions)
-│   ├── supabase.ts        # Supabase client (createClient dengan VITE_SUPABASE_URL/ANON_KEY)
-│   ├── ledger.ts          # computeBalances, summarize, buildLedger, startOfMonth, monthlyTrend
-│   ├── dashboard.ts       # getDashboardData, monthlyTrend (12 bulan)
-│   ├── format.ts          # formatIDR, formatDate, formatSigned
-│   └── scripts/
-│       ├── ledger.check.ts        # 10 assertion tes unit (`npm run check`)
-│       └── e2e.mjs                # 14 check Playwright (`npm run test:ui`)
-├── views/
-│   ├── Home.svelte        # Dashboard (summary cards, PieChart, LineChart, Month Summary)
-│   ├── Master.svelte      # AccountsManager + CategoryManager
-│   ├── Transaction.svelte # EntryForm + TransactionList
-│   ├── Report.svelte      # Reports (Neraca + Buku Besar + filter rentang tanggal)
+│   ├── store.ts           # Svelte stores + Supabase CRUD
+│   ├── ledger.ts          # saldo, ringkasan, buku besar
+│   ├── dashboard.ts       # data Home (tren, kategori teratas)
+│   ├── insights.ts        # insight lokal Home
+│   ├── history.ts         # filter & grup riwayat
+│   ├── reports.ts         # periode, saldo akun, kategori, CSV
+│   ├── master.ts          # validasi nama, cek referensi
+│   └── *.check.ts         # tes logika (`npm run check`)
+├── views/                 # Home, Transaction, Report, Master
 └── components/
-    ├── Dashboard.svelte   # Konten halaman Home
-    ├── Reports.svelte     # Laporan: neraca saldo, buku besar, ekspor CSV, filter tanggal
-    ├── EntryForm.svelte   # Form pemasukan / pengeluaran / transfer
-    ├── TransactionList.svelte # Riwayat transaksi dengan filter tab
-    ├── AccountsManager.svelta # CRUD akun (bank, tunai, e-wallet)
-    ├── CategoryManager.svelta # CRUD kategori
-    ├── PieChart.svelte    # Grafik lingkaran pengeluaran per kategori (SVG murni)
-    └── LineChart.svelte   # Grafik garis trend pemasukan/pengeluaran 12 bulan (SVG murni)
+    ├── ui/                # komponen dasar (Card, Sheet, Chips, nav, dll.)
+    ├── report/            # tab Laporan
+    └── EntryForm, TransactionList, AccountsManager, CategoryManager, MasterSheet
 
-supabase/
-└── schema.sql             # Skema database Supabase (tabel, index, RLS)
+public/                    # logo.svg, manifest.webmanifest, sw.js, icons/
+scripts/                   # e2e.mjs (Playwright), make-icons.mjs
+supabase/                  # schema.sql, migrations/, seed.e2e.sql
+docs/                      # design.md, design-system.md, rencana & handoff revamp
 ```
+
+## PWA (pasang di layar utama)
+
+Build produksi (`npm run build && npm run preview`) mendaftarkan service worker. Android Chrome: menu ⋮ → *Install app* / *Add to Home screen*. iOS Safari: Bagikan → *Add to Home Screen*. Setelah dibuka dua kali, shell tampil offline (data tetap butuh koneksi). Ikon dibuat ulang dengan `node scripts/make-icons.mjs`.
 
 ## Perintah penting
 
@@ -60,8 +54,8 @@ supabase/
 npm run dev          # Jalankan dev server (http://localhost:5173/)
 npm run build        # Build produksi ke folder dist/
 npm run preview      # Preview hasil build secara lokal
-npm run check        # Tes unit ledger (10 assertion)
-npm run test:ui      # Tes E2E Playwright (14 check; butuh dev server berjalan di :5173)
+npm run check        # Tes logika (src/lib/*.check.ts)
+npm run test:ui      # Tes E2E Playwright (butuh dev server di :5173 dan Postgres lokal)
 ```
 
 ## Persistensi data (Supabase)
@@ -74,7 +68,7 @@ Data tersimpan di tabel Supabase:
 | `categories` | Daftar kategori (default: Gaji, Freelance, Makanan, Transport, Listrik/Air, Hiburan) |
 | `transactions` | Daftar transaksi (pemasukan, pengeluaran, transfer) |
 
-Data tetap utuh setelah reload halaman karena tersimpan di cloud Supabase. Untuk cadangan, gunakan fitur **Ekspor CSV** di halaman Laporan.
+Untuk cadangan, gunakan fitur **Ekspor CSV** di halaman Laporan.
 
 ## Skema database
 

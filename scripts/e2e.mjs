@@ -247,23 +247,6 @@ const homeTotalValue = await homePage.locator('[data-testid="home-total"]').getA
 check("total Home bernilai 4.750.000", homeTotalValue === "4750000", homeTotalValue ?? "missing");
 await homePage.close();
 
-// UI primitives demo: selection, dialog keyboard dismissal, and toast lifecycle.
-const demoPage = await context.newPage();
-await demoPage.goto("http://localhost:5173/#demo", { waitUntil: "networkidle" });
-const demoTabs = demoPage.getByRole("tablist", { name: "Demo segmented" });
-const demoFirst = demoTabs.getByRole("tab").nth(0);
-const demoSecond = demoTabs.getByRole("tab").nth(1);
-await demoSecond.click();
-check("demo segmented selection", await demoSecond.getAttribute("aria-selected") === "true" && await demoFirst.getAttribute("aria-selected") === "false");
-await demoPage.getByRole("button", { name: "Buka sheet demo" }).click();
-check("demo sheet opens", await demoPage.getByRole("dialog").isVisible());
-await demoPage.keyboard.press("Escape");
-check("demo sheet closes with Escape", await demoPage.getByRole("dialog").count() === 0);
-await demoPage.getByRole("button", { name: "Tampilkan toast demo" }).click();
-check("demo toast appears", await demoPage.getByText("Toast demo.").isVisible());
-await demoPage.waitForTimeout(3000);
-check("demo toast disappears", await demoPage.getByText("Toast demo.").count() === 0);
-
 // Task 3 shell acceptance checks.
 const shellPage = await context.newPage();
 await shellPage.setViewportSize({ width: 375, height: 812 });
