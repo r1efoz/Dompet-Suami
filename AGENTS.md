@@ -8,6 +8,7 @@ Project ini memakai akun Vercel r1efoz lewat `.envrc` (direnv). Selalu jalankan 
 - **Hosted:** project ref `utrcegxlfiktgoubrhaj` (nama "Dompet Suami"). **Hanya baca.** Jangan menjalankan migrasi, `supabase db push`, atau perintah tulis apa pun ke hosted; itu dilakukan pemilik repo.
 - Jangan membaca atau menampilkan `.env`, `.envrc`, `supabase/.temp/`. Nilai `VITE_SUPABASE_*` tidak boleh muncul di chat atau commit.
 - Perubahan skema ditulis di `supabase/schema.sql` dan dijalankan di lokal lewat `psql -h 127.0.0.1 -p 55322 -U postgres -d postgres`.
+- **`.env` menunjuk ke hosted** (dipakai Vercel). Untuk development dan e2e, `.env.local` (gitignored) meng-override ke `http://127.0.0.1:55321`. Jangan hapus `.env.local`. `scripts/e2e.mjs` punya guard yang membatalkan tes bila app mengarah ke host selain 127.0.0.1/localhost — jangan dilepas. Jika guard memicu, perbaiki `.env.local` dan restart `npm run dev`; **jangan** jalankan e2e ke hosted.
 
 ## Stack & konvensi
 - Svelte 5 dengan **sintaks legacy** (`export let`, `$:`, `on:click`). Jangan memakai runes.

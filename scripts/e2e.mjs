@@ -25,6 +25,15 @@ page.on(
   (m) => m.type() === "error" && errors.push(`console: ${m.text()}`),
 );
 
+// Guard: e2e menulis data. Hentikan sebelum menyentuh apa pun bila app tidak memakai Supabase lokal.
+page.on("request", (req) => {
+  const url = new URL(req.url());
+  if (url.pathname.startsWith("/rest/v1") && url.hostname !== "127.0.0.1" && url.hostname !== "localhost") {
+    console.error(`E2E DIBATALKAN: app mengarah ke ${url.origin}, bukan Supabase lokal. Periksa .env.local.`);
+    process.exit(2);
+  }
+});
+
 await page.goto("http://localhost:5173/", { waitUntil: "networkidle" });
 await page.getByRole("button", { name: "Transaksi" }).click();
 await page.waitForTimeout(500);
@@ -37,6 +46,7 @@ const reportTabs = page.getByRole("tablist", { name: "Jenis laporan" });
 await amount.fill("5000000");
 await page.locator("#entry-description").fill("Gaji bulanan");
 await page.getByRole("button", { name: "Simpan pemasukan" }).click();
+await page.locator("[aria-live]").getByText("Pemasukan dicatat.").waitFor();
 
 // 2. Transfer bank -> cash
 await entryTabs.getByRole("tab", { name: "Transfer" }).click();
@@ -44,6 +54,7 @@ await amount.fill("1000000");
 await page.locator("#entry-source").selectOption("bank");
 await page.locator("#entry-destination").selectOption("cash");
 await page.getByRole("button", { name: "Pindahkan dana" }).click();
+await page.locator("[aria-live]").getByText("Transfer dicatat.").waitFor();
 
 // 3. Expense from cash
 await entryTabs.getByRole("tab", { name: "Pengeluaran" }).click();
@@ -51,6 +62,7 @@ await amount.fill("250000");
 await page.locator("#entry-source").selectOption("cash");
 await page.locator("#entry-description").fill("Belanja pasar");
 await page.getByRole("button", { name: "Simpan pengeluaran" }).click();
+await page.locator("[aria-live]").getByText("Pengeluaran dicatat.").waitFor();
 
 await page.waitForTimeout(400);
 
@@ -135,6 +147,23 @@ async function shoot(name, width, height, colorScheme = "light") {
 await shoot("mobile", 390, 844);
 await shoot("tablet", 834, 1112);
 await shoot("dark", 1440, 1200, "dark");
+
+// UI primitives demo: selection, dialog keyboard dismissal, and toast lifecycle.
+const demoPage = await context.newPage();
+await demoPage.goto("http://localhost:5173/#demo", { waitUntil: "networkidle" });
+const demoTabs = demoPage.getByRole("tablist", { name: "Demo segmented" });
+const demoFirst = demoTabs.getByRole("tab").nth(0);
+const demoSecond = demoTabs.getByRole("tab").nth(1);
+await demoSecond.click();
+check("demo segmented selection", await demoSecond.getAttribute("aria-selected") === "true" && await demoFirst.getAttribute("aria-selected") === "false");
+await demoPage.getByRole("button", { name: "Buka sheet demo" }).click();
+check("demo sheet opens", await demoPage.getByRole("dialog").isVisible());
+await demoPage.keyboard.press("Escape");
+check("demo sheet closes with Escape", await demoPage.getByRole("dialog").count() === 0);
+await demoPage.getByRole("button", { name: "Tampilkan toast demo" }).click();
+check("demo toast appears", await demoPage.getByText("Toast demo.").isVisible());
+await demoPage.waitForTimeout(3000);
+check("demo toast disappears", await demoPage.getByText("Toast demo.").count() === 0);
 
 await browser.close();
 

@@ -5,6 +5,11 @@
   import Transaction from './views/Transaction.svelte';
   import Report from './views/Report.svelte';
   import { loadInitialData } from './lib/store';
+  import UiDemo from './views/UiDemo.svelte';
+  import { onMount as mount } from 'svelte';
+
+  let demo = false;
+  mount(() => { demo = window.location.hash === '#demo'; });
 
   const views = [
     { id: 'home', label: 'Home' },
@@ -53,6 +58,9 @@
     </div>
   </header>
 
+  {#if demo}
+    <UiDemo />
+  {:else}
   <main class="mx-auto max-w-[1180px] px-5 pb-14 pt-9 sm:px-6 sm:pt-11">
     {#if currentView === 'home'}
       <Home />
@@ -68,4 +76,5 @@
   <footer class="border-t border-line pt-4 font-mono text-[11px] leading-relaxed text-ink2">
     Data tersimpan di Supabase cloud. Unduh CSV untuk cadangan.
   </footer>
+  {/if}
 </div>

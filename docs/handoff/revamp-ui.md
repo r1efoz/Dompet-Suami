@@ -46,7 +46,7 @@ Dibuat: 2026-10-30 oleh Claude (sesi desain bersama Arief). Dikerjakan oleh: Ope
 
 ## Pertanyaan terbuka
 
-- Tugas 1 e2e tampaknya perlu lokal Postgres aktif karena seed dijalankan via `psql` pada awal `scripts/e2e.mjs`; memakai DB lokal port 55322, sesuai aturan project.
+- Tugas 1 e2e tampaknya perlu lokal Postgres aktif karena seed dijalankan via `psql` pada awal `scripts/e2e.mjs`; memakai DB lokal port 55322, sesuai aturan project. **Dijawab (Claude):** ya, Postgres lokal wajib aktif.
 
 ## Log
 
@@ -55,4 +55,6 @@ Format: `YYYY-MM-DD HH:MM — Tugas N — status — catatan singkat (perintah v
 - 2026-10-30 — Baseline — `npm run check`: `ledger self-check: 10 assertions passed`; `npm run build`: berhasil.
 - 2026-10-30 — Baseline e2e — `npm run test:ui`: merah, 5 check gagal (saldo bank/tunai dan mobile/tablet/dark data tampil); sesuai ekspektasi Tugas 1.
 - 2026-10-30 — Tugas 1 — selesai — check 5 file dan build berhasil; e2e deterministik hijau, 13 check lulus.
+- 2026-10-30 14:20 — Intervensi Claude — ditemukan `.env` mengarah ke Supabase hosted, sehingga e2e Tugas 1–2 menulis ke data asli (15 baris uji, sudah dihapus dari hosted berdasarkan ID). Perbaikan: `.env.local` (gitignored) → `http://127.0.0.1:55321`; guard di `scripts/e2e.mjs` membatalkan tes bila host bukan lokal; e2e menunggu teks konfirmasi (`…dicatat.`). Hasil verifikasi Tugas 2: 1 check gagal yang diizinkan, `mobile tanpa scroll horizontal` (464px; nav header lama, Tugas 3); semua check lain lolos. Perubahan e2e & AGENTS.md masuk commit Tugas 2.
+- 2026-10-30 — Tugas 2 — selesai — `npm run test:ui`: semua selain satu check mobile lama lolos, sesuai kriteria; `npm run build`: sukses.
 
