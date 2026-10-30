@@ -10,6 +10,7 @@ Aturan:
 - Ikuti urutan di tugas: tulis tes dulu → jalankan → tunjukkan outputnya merah → baru ubah kode → jalankan lagi → tunjukkan hijau. Tempelkan output perintah apa adanya, jangan diringkas.
 - Semua nilai (warna, ukuran, teks, rumus) sudah final di dokumen. Jangan menebak. Kalau dokumen tidak menyebut sesuatu, pilih tafsir paling sederhana yang tidak melanggar docs/design-system.md, lalu tulis tafsir itu di bagian "Pertanyaan terbuka" docs/handoff/revamp-ui.md.
 - Dilarang: menambah dependency, memakai runes Svelte, membaca .env/.envrc/supabase/.temp, menjalankan perintah apa pun ke Supabase hosted, memakai confirm()/alert(), menulis hex di file .svelte, melepas guard host di scripts/e2e.mjs.
+- Tool shell: SATU perintah per panggilan. Jangan gabungkan dengan `&&`, `;`, `|`, backtick, atau `$(…)` — gabungan seperti itu ditolak oleh kebijakan izin, bukan karena git/npm tidak tersedia. Jika sebuah perintah ditolak, ulangi dalam bentuk tunggal (`git status --short`, lalu `git log -1`, dst.). Menghapus file: `git rm <path>`.
 - Dev server sudah berjalan di http://localhost:5173 — jangan menjalankan `npm run dev` lagi.
 - Setelah "Selesai bila" semua tercentang: git add file tugas ini (plus docs/handoff/revamp-ui.md), commit dengan pesan yang tertulis di tugas, tambahkan 3–5 baris ke bagian "Log" di docs/handoff/revamp-ui.md dengan format yang ada, lalu BERHENTI. Jangan mulai tugas berikutnya.
 {EXTRA}
