@@ -13,7 +13,7 @@ Aplikasi invite-only: pendaftaran publik mati, tiap pengguna hanya melihat datan
 
 1. Jalankan `supabase/migrations/2026-10-31-shares.sql` di SQL Editor (sekali).
 2. Undang istri seperti pengguna biasa (Users → Add user → Send invitation) dan pastikan ia sudah bisa masuk.
-3. Di aplikasi: Master → **The Queen 👑** → isi email istri → Simpan. Istri masuk dengan akunnya sendiri dan melihat dompet suami dalam **mode lihat** (hanya baca, tanpa tombol catat/ubah). "Cabut akses" menghentikannya.
+3. Di aplikasi: menu logo ayam → **The Queen 👑** → isi email istri → Simpan. Istri masuk dengan akunnya sendiri dan melihat dompet suami dalam **mode lihat** (hanya baca, tanpa tombol catat/ubah). "Cabut akses" menghentikannya.
 
 Satu pengguna = satu istri. Template email undangan/reset ada di `docs/email-templates.md`.
 

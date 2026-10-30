@@ -262,9 +262,10 @@ check("keluar kembali ke halaman masuk", true);
 await freshCtx.close();
 
 // The Queen: owner shares read-only access with the wife (OTHER_USER), who logs in and only sees.
-check("Master punya seksi The Queen", await page.getByText("The Queen", { exact: false }).first().isVisible());
+await page.getByRole("button", { name: "Menu akun" }).click();
+await page.getByRole("menuitem", { name: "The Queen" }).click();
 await page.getByLabel("Email istri").fill(OTHER_USER.email);
-await page.getByRole("button", { name: "Simpan", exact: true }).click();
+await page.getByRole("dialog").getByRole("button", { name: "Simpan", exact: true }).click();
 await toastOf("Tersimpan.").waitFor();
 const wifeCtx = await newContext({ storageState: { cookies: [], origins: [] }, viewport: { width: 1440, height: 900 } });
 const wifePage = await wifeCtx.newPage();
@@ -289,6 +290,8 @@ const wifeHdr = { apikey: SB_KEY, authorization: `Bearer ${wifeTok}`, "content-t
 const wifeEdit = await (await fetch(`${SB_URL}/rest/v1/accounts?id=eq.bank`, { method: "PATCH", headers: wifeHdr, body: JSON.stringify({ name: "Diubah istri" }) })).json();
 check("RLS: istri tidak bisa mengubah data suami", Array.isArray(wifeEdit) && wifeEdit.length === 0, JSON.stringify(wifeEdit).slice(0, 80));
 await wifeCtx.close();
+await page.getByRole("button", { name: "Menu akun" }).click();
+await page.getByRole("menuitem", { name: "The Queen" }).click();
 await page.getByRole("button", { name: "Cabut akses" }).click();
 await toastOf("Akses dicabut.").waitFor();
 const afterRevoke = await (await fetch(`${SB_URL}/rest/v1/accounts?select=id`, { headers: wifeHdr })).json();

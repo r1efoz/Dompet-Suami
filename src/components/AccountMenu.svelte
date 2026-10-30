@@ -1,14 +1,18 @@
 <script lang="ts">
   import { session, setPassword, signOut } from '../lib/auth';
   import { showToast } from '../lib/ui';
+  import { viewer } from '../lib/queen';
   import Field from './ui/Field.svelte';
+  import QueenSheet from './QueenSheet.svelte';
   import Sheet from './ui/Sheet.svelte';
 
   let open = false;
   let sheet = false;
+  let queen = false;
   let password = '';
   let error = '';
 
+  function openQueen() { open = false; queen = true; }
   function openSheet() { open = false; password = ''; error = ''; sheet = true; }
 
   async function save() {
@@ -32,6 +36,7 @@
     <div role="menu" class="absolute right-0 top-12 z-30 w-[240px] rounded-card border border-line bg-card p-1.5 shadow-[var(--shadow-sheet)]" on:click|stopPropagation on:keydown|stopPropagation>
       {#if $session?.user.email}<p class="truncate px-3 py-2 text-[11.5px] text-ink2">{$session.user.email}</p>{/if}
       <button type="button" role="menuitem" class="block w-full rounded-seg px-3 py-2.5 text-left text-[13.5px] hover:bg-chip" on:click={openSheet}>Ubah kata sandi</button>
+      {#if !$viewer}<button type="button" role="menuitem" class="block w-full rounded-seg px-3 py-2.5 text-left text-[13.5px] hover:bg-chip" on:click={openQueen}>The Queen 👑</button>{/if}
       <button type="button" role="menuitem" class="block w-full rounded-seg px-3 py-2.5 text-left text-[13.5px] text-accent hover:bg-chip" on:click={signOut}>Keluar</button>
     </div>
   {/if}
@@ -44,3 +49,4 @@
     <div class="grid grid-cols-2 gap-2"><button type="submit" class="h-11 rounded-btn bg-ink text-[14px] font-semibold text-on-ink">Simpan</button><button type="button" class="h-11 rounded-btn bg-chip text-[14px] font-medium text-ink2" on:click={() => (sheet = false)}>Batal</button></div>
   </form>
 </Sheet>
+<QueenSheet open={queen} on:close={() => (queen = false)} />
