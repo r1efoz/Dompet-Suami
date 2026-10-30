@@ -7,8 +7,6 @@
       "*": "deny",
       "psql -h 127.0.0.1 -p 55322 -U postgres -d postgres -f supabase/*.sql": "allow",
       "PGPASSWORD=postgres psql -h 127.0.0.1 -p 55322 -U postgres -d postgres -f supabase/*.sql": "allow",
-      "psql -h 127.0.0.1 -p 55322 -U postgres -d postgres -c *": "allow",
-      "PGPASSWORD=postgres psql -h 127.0.0.1 -p 55322 -U postgres -d postgres -c *": "allow",
       "npx tsx src/lib/*.check.ts": "allow",
       "npx tsx scripts/*.check.ts": "allow",
       "TZ=* npx tsx src/lib/*.check.ts": "allow",
@@ -127,7 +125,18 @@
       "npm add *": "deny",
       "pnpm *": "deny",
       "yarn *": "deny",
-      "rm -rf *": "deny"
+      "rm -rf *": "deny",
+      "*psql*\\!*": "deny",
+      "*PROGRAM*": "deny",
+      "*\\copy*": "deny",
+      "*psql*COPY*": "deny",
+      "*`*": "deny",
+      "*$(*": "deny",
+      "*;*": "deny",
+      "*&&*": "deny",
+      "*||*": "deny",
+      "*|*sh*": "deny",
+      "*>*.env*": "deny"
     }
   }
 }
