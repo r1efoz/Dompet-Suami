@@ -34,7 +34,7 @@ for ROUND in $(seq 0 "$MAX_FIX"); do
   echo "[task $N] Claude mereview (putaran $ROUND)…"
   claude -p "$(render scripts/revamp/review-prompt.md "")" \
     --output-format text --max-turns 40 --permission-mode default \
-    --allowedTools "Read" "Glob" "Grep" "Bash(git log *)" "Bash(git show *)" "Bash(git diff *)" "Bash(git status *)" "Bash(npm run check)" "Bash(npm run build)" "Bash(npm run test:ui)" "Bash(grep *)" "Bash(ls *)" "Bash(cat *)" \
+    --allowedTools "Read" "Glob" "Grep" "Bash(git log *)" "Bash(git show *)" "Bash(git diff *)" "Bash(git status *)" "Bash(npm run check)" "Bash(npm run build)" "Bash(npm run test:ui)" \
     >"$OUT" 2>"$REV_DIR/task-$N-review-r$ROUND.err" || true
   VERDICT="$(head -1 "$OUT" | tr -d '\r')"
   echo "[task $N] $VERDICT → $OUT"
