@@ -154,6 +154,31 @@ const [download] = await Promise.all([
 check("CSV bernama dompet-suami-", download.suggestedFilename().startsWith("dompet-suami-"), download.suggestedFilename());
 await page.keyboard.press("Escape");
 
+// Task 9: Master acceptance.
+await topNav.getByRole("button", { name: "Master", exact: true }).click();
+const accSection = page.locator("section", { hasText: "Akun ·" });
+await accSection.getByRole("button", { name: "+ Tambah" }).click();
+let dlg = page.getByRole("dialog");
+await dlg.getByLabel("Nama").fill("bank");
+await dlg.getByRole("button", { name: "Simpan" }).click();
+check("nama duplikat ditolak", await dlg.getByText("Nama sudah dipakai.").isVisible());
+await dlg.getByLabel("Nama").fill("Dompet Uji");
+await dlg.getByRole("tab", { name: "Tunai" }).click();
+await dlg.getByRole("button", { name: "Simpan" }).click();
+await toastOf("Disimpan.").waitFor();
+check("akun baru muncul", (await accSection.getByText("Dompet Uji", { exact: true }).count()) === 1);
+await accSection.locator("button", { hasText: "Bank" }).first().click();
+check("hapus akun bertransaksi disabled", await page.getByRole("dialog").getByRole("button", { name: /^Hapus akun/ }).isDisabled());
+await page.keyboard.press("Escape");
+await accSection.locator("button", { hasText: "Dompet Uji" }).click();
+await page.getByRole("dialog").getByRole("button", { name: /^Hapus akun/ }).click();
+await page.getByRole("dialog").getByRole("button", { name: "Hapus", exact: true }).click();
+await toastOf("Dihapus.").waitFor();
+check("akun terhapus", (await accSection.getByText("Dompet Uji", { exact: true }).count()) === 0);
+await page.reload();
+await topNav.getByRole("button", { name: "Master", exact: true }).click();
+check("akun terhapus setelah reload", (await page.getByText("Dompet Uji", { exact: true }).count()) === 0);
+
 // Responsive layout uses the database seed loaded at startup.
 async function shoot(name, width, height, colorScheme = "light") {
   const ctx = await browser.newContext({

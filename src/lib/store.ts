@@ -8,6 +8,7 @@ import { formatIDR } from './format';
 import { fromDatabaseTransaction, toDatabaseTransaction } from './transaction-mapping';
 import { buildTransferEdit } from './transaction-edit';
 import { transactionIdsToDelete } from './transaction-delete';
+import { isReferenced } from './master';
 
 const DEFAULT_ACCOUNTS: Account[] = [
   { id: 'bank', name: 'Bank', type: 'bank' },
@@ -281,13 +282,31 @@ export async function clearAll(): Promise<void> {
 /** Simpan akun ke Supabase (create atau update). */
 export async function saveAccount(account: Account): Promise<void> {
   if (!account.id) throw new Error('Account ID tidak ada.');
-  const { error } = await supabase.from('accounts').upsert(account);
+  const { icon, ...rest } = account;
+  const { error } = await supabase.from('accounts').upsert(icon ? { ...rest, icon } : rest);
   if (error) throw error;
 }
 
 /** Simpan kategori ke Supabase (create atau update). */
 export async function saveCategory(category: Category): Promise<void> {
   if (!category.id) throw new Error('Kategori ID tidak ada.');
-  const { error } = await supabase.from('categories').upsert(category);
+  const { icon, ...rest } = category;
+  const { error } = await supabase.from('categories').upsert(icon ? { ...rest, icon } : rest);
   if (error) throw error;
+}
+
+/** Hapus akun di Supabase dan store; ditolak bila masih dipakai transaksi. */
+export async function deleteAccount(id: string): Promise<void> {
+  if (isReferenced(get(transactions), { accountId: id })) throw new Error('Masih ada transaksi yang memakai ini.');
+  const { error } = await supabase.from('accounts').delete().eq('id', id);
+  if (error) throw error;
+  accounts.update((items) => items.filter((a) => a.id !== id));
+}
+
+/** Hapus kategori di Supabase dan store; ditolak bila masih dipakai transaksi. */
+export async function deleteCategory(id: string): Promise<void> {
+  if (isReferenced(get(transactions), { categoryId: id })) throw new Error('Masih ada transaksi yang memakai ini.');
+  const { error } = await supabase.from('categories').delete().eq('id', id);
+  if (error) throw error;
+  categories.update((items) => items.filter((c) => c.id !== id));
 }

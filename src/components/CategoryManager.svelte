@@ -1,174 +1,36 @@
 <script lang="ts">
-  import { categories, saveCategory } from '../lib/store';
+  import { categories, transactions } from '../lib/store';
+  import { formatCompact } from '../lib/format';
+  import { isReferenced } from '../lib/master';
+  import type { Category } from '../models/Category';
+  import Card from './ui/Card.svelte';
+  import ListItem from './ui/ListItem.svelte';
+  import Pill from './ui/Pill.svelte';
+  import MasterSheet from './MasterSheet.svelte';
 
-  let newName = '';
-  let newType: 'income' | 'expense' = 'expense';
-  let editingId: string | null = null;
-  let editName = '';
-  let editType: 'income' | 'expense' = 'expense';
-  let error = '';
+  const GROUPS = [{ type: 'expense', label: 'Pengeluaran', icon: '🧾' }, { type: 'income', label: 'Pemasukan', icon: '💼' }];
+  const now = new Date();
+  let open = false;
+  let item: Category | null = null;
 
-  async function addCategory() {
-    if (!newName.trim()) return;
-    const newCat = { id: `${Date.now()}`, name: newName.trim(), type: newType };
-    categories.update((cats) => [...cats, newCat]);
-    try {
-      await saveCategory(newCat);
-      newName = '';
-      error = '';
-    } catch (e) {
-      categories.update((cats) => cats.filter((c) => c.id !== newCat.id));
-      error = 'Gagal menyimpan: ' + (e instanceof Error ? e.message : 'Unknown error');
-    }
-  }
-
-  function startEdit(category: typeof categories[$type][number]) {
-    editingId = category.id;
-    editName = category.name;
-    editType = category.type;
-  }
-
-  function saveEdit() {
-    if (!editingId) return;
-    const updated = $categories[$categories.findIndex(c => c.id === editingId)];
-    if (!updated) return;
-    updated.name = editName.trim();
-    updated.type = editType;
-    categories.update((cats) =>
-      cats.map((c) => (c.id === editingId ? updated : c))
-    );
-    saveCategory(updated).catch((e) => {
-      error = 'Gagal menyimpan: ' + (e instanceof Error ? e.message : 'Unknown error');
-    }).finally(() => {
-      editingId = null;
-      editName = '';
-      error = '';
-    });
-  }
-
-  function cancelEdit() {
-    editingId = null;
-    editName = '';
-    error = '';
-  }
-
-  function deleteCategory(id: string) {
-    if (confirm('Hapus kategori ini?')) {
-      categories.update((cats) => cats.filter((c) => c.id !== id));
-    }
-  }
+  $: month = (id: string) => $transactions.filter((t) => !t.transferId && t.categoryId === id && new Date(t.timestamp).getMonth() === now.getMonth() && new Date(t.timestamp).getFullYear() === now.getFullYear()).reduce((s, t) => s + t.amount, 0);
+  $: sub = (id: string) => (isReferenced($transactions, { categoryId: id }) ? `Rp ${formatCompact(month(id))} bulan ini` : 'Belum dipakai');
+  $: sorted = (type: string) => $categories.filter((c) => c.type === type).sort((a, b) => month(b.id) - month(a.id) || a.name.localeCompare(b.name));
+  function edit(c: Category | null) { item = c; open = true; }
 </script>
 
-<div class="border-t border-line pt-8">
-  <div class="flex items-end justify-between">
-    <h2 class="label">Kategori</h2>
-  </div>
-
-  <div class="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-4">
-    <!-- Add form -->
-    <div class="space-y-2 sm:col-span-2">
-      <label class="label" for="category-name">Nama</label>
-      <input
-        id="category-name"
-        type="text"
-        bind:value={newName}
-        placeholder="Contoh: Belanja pasar"
-        class="w-full rounded border border-line bg-paper px-3 py-2 text-[14px] text-ink focus:border-ink focus:outline-none"
-      />
-    </div>
-    <div class="space-y-2">
-      <label class="label" for="category-type">Jenis</label>
-      <select
-        id="category-type"
-        bind:value={newType}
-        class="w-full rounded border border-line bg-paper px-3 py-2 text-[14px] text-ink focus:border-ink focus:outline-none"
-      >
-        <option value="income">Pemasukan</option>
-        <option value="expense">Pengeluaran</option>
-      </select>
-    </div>
-    <div class="flex items-end">
-      <button
-        on:click={addCategory}
-        class="w-full rounded bg-ink px-4 py-2 text-[14px] font-medium text-paper hover:bg-ink2 focus:outline-none focus:ring-2 focus:ring-ink/50"
-      >
-        Tambah
-      </button>
-    </div>
-  </div>
-
-  <table class="mt-6 w-full">
-    <thead>
-      <tr class="cell-rule text-left font-mono text-[11px] text-ink2">
-        <th class="pb-2 font-normal">Nama</th>
-        <th class="pb-2 font-normal">Jenis</th>
-        <th class="pb-2 text-right font-normal">Aksi</th>
-      </tr>
-    </thead>
-    <tbody>
-      {#each $categories as category (category.id)}
-        <tr class="cell-rule last:border-0">
-          {#if editingId === category.id}
-            <td class="py-3">
-              <input
-                type="text"
-                bind:value={editName}
-                class="w-full rounded border border-line bg-paper px-2 py-1 text-[14px] text-ink focus:border-ink focus:outline-none"
-              />
-            </td>
-            <td class="py-3">
-              <select
-                bind:value={editType}
-                class="w-full rounded border border-line bg-paper px-2 py-1 text-[14px] text-ink focus:border-ink focus:outline-none"
-              >
-                <option value="income">Pemasukan</option>
-                <option value="expense">Pengeluaran</option>
-              </select>
-            </td>
-            <td class="py-3 text-right">
-              <div class="flex items-center justify-end gap-2">
-                <button
-                  on:click={saveEdit}
-                  class="rounded bg-ink px-3 py-1 text-[12px] font-medium text-paper hover:bg-ink2"
-                >
-                  Simpan
-                </button>
-                <button
-                  on:click={cancelEdit}
-                  class="rounded border border-line px-3 py-1 text-[12px] text-ink2 hover:bg-line"
-                >
-                  Batal
-                </button>
-              </div>
-            </td>
-          {:else}
-            <td class="py-3 text-[14px] text-ink">{category.name}</td>
-            <td class="py-3 text-[12px] text-ink2">
-              {category.type === 'income' ? 'Pemasukan' : 'Pengeluaran'}
-            </td>
-            <td class="py-3 text-right">
-              <div class="flex items-center justify-end gap-2">
-                <button
-                  on:click={() => startEdit(category)}
-                  class="rounded border border-line px-3 py-1 text-[12px] text-ink2 hover:bg-line"
-                >
-                  Edit
-                </button>
-                <button
-                  on:click={() => deleteCategory(category.id)}
-                  class="rounded border border-red/30 px-3 py-1 text-[12px] text-red hover:border-red/60 hover:bg-red/10"
-                >
-                  Hapus
-                </button>
-              </div>
-            </td>
-          {/if}
-        </tr>
-      {/each}
-    </tbody>
-  </table>
-
-  {#if error}
-    <p class="mt-4 text-[13px] text-red">{error}</p>
-  {/if}
-</div>
+<section>
+  <div class="mb-2.5 flex items-baseline justify-between"><h2 class="text-[15px] leading-[1.3] font-semibold">Kategori · {$categories.length}</h2><button type="button" class="h-7" on:click={() => edit(null)}><Pill variant="ink">+ Tambah</Pill></button></div>
+  {#each GROUPS as g}
+    {@const list = sorted(g.type)}
+    {#if list.length}
+      <div class="lbl mt-3.5 mb-1.5">{g.label} · {list.length}</div>
+      <Card dense>
+        {#each list as c (c.id)}
+          <button type="button" class="block w-full text-left" on:click={() => edit(c)}><ListItem icon={c.icon || g.icon} title={c.name} subtitle={sub(c.id)} /></button>
+        {/each}
+      </Card>
+    {/if}
+  {/each}
+</section>
+<MasterSheet kind="category" {open} {item} on:close={() => (open = false)} />

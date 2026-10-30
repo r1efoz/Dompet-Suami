@@ -4,4 +4,5 @@ export interface Account {
   id: string;
   name: string;
   type: AccountType;
+  icon?: string;
 }

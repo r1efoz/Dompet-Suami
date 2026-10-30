@@ -1,9 +1,16 @@
 <script lang="ts">
   import AccountsManager from '../components/AccountsManager.svelte';
   import CategoryManager from '../components/CategoryManager.svelte';
+  import Segmented from '../components/ui/Segmented.svelte';
+  import { isDesktop } from '../lib/ui';
+
+  let tab = 'account';
 </script>
 
-<div class="space-y-10">
-  <AccountsManager />
-  <CategoryManager />
-</div>
+<h1 class="mb-3 text-[20px] leading-[1.2] font-semibold">Master</h1>
+{#if $isDesktop}
+  <div class="grid grid-cols-2 gap-7"><AccountsManager /><CategoryManager /></div>
+{:else}
+  <Segmented ariaLabel="Jenis master" items={[{ id: 'account', label: 'Sumber dana' }, { id: 'category', label: 'Kategori' }]} bind:value={tab} />
+  <div class="mt-4">{#if tab === 'account'}<AccountsManager />{:else}<CategoryManager />{/if}</div>
+{/if}

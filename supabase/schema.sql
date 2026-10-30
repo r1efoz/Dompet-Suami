@@ -9,6 +9,7 @@ create table accounts (
   id text primary key,
   name text not null,
   type text not null check (type in ('bank', 'cash', 'ewallet')),
+  icon text,
   created_at timestamptz default now()
 );
 
@@ -17,6 +18,7 @@ create table categories (
   id text primary key,
   name text not null,
   type text not null check (type in ('income', 'expense')),
+  icon text,
   created_at timestamptz default now()
 );
 
