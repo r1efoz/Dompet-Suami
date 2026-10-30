@@ -4,6 +4,10 @@
     "edit": "allow",
     "webfetch": "deny",
     "bash": {
+      "*.env*": "deny",
+      "*.envrc*": "deny",
+      "*.temp*": "deny",
+      "*printenv*": "deny",
       "git * -c *": "deny",
       "git * --exec*": "deny",
       "git * --output*": "deny",
