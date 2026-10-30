@@ -64,3 +64,4 @@ Format: `YYYY-MM-DD HH:MM — Tugas N — status — catatan singkat (perintah v
 - 2026-10-30 14:36 — Tugas 3 — review Claude putaran 1 — VERDICT: REJECT — detail: docs/handoff/reviews/task-3-review-r1.md
 - 2026-10-30 14:36 — Tugas 3 — review Claude putaran 2 — VERDICT: REJECT — detail: docs/handoff/reviews/task-3-review-r2.md
 - 2026-10-30 14:38 — Tugas 3 — dua REJECT di atas palsu: `opencode run` gagal start (id sesi wajib berawalan `ses`), tidak ada commit Tugas 3, reviewer menilai HEAD yang salah. task.sh diperbaiki: id sesi `ses_…`, stderr ikut log, abort bila OpenCode tidak menghasilkan commit.
+- 2026-10-30 14:53 — Tugas 3 — OpenCode berhenti "tidak ada terminal": penyebab `opencode.json` — OpenCode memakai aturan cocok TERAKHIR menang, dan `"*": "deny"` saya taruh paling akhir sehingga menolak semua bash. Diperbaiki: `*` deny di awal, allow di tengah, deny spesifik (.env/.temp/curl/install/push) paling akhir.
