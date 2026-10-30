@@ -35,7 +35,7 @@ page.on("request", (req) => {
 });
 
 await page.goto("http://localhost:5173/", { waitUntil: "networkidle" });
-await page.getByRole("button", { name: "Transaksi" }).click();
+await page.locator('nav[aria-label="Navigasi atas"]').getByRole("button", { name: "Transaksi", exact: true }).click();
 await page.waitForTimeout(500);
 
 const amount = page.locator("#entry-amount");
@@ -85,7 +85,7 @@ check(
 
 await page.screenshot({ path: `${OUT}/dompet-desktop.png`, fullPage: true });
 
-await page.getByRole("button", { name: "Laporan" }).click();
+await page.locator('nav[aria-label="Navigasi atas"]').getByRole("button", { name: "Laporan", exact: true }).click();
 await page.waitForTimeout(500);
 
 // Ledger tab: state and content must agree.
@@ -164,6 +164,24 @@ await demoPage.getByRole("button", { name: "Tampilkan toast demo" }).click();
 check("demo toast appears", await demoPage.getByText("Toast demo.").isVisible());
 await demoPage.waitForTimeout(3000);
 check("demo toast disappears", await demoPage.getByText("Toast demo.").count() === 0);
+
+// Task 3 shell acceptance checks.
+const shellPage = await context.newPage();
+await shellPage.setViewportSize({ width: 375, height: 812 });
+await shellPage.goto("http://localhost:5173/", { waitUntil: "networkidle" });
+const shellBody = (await shellPage.locator("body").innerText()).replace(/\s+/g, " ");
+check("shell tanpa teks Supabase", !/Supabase/i.test(shellBody));
+const bottomNav = shellPage.locator('nav[aria-label="Navigasi bawah"]');
+const reportNav = bottomNav.getByRole("button", { name: "Laporan", exact: true });
+const reportNavBox = await reportNav.boundingBox();
+check("bottom nav Laporan terlihat di bawah", !!reportNavBox && reportNavBox.y > 700);
+await shellPage.getByRole("button", { name: "Catat transaksi", exact: true }).click();
+check("FAB membuka jumlah transaksi dan fokus jumlah", await shellPage.locator("#entry-amount").evaluate((el) => document.activeElement === el));
+const desktopShell = await context.newPage();
+await desktopShell.setViewportSize({ width: 1440, height: 900 });
+await desktopShell.goto("http://localhost:5173/", { waitUntil: "networkidle" });
+check("desktop tidak render bottom nav", await desktopShell.locator('nav[aria-label="Navigasi bawah"]').count() === 0);
+check("desktop render top nav", await desktopShell.locator('nav[aria-label="Navigasi atas"]').count() === 1);
 
 await browser.close();
 

@@ -47,6 +47,7 @@ Dibuat: 2026-10-30 oleh Claude (sesi desain bersama Arief). Dikerjakan oleh: Ope
 ## Pertanyaan terbuka
 
 - Tugas 1 e2e tampaknya perlu lokal Postgres aktif karena seed dijalankan via `psql` pada awal `scripts/e2e.mjs`; memakai DB lokal port 55322, sesuai aturan project. **Dijawab (Claude):** ya, Postgres lokal wajib aktif.
+- Tugas 3 loading gagal/skeleton belum diimplementasikan: rencana mengizinkan `store.ts` untuk `loading` dan perlindungan seeding/error, namun “Jangan sentuh: views, store” berkonflik; dipatuhi larangan eksplisit, perlu keputusan pemilik sebelum melanjutkan bagian ini.
 
 ## Log
 
@@ -65,3 +66,7 @@ Format: `YYYY-MM-DD HH:MM — Tugas N — status — catatan singkat (perintah v
 - 2026-10-30 14:36 — Tugas 3 — review Claude putaran 2 — VERDICT: REJECT — detail: docs/handoff/reviews/task-3-review-r2.md
 - 2026-10-30 14:38 — Tugas 3 — dua REJECT di atas palsu: `opencode run` gagal start (id sesi wajib berawalan `ses`), tidak ada commit Tugas 3, reviewer menilai HEAD yang salah. task.sh diperbaiki: id sesi `ses_…`, stderr ikut log, abort bila OpenCode tidak menghasilkan commit.
 - 2026-10-30 14:53 — Tugas 3 — OpenCode berhenti "tidak ada terminal": penyebab `opencode.json` — OpenCode memakai aturan cocok TERAKHIR menang, dan `"*": "deny"` saya taruh paling akhir sehingga menolak semua bash. Diperbaiki: `*` deny di awal, allow di tengah, deny spesifik (.env/.temp/curl/install/push) paling akhir.
+- 2026-10-30 15:10 — Tugas 3 — RED — `npm run test:ui`: gagal karena shell belum merender bottom nav mobile.
+- 2026-10-30 15:18 — Tugas 3 — selesai — shell responsif, footer dihapus, FAB/nav sesuai view; e2e mencakup acceptance mobile/desktop.
+- 2026-10-30 15:22 — Tugas 3 — review — fokus FAB, safe-area bottom nav, dan whitespace assertion diperbaiki; review final tetap mencatat loading gagal/skeleton belum dikerjakan karena konflik batas store.
+- 2026-10-30 15:22 — Tugas 3 — verifikasi — `npm run test:ui`: semua check lulus; `npm run build`: berhasil.
