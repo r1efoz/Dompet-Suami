@@ -112,7 +112,7 @@ await page.locator('nav[aria-label="Navigasi atas"]').getByRole("button", { name
 await page.waitForTimeout(500);
 
 // Ledger tab: state and content must agree.
-await reportTabs.getByRole("tab", { name: "Buku" }).click();
+await reportTabs.getByRole("tab", { name: "Buku besar" }).click();
 await page.waitForTimeout(300);
 
 const selectedReports = await reportTabs
@@ -120,7 +120,7 @@ const selectedReports = await reportTabs
   .allInnerTexts();
 check(
   "tab buku besar aktif",
-  selectedReports.length === 1 && /buku/i.test(selectedReports[0]),
+  selectedReports.length === 1 && /buku besar/i.test(selectedReports[0]),
   selectedReports.join(","),
 );
 check(
@@ -129,6 +129,30 @@ check(
 );
 
 await page.screenshot({ path: `${OUT}/dompet-ledger.png`, fullPage: true });
+
+// Task 8: Laporan acceptance.
+const topNav = page.locator('nav[aria-label="Navigasi atas"]');
+await topNav.getByRole("button", { name: "Home", exact: true }).click();
+await page.waitForTimeout(300);
+const homeTotal = await page.locator('[data-testid="home-total"]').getAttribute("data-value");
+await topNav.getByRole("button", { name: "Laporan", exact: true }).click();
+await reportTabs.getByRole("tab", { name: "Saldo akun" }).click();
+await page.waitForTimeout(300);
+const balanceTotal = await page.locator('[data-testid="balance-total"] td:last-child').getAttribute("data-value");
+check("Saldo akun total = total Home", balanceTotal === homeTotal, `${balanceTotal} vs ${homeTotal}`);
+for (const tab of ["Arus kas", "Kategori", "Saldo akun", "Buku besar"]) {
+  await reportTabs.getByRole("tab", { name: tab }).click();
+  const body = (await page.locator("body").innerText()).replace(/\s+/g, " ");
+  check(`laporan ${tab} tanpa Neraca/Debit/Kredit`, !/Neraca|Debit|Kredit/.test(body));
+}
+await reportTabs.getByRole("tab", { name: "Arus kas" }).click();
+await page.getByRole("button", { name: "⤓ CSV" }).click();
+const [download] = await Promise.all([
+  page.waitForEvent("download"),
+  page.getByRole("dialog").getByRole("button").first().click(),
+]);
+check("CSV bernama dompet-suami-", download.suggestedFilename().startsWith("dompet-suami-"), download.suggestedFilename());
+await page.keyboard.press("Escape");
 
 // Responsive layout uses the database seed loaded at startup.
 async function shoot(name, width, height, colorScheme = "light") {

@@ -1,0 +1,71 @@
+<script lang="ts">
+  import Card from '../ui/Card.svelte';
+  import ListItem from '../ui/ListItem.svelte';
+  import SectionHeader from '../ui/SectionHeader.svelte';
+  import Sheet from '../ui/Sheet.svelte';
+  import { formatCompact, formatDayMonth } from '../../lib/format';
+  import type { CategoryReport, CategoryRow } from '../../lib/reports';
+  import type { Transaction } from '../../models/Transaction';
+
+  export let report: CategoryReport;
+  export let transactions: Transaction[] = [];
+  export let prevLabel = 'vs sblm';
+
+  let detail: { type: 'expense' | 'income'; row: CategoryRow } | null = null;
+  $: detailTx = detail
+    ? transactions
+        .filter((tx) => tx.type === detail!.type && (detail!.row.id === 'total' || (tx.categoryId ?? '') === detail!.row.id) && !tx.transferId)
+        .sort((a, b) => b.timestamp.localeCompare(a.timestamp))
+        .slice(0, 50)
+    : [];
+
+  function vsText(vs: CategoryRow['vs']) {
+    return typeof vs === 'number' ? `${vs >= 0 ? '▲' : '▼'} ${Math.abs(vs)}%` : vs;
+  }
+  function vsTone(vs: CategoryRow['vs'], type: 'expense' | 'income') {
+    if (typeof vs !== 'number' || vs === 0) return 'text-ink2';
+    return (vs > 0) === (type === 'income') ? 'text-pos' : 'text-accent';
+  }
+  const sections = [
+    { type: 'expense' as const, title: 'Pengeluaran', empty: 'pengeluaran' },
+    { type: 'income' as const, title: 'Pemasukan', empty: 'pemasukan' }
+  ];
+</script>
+
+{#each sections as s}
+  {@const rows = report[s.type]}
+  <SectionHeader title={s.title} />
+  <Card dense>
+    {#if rows.length === 0}
+      <p class="py-2.5 text-[13px] text-ink2">Belum ada {s.empty} di periode ini.</p>
+    {:else}
+      <table class="w-full">
+        <thead><tr class="lbl text-right"><th scope="col" class="py-2 text-left">Kategori</th><th scope="col">Jumlah</th><th scope="col">%</th><th scope="col">{prevLabel}</th></tr></thead>
+        <tbody>
+          {#each rows as r (r.id)}
+            <tr class="cursor-pointer border-t border-line text-[13px]" on:click={() => (detail = { type: s.type, row: r })}>
+              <td class="py-2.5">{r.name}</td>
+              <td class="num text-right">{formatCompact(r.amount)}</td>
+              <td class="num text-right text-ink2">{Math.round(r.percent)}</td>
+              <td class="num text-right {vsTone(r.vs, s.type)}">{vsText(r.vs)}</td>
+            </tr>
+          {/each}
+          {#each [report.total[s.type]] as t}
+            <tr class="tot border-t border-ink text-[13px] font-semibold">
+              <td class="py-2.5">Total</td>
+              <td class="num text-right">{formatCompact(t.amount)}</td>
+              <td class="num text-right">100</td>
+              <td class="num text-right {vsTone(t.vs, s.type)}">{vsText(t.vs)}</td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    {/if}
+  </Card>
+{/each}
+
+<Sheet open={detail !== null} title={detail ? `${detail.row.name} · ${formatCompact(detail.row.amount)}` : ''} on:close={() => (detail = null)}>
+  {#each detailTx as tx (tx.id)}
+    <ListItem title={tx.description || detail?.row.name || ''} subtitle={formatDayMonth(tx.timestamp)} amount={formatCompact(tx.amount)} tone={tx.type} />
+  {/each}
+</Sheet>
