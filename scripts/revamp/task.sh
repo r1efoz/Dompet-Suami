@@ -29,7 +29,16 @@ else
   opencode run --title "Revamp Tugas $N" --session "$OC_SESSION" --auto "$(render scripts/revamp/task-prompt.md "$EXTRA")" 2>&1 \
     | tee "$REV_DIR/task-$N-opencode-r0.log"
   OC_EXIT="${PIPESTATUS[0]}"
-  if [ "$OC_EXIT" != 0 ]; then echo "[task $N] ABORT: opencode run keluar dengan kode $OC_EXIT (lihat log)."; exit 3; fi
+  # Provider gratis kadang putus di tengah (mis. "Unsupported model"). Coba lanjutkan sesi yang sama, maks 2 kali.
+  for RETRY in 1 2; do
+    [ "$OC_EXIT" = 0 ] && break
+    echo "[task $N] opencode keluar kode $OC_EXIT; tunggu 30 detik lalu lanjutkan sesi (percobaan $RETRY/2)…"
+    sleep 30
+    opencode run --session "$OC_SESSION" --auto "Sesi terputus karena error penyedia model. Lanjutkan Tugas $N persis dari tempat berhenti: periksa git status dan file yang sudah kamu ubah, jangan ulangi dari nol, selesaikan sampai commit dan Log, lalu BERHENTI." 2>&1 \
+      | tee -a "$REV_DIR/task-$N-opencode-r0.log"
+    OC_EXIT="${PIPESTATUS[0]}"
+  done
+  if [ "$OC_EXIT" != 0 ]; then echo "[task $N] ABORT: opencode run keluar dengan kode $OC_EXIT setelah 2 percobaan lanjut (lihat log)."; exit 3; fi
   if [ "$(git rev-parse HEAD)" = "$HEAD_BEFORE" ]; then echo "[task $N] ABORT: OpenCode tidak menghasilkan commit baru; tidak ada yang direview."; exit 3; fi
 fi
 
