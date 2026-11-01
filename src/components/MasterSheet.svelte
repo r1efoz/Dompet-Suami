@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import { accounts, categories, transactions, newId, saveAccount, saveCategory, deleteAccount, deleteCategory } from '../lib/store';
-  import { isReferenced, validateName } from '../lib/master';
+  import { errorMessage, isReferenced, validateName } from '../lib/master';
   import { showToast } from '../lib/ui';
   import ConfirmDialog from './ui/ConfirmDialog.svelte';
   import Field from './ui/Field.svelte';
@@ -49,7 +49,7 @@
       showToast('Disimpan.');
       dispatch('close');
     } catch (e) {
-      error = e instanceof Error ? e.message : 'Gagal menyimpan.';
+      error = errorMessage(e, 'Gagal menyimpan.');
     }
   }
 
@@ -60,7 +60,7 @@
       showToast('Dihapus.');
       dispatch('close');
     } catch (e) {
-      error = e instanceof Error ? e.message : 'Gagal menghapus.';
+      error = errorMessage(e, 'Gagal menghapus.');
     }
   }
 </script>

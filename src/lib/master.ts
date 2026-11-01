@@ -14,3 +14,9 @@ export function validateName(existing: { id: string; name: string; type: string 
   if (existing.some((e) => e.id !== selfId && e.type === type && e.name.trim().toLowerCase() === n.toLowerCase())) return 'Nama sudah dipakai.';
   return null;
 }
+
+/** Supabase errors are plain objects, not Error instances. */
+export function errorMessage(e: unknown, fallback: string): string {
+  const m = (e as { message?: unknown } | null)?.message;
+  return typeof m === 'string' && m ? m : fallback;
+}
