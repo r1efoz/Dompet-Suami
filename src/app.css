@@ -117,6 +117,7 @@
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
+    touch-action: manipulation;
   }
 
   body {
@@ -348,4 +349,11 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* iOS zooms into inputs under 16px on focus. Unlayered so it beats text-[14px] utilities. */
+input,
+select,
+textarea {
+  font-size: 16px;
 }
