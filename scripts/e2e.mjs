@@ -223,7 +223,7 @@ check("kategori dengan emoji tersimpan", (await catSection.getByText("Kategori E
 await catSection.locator("button", { hasText: "Kategori Emoji" }).click();
 await page.getByRole("dialog").getByLabel("Nama").fill("Kategori Emoji 2");
 await page.getByRole("dialog").getByRole("button", { name: "Simpan" }).click();
-await toastOf("Disimpan.").waitFor();
+await page.getByRole("dialog").waitFor({ state: "hidden" });
 check("edit kategori tersimpan", (await catSection.getByText("Kategori Emoji 2", { exact: true }).count()) === 1);
 await page.reload();
 await topNav.getByRole("button", { name: "Master", exact: true }).click();
