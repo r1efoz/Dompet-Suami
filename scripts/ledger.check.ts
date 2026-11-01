@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import type { Account } from '../src/models/Account';
 import type { Transaction } from '../src/models/Transaction';
-import { buildLedger, computeBalances, startOfMonth, summarize, summarizeSince } from '../src/lib/ledger';
+import { buildLedger, computeBalances, operating, startOfMonth, summarize, summarizeSince } from '../src/lib/ledger';
 
 const accounts: Account[] = [
   { id: 'bank', name: 'Bank', type: 'bank' },
@@ -41,5 +41,17 @@ assert.equal(ledger[1].runningBalance, 4_000_000, 'bank running balance');
 const som = new Date(startOfMonth(new Date('2026-10-27T10:00:00Z')));
 assert.equal(som.getDate(), 1, 'start of month day');
 assert.equal(som.getMonth(), 9, 'start of month is October');
+
+// transfer with admin fee: fee is the only real expense; income - expense must equal total balance change
+const withTransfer: Transaction[] = [
+  tx({ id: 'a', type: 'income', amount: 1_000_000, source: 'bank' }),
+  tx({ id: 'o', type: 'expense', amount: 100_500, source: 'bank', destination: 'cash', transferId: 't1' }),
+  tx({ id: 'i', type: 'income', amount: 100_000, source: 'cash', destination: 'cash', transferId: 't1' })
+];
+const op = operating(withTransfer);
+const opSum = summarize(op);
+const totalBalance = Object.values(computeBalances(accounts, withTransfer)).reduce((a, b) => a + b, 0);
+assert.equal(opSum.expense, 500, 'fee counted as expense');
+assert.equal(opSum.income - opSum.expense, totalBalance, 'net equals total balance change');
 
 console.log('ledger self-check: 10 assertions passed');

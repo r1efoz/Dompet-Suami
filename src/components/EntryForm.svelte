@@ -46,8 +46,8 @@
   }
 
   function transferFee(tx: import('../models/Transaction').Transaction): number {
-    const match = tx.description.match(/\(biaya Rp\s*([\d.]+)\)/);
-    return match ? Number(match[1].replace(/\./g, '')) : 0;
+    const incoming = $transactions.find((item) => item.transferId === tx.transferId && item.type === 'income');
+    return incoming ? tx.amount - incoming.amount : 0;
   }
 
   function parseInput(value: string): number {

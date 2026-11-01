@@ -18,6 +18,8 @@ export interface PeriodRange {
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
 const DAY_MS = 86_400_000;
 
+import { operating } from './ledger';
+
 const signed = (tx: Transaction) => (tx.type === 'income' ? tx.amount : -tx.amount);
 const time = (tx: Transaction) => new Date(tx.timestamp).getTime();
 const within = (tx: Transaction, start: Date, end: Date) => time(tx) >= start.getTime() && time(tx) < end.getTime();
@@ -114,7 +116,7 @@ function compare(amount: number, prev: number): CategoryRow['vs'] {
 
 function sumBy(transactions: Transaction[], type: Transaction['type'], start: Date, end: Date): Map<string, number> {
   const sums = new Map<string, number>();
-  for (const tx of transactions) {
+  for (const tx of operating(transactions)) {
     if (tx.transferId || tx.type !== type || !within(tx, start, end)) continue;
     const key = tx.categoryId ?? NO_CATEGORY;
     sums.set(key, (sums.get(key) ?? 0) + tx.amount);
@@ -157,7 +159,7 @@ export interface MonthlyRow {
 /** Non-transfer entries of `year`, one row per month that has any, newest first. */
 export function monthlyTable(transactions: Transaction[], year: number): { rows: MonthlyRow[]; total: Omit<MonthlyRow, 'month'> } {
   const months = new Map<number, MonthlyRow>();
-  for (const tx of transactions) {
+  for (const tx of operating(transactions)) {
     const date = new Date(tx.timestamp);
     if (tx.transferId || date.getFullYear() !== year) continue;
     const row = months.get(date.getMonth()) ?? { month: date.getMonth(), income: 0, expense: 0, net: 0 };

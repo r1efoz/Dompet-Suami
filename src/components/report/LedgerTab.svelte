@@ -1,6 +1,6 @@
 <script lang="ts">
   import Card from '../ui/Card.svelte';
-  import { formatCompact } from '../../lib/format';
+  import { formatIDR } from '../../lib/format';
   import { buildLedger } from '../../lib/ledger';
   import type { AccountBalanceRow } from '../../lib/reports';
   import type { Account } from '../../models/Account';
@@ -11,7 +11,7 @@
   export let transactions: Transaction[] = [];
   export let accountId = '';
 
-  const signed = (n: number) => `${n < 0 ? '−' : n > 0 ? '+' : ''}${formatCompact(n)}`;
+  const signed = (n: number) => `${n < 0 ? '−' : n > 0 ? '+' : ''}${formatIDR(n)}`;
   const name = (id?: string) => accounts.find((a) => a.id === id)?.name ?? '';
 
   $: if (!accounts.some((a) => a.id === accountId)) accountId = [...rows].sort((a, b) => b.akhir - a.akhir)[0]?.id ?? '';
@@ -28,9 +28,9 @@
   {#if row}
     <div class="mt-3"><Card>
       <div class="grid grid-cols-3 text-center">
-        <div><div class="lbl">Awal</div><div class="num text-[15px] font-semibold">{formatCompact(row.awal)}</div></div>
+        <div><div class="lbl">Awal</div><div class="num text-[15px] font-semibold">{formatIDR(row.awal)}</div></div>
         <div><div class="lbl">Mutasi</div><div class="num text-[15px] font-semibold">{signed(row.masuk - row.keluar)}</div></div>
-        <div><div class="lbl">Akhir</div><div class="num text-[15px] font-semibold">{formatCompact(row.akhir)}</div></div>
+        <div><div class="lbl">Akhir</div><div class="num text-[15px] font-semibold">{formatIDR(row.akhir)}</div></div>
       </div>
     </Card></div>
   {/if}
@@ -46,7 +46,7 @@
               <td class="num whitespace-nowrap py-2.5 pr-2 text-[11.5px] text-ink2">{new Date(l.tx.timestamp).toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })}</td>
               <td class="max-w-[140px] truncate pr-2 lg:max-w-none">{note(l.tx)}</td>
               <td class="num text-right {l.tx.type === 'income' ? 'text-pos' : 'text-accent'}">{signed(l.tx.type === 'income' ? l.tx.amount : -l.tx.amount)}</td>
-              <td class="num text-right font-semibold">{formatCompact(l.runningBalance)}</td>
+              <td class="num text-right font-semibold">{formatIDR(l.runningBalance)}</td>
             </tr>
           {/each}
         </tbody>

@@ -3,7 +3,7 @@
   import ListItem from '../ui/ListItem.svelte';
   import SectionHeader from '../ui/SectionHeader.svelte';
   import Sheet from '../ui/Sheet.svelte';
-  import { formatCompact, formatDayMonth } from '../../lib/format';
+  import { formatCompact, formatDayMonth, formatIDR } from '../../lib/format';
   import type { CategoryReport, CategoryRow } from '../../lib/reports';
   import type { Transaction } from '../../models/Transaction';
 
@@ -66,6 +66,6 @@
 
 <Sheet open={detail !== null} title={detail ? `${detail.row.name} · ${formatCompact(detail.row.amount)}` : ''} on:close={() => (detail = null)}>
   {#each detailTx as tx (tx.id)}
-    <ListItem title={tx.description || detail?.row.name || ''} subtitle={formatDayMonth(tx.timestamp)} amount={formatCompact(tx.amount)} tone={tx.type} />
+    <ListItem title={tx.description || detail?.row.name || ''} subtitle={formatDayMonth(tx.timestamp)} amount={formatIDR(tx.amount)} tone={tx.type} />
   {/each}
 </Sheet>

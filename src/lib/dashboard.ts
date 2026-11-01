@@ -1,7 +1,7 @@
 import type { Account } from '../models/Account';
 import type { Category } from '../models/Category';
 import type { Transaction } from '../models/Transaction';
-import { summarize, summarizeSince, startOfMonth } from './ledger';
+import { operating, summarize, summarizeSince, startOfMonth } from './ledger';
 
 export interface DashboardData {
   totalBalance: number;
@@ -15,7 +15,7 @@ export interface DashboardData {
 }
 
 export function getDashboardData(accounts: Account[], categories: Category[], transactions: Transaction[]): DashboardData {
-  const normalTransactions = transactions.filter((tx) => !tx.transferId);
+  const normalTransactions = operating(transactions);
   const summary = summarizeSince(normalTransactions, startOfMonth());
   const balances = accounts.reduce((acc, a) => {
     acc[a.id] = transactions.filter((tx) => tx.source === a.id).reduce((sum, tx) => sum + (tx.type === 'income' ? tx.amount : -tx.amount), 0);
@@ -35,6 +35,7 @@ export function getDashboardData(accounts: Account[], categories: Category[], tr
 export interface MonthlyPoint { month: string; income: number; expense: number }
 export function monthlyTrend(transactions: Transaction[], months = 12, now = new Date()): MonthlyPoint[] {
   const points: MonthlyPoint[] = [];
+  const ops = operating(transactions);
   for (let i = months - 1; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
     const month = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
@@ -42,7 +43,7 @@ export function monthlyTrend(transactions: Transaction[], months = 12, now = new
     const end = new Date(d.getFullYear(), d.getMonth() + 1, 1);
     let income = 0;
     let expense = 0;
-    for (const tx of transactions) {
+    for (const tx of ops) {
       if (tx.transferId) continue;
       const t = new Date(tx.timestamp);
       if (t < start || t >= end) continue;
@@ -70,7 +71,7 @@ export function accountMonthStats(accounts: Account[], tx: Transaction[], start:
 export interface CategorySlice { id: string | null; name: string; icon: string; value: number; percent: number }
 export function topCategories(tx: Transaction[], categories: Category[], limit: number): { top: CategorySlice[]; rest: CategorySlice | null; total: number } {
   const totals = new Map<string | null, number>();
-  for (const item of tx) {
+  for (const item of operating(tx)) {
     if (item.type !== 'expense' || item.transferId) continue;
     totals.set(item.categoryId ?? null, (totals.get(item.categoryId ?? null) ?? 0) + item.amount);
   }

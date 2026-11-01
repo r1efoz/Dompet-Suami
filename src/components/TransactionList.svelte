@@ -1,6 +1,6 @@
 <script lang="ts">
   import { accounts, categories, deleteTransaction, editingTransaction, transactions } from '../lib/store';
-  import { formatCompact, formatIDR } from '../lib/format';
+  import { formatIDR } from '../lib/format';
   import { filterHistory, groupByDay } from '../lib/history';
   import { showToast } from '../lib/ui';
   import { viewer } from '../lib/queen';
@@ -94,13 +94,12 @@
   }
 
   function amountOf(tx: Transaction): string {
-    if (tx.transferId) return formatCompact(tx.type === 'expense' ? pairAmount(tx) : tx.amount);
-    return `${tx.type === 'income' ? '+' : '−'}${formatCompact(tx.amount)}`;
+    if (tx.transferId) return formatIDR(tx.type === 'expense' ? pairAmount(tx) : tx.amount);
+    return `${tx.type === 'income' ? '+' : '−'}${formatIDR(tx.amount)}`;
   }
 
   function pairAmount(tx: Transaction): number {
-    const match = tx.description.match(/\(biaya Rp\s*([\d.]+)\)/);
-    return tx.amount - (match ? Number(match[1].replace(/\./g, '')) : 0);
+    return $transactions.find((item) => item.transferId === tx.transferId && item.type === 'income')?.amount ?? tx.amount;
   }
 
   function subtitleOf(tx: Transaction): string {
@@ -108,7 +107,7 @@
   }
 
   function signed(value: number): string {
-    return value === 0 ? '0' : `${value > 0 ? '+' : '−'}${formatCompact(value)}`;
+    return value === 0 ? '0' : `${value > 0 ? '+' : '−'}${formatIDR(value)}`;
   }
 
   function edit() {

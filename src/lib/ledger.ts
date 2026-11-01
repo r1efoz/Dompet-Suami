@@ -14,6 +14,24 @@ export function computeBalances(accounts: Account[], transactions: Transaction[]
   return balances;
 }
 
+/**
+ * Entries that count as income/expense: non-transfers, plus each transfer's admin fee
+ * (outgoing minus incoming amount) as an expense. Keeps income - expense equal to the balance change.
+ */
+export function operating(transactions: Transaction[]): Transaction[] {
+  const result: Transaction[] = [];
+  const incoming = new Map<string, number>();
+  for (const tx of transactions) if (tx.transferId && tx.type === 'income') incoming.set(tx.transferId, tx.amount);
+  for (const tx of transactions) {
+    if (!tx.transferId) result.push(tx);
+    else if (tx.type === 'expense') {
+      const fee = tx.amount - (incoming.get(tx.transferId) ?? tx.amount);
+      if (fee > 0) result.push({ id: `fee_${tx.transferId}`, type: 'expense', amount: fee, description: 'Biaya admin transfer', source: tx.source, timestamp: tx.timestamp });
+    }
+  }
+  return result;
+}
+
 export interface Summary {
   income: number;
   expense: number;

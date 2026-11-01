@@ -20,6 +20,7 @@ export function fromDatabaseTransaction(row: TransactionRow): AppTransaction {
   const { category_id, transfer_id, ...transaction } = row;
   return {
     ...transaction,
+    amount: Number(transaction.amount),
     ...(category_id ? { categoryId: category_id } : {}),
     ...(transfer_id ? { transferId: transfer_id } : {})
   };
