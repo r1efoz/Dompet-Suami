@@ -22,11 +22,11 @@ export function groupByDay(transactions: Transaction[]): HistoryDay[] {
   }));
 }
 
-export function filterHistory(transactions: Transaction[], options: { query?: string; filter?: 'all' | 'income' | 'expense' | 'transfer' }): Transaction[] {
+export function filterHistory(transactions: Transaction[], options: { query?: string; filter?: 'all' | 'income' | 'expense' | 'transfer'; account?: string }): Transaction[] {
   const query = options.query?.trim().toLocaleLowerCase();
   return transactions.filter((tx) => {
     const matchesType = !options.filter || options.filter === 'all' || (options.filter === 'transfer' ? Boolean(tx.transferId) : !tx.transferId && tx.type === options.filter);
-    return matchesType && (!query || tx.description.toLocaleLowerCase().includes(query));
+    return matchesType && (!options.account || tx.source === options.account) && (!query || tx.description.toLocaleLowerCase().includes(query));
   });
 }
 

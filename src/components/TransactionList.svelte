@@ -31,6 +31,7 @@
   let filter: Filter = 'all';
   let range: Range = 'month';
   let query = '';
+  let account = '';
   let limit = PAGE;
   let rangeOpen = false;
   let detail: Transaction | null = null;
@@ -57,14 +58,14 @@
     return !needle || [tx.description, categoryName(tx.categoryId), accountName(tx.source), accountName(tx.destination)].some((value) => value.toLocaleLowerCase().includes(needle));
   }
 
-  $: typed = filterHistory($transactions.filter((tx) => inRange(tx, range)), { filter });
+  $: typed = filterHistory($transactions.filter((tx) => inRange(tx, range)), { filter, account });
   $: filtered = typed.filter((tx) => matches(tx, query));
-  $: ordered = filtered.filter((tx) => !tx.transferId || tx.type === 'expense').sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime() || b.id.localeCompare(a.id));
+  $: ordered = filtered.filter((tx) => account || !tx.transferId || tx.type === 'expense').sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime() || b.id.localeCompare(a.id));
   $: days = groupByDay(ordered);
   $: total = days.reduce((sum, day) => sum + day.transactions.length, 0);
   $: shown = limitDays(days, limit);
-  $: filtering = Boolean(query.trim()) || filter !== 'all';
-  $: if (filter || range || query) limit = PAGE;
+  $: filtering = Boolean(query.trim()) || filter !== 'all' || Boolean(account);
+  $: if (filter || range || query || account) limit = PAGE;
 
   function limitDays(source: typeof days, max: number) {
     let left = max;
@@ -94,6 +95,7 @@
   }
 
   function amountOf(tx: Transaction): string {
+    if (tx.transferId && account) return `${tx.type === 'income' ? '+' : '−'}${formatIDR(tx.amount)}`;
     if (tx.transferId) return formatIDR(tx.type === 'expense' ? pairAmount(tx) : tx.amount);
     return `${tx.type === 'income' ? '+' : '−'}${formatIDR(tx.amount)}`;
   }
@@ -103,6 +105,7 @@
   }
 
   function subtitleOf(tx: Transaction): string {
+    if (tx.transferId && tx.type === 'income') return `${accountName($transactions.find((item) => item.transferId === tx.transferId && item.type === 'expense')?.source)} → ${accountName(tx.source)}`;
     return tx.transferId ? `${accountName(tx.source)} → ${accountName(tx.destination)}` : [categoryName(tx.categoryId), accountName(tx.source)].filter(Boolean).join(' · ');
   }
 
@@ -150,6 +153,8 @@
       class="h-10 w-full rounded-field border border-line bg-card px-3 text-[14px] leading-[1.45] text-ink hover:border-ink2 focus:border-ink focus:ring-1 focus:ring-ink focus:outline-none"
     />
   </div>
+
+  <label class="mt-2.5 block"><span class="sr-only">Sumber dana</span><select bind:value={account} aria-label="Sumber dana" class="h-10 w-full rounded-field border border-line bg-card px-3 text-ink focus:border-ink focus:ring-1 focus:ring-ink focus:outline-none"><option value="">Semua sumber dana</option>{#each $accounts as a (a.id)}<option value={a.id}>{a.name}</option>{/each}</select></label>
 
   <div class="mt-2.5 flex items-center gap-2" role="group" aria-label="Filter transaksi">
     <div class="min-w-0 flex-1"><Chips items={filters} value={filter} onChange={(id) => (filter = id as Filter)} /></div>

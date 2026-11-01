@@ -14,4 +14,6 @@ assert.equal(grouped.length, 1);
 assert.equal(grouped[0].subtotal, 20);
 assert.equal(grouped[0].transactions.filter((tx) => tx.transferId).length, 1);
 assert.deepEqual(filterHistory(transactions, { query: 'bElAnJa' }).map((tx) => tx.id), ['expense']);
-console.log('history self-check: 4 assertions passed');
+assert.deepEqual(filterHistory(transactions, { account: 'cash' }).map((tx) => tx.id), ['transfer-in']);
+assert.deepEqual(filterHistory(transactions, { account: 'bank' }).map((tx) => tx.id), ['expense', 'transfer-out', 'income']);
+console.log('history self-check: 6 assertions passed');
