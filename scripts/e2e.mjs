@@ -379,6 +379,14 @@ const homeWidth = await homePage.evaluate(() => ({ scroll: document.documentElem
 check("Home tanpa scroll horizontal halaman", homeWidth.scroll === homeWidth.client, `${homeWidth.scroll} !== ${homeWidth.client}`);
 const homeTotalValue = await homePage.locator('[data-testid="home-total"]').getAttribute("data-value");
 check("total Home bernilai 4.750.000", homeTotalValue === "4750000", homeTotalValue ?? "missing");
+await homePage.getByRole("button", { name: "Detail →" }).click();
+check("Home Detail membuka Laporan", await homePage.getByRole("heading", { name: "Laporan" }).isVisible());
+await homePage.getByRole("button", { name: "Home", exact: true }).first().click();
+await homePage.getByRole("button", { name: "Semua →" }).click();
+check("Home Semua membuka tab Kategori", await homePage.getByRole("tab", { name: "Kategori" }).getAttribute("aria-selected") === "true");
+await homePage.getByRole("button", { name: "Home", exact: true }).first().click();
+await homePage.getByRole("button", { name: "Riwayat →" }).click();
+check("Home Riwayat membuka Transaksi", await homePage.getByText("Catat transaksi").first().isVisible());
 await homePage.close();
 
 // Task 3 shell acceptance checks.

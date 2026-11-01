@@ -44,15 +44,15 @@
     <div class="mt-3"><AccountRail accounts={orderedAccounts} {stats} {hiddenCount} /></div>
   </section>
   <div class="mt-5 lg:hidden"><StatStrip income={$monthSummary.income} expense={$monthSummary.expense} net={$monthSummary.net} periodLabel={compactMonth.toUpperCase()} /></div>
-  <section class="min-w-0 lg:col-span-8"><SectionHeader title="Tren 12 bulan" actionLabel="Detail →" on:action={openCashflow} /><Card><BarChart data={monthly} width={desktop ? 700 : 340} /></Card></section>
+  <section class="min-w-0 lg:col-span-8"><SectionHeader title="Tren 12 bulan" actionLabel="Detail →" on:click={openCashflow} /><Card><BarChart data={monthly} width={desktop ? 700 : 340} /></Card></section>
   <section class="min-w-0 lg:col-span-4"><SectionHeader title="Insight" /><Card dense>
     {#if insights.length === 0}<p class="py-2.5 text-[13px] leading-[1.45] text-ink2">Belum ada transaksi bulan ini. Catat yang pertama lewat tombol +.</p>
     {:else}{#each insights as insight, i}<div data-testid="insight-row" class="flex gap-2.5 py-2.5 {i < insights.length-1 ? 'border-b border-line' : ''}"><span class="mt-1.5 h-2 w-2 shrink-0 rounded-full {insight.tone === 'pos' ? 'bg-pos' : insight.tone === 'neutral' ? 'bg-ink2' : 'bg-accent'}"></span><p class="text-[13px] leading-[1.45]">{#each insight.segments as segment}{#if segment.b}<b>{segment.t}</b>{:else}{segment.t}{/if}{/each}</p></div>{/each}{/if}
   </Card></section>
-  <section class="min-w-0 lg:col-span-4"><SectionHeader title="Pengeluaran bulan ini" actionLabel="Semua →" on:action={openCategories} /><Card dense>
+  <section class="min-w-0 lg:col-span-4"><SectionHeader title="Pengeluaran bulan ini" actionLabel="Semua →" on:click={openCategories} /><Card dense>
     {#if categoriesTop.top.length === 0}<p class="py-2.5 text-[13px] text-ink2 italic">Belum ada pengeluaran bulan ini.</p>{:else}{#each [...categoriesTop.top, ...(categoriesTop.rest ? [categoriesTop.rest] : [])] as category}<ListItem icon={category.icon} title={category.name} amount={formatCompact(category.value)} amountSubtitle="{category.percent}%" percent={category.value / Math.max(categoriesTop.total, 1) * 100} />{/each}{/if}
   </Card></section>
-  <section class="min-w-0 lg:col-span-8"><SectionHeader title="Transaksi terbaru" actionLabel="Riwayat →" on:action={() => currentView.set('transaction')} /><Card dense>
+  <section class="min-w-0 lg:col-span-8"><SectionHeader title="Transaksi terbaru" actionLabel="Riwayat →" on:click={() => currentView.set('transaction')} /><Card dense>
     {#if $transactions.length === 0}<p class="py-2.5 text-[13px] text-ink2">Belum ada transaksi.</p>{:else}{#each [...$transactions].sort((a,b) => new Date(b.timestamp).getTime()-new Date(a.timestamp).getTime() || b.id.localeCompare(a.id)).slice(0,5) as tx}<div class="flex min-h-[60px] items-center justify-between gap-3 border-b border-line last:border-0"><div class="min-w-0"><p class="truncate text-[14px] font-medium">{tx.description || $categories.find((c) => c.id === tx.categoryId)?.name || 'Tanpa keterangan'}</p><p class="text-[11.5px] text-ink2">{dateLabel(tx.timestamp)} · {$accounts.find((a) => a.id === tx.source)?.name ?? ''}</p></div><span class="num whitespace-nowrap text-[14px] font-semibold {tx.type === 'income' ? 'text-pos' : 'text-accent'}">{tx.type === 'income' ? '+' : '−'}{formatIDR(tx.amount)}</span></div>{/each}{/if}
   </Card></section>
 </div>
