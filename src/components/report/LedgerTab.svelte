@@ -11,12 +11,12 @@
   export let transactions: Transaction[] = [];
   export let accountId = '';
 
-  const signed = (n: number) => `${n < 0 ? '−' : n > 0 ? '+' : ''}${formatIDR(n)}`;
+  const signed = (n: number) => `${n < 0 ? '−' : n > 0 ? '+' : ''}${formatIDR(Math.abs(n))}`;
   const name = (id?: string) => accounts.find((a) => a.id === id)?.name ?? '';
 
   $: if (!accounts.some((a) => a.id === accountId)) accountId = [...rows].sort((a, b) => b.akhir - a.akhir)[0]?.id ?? '';
   $: row = rows.find((r) => r.id === accountId);
-  $: ledger = buildLedger(transactions, accountId, row?.awal ?? 0).reverse();
+  $: ledger = buildLedger(transactions, accountId, row?.awal ?? 0);
   function note(tx: Transaction) {
     const dir = tx.transferId ? (tx.type === 'expense' ? `→ ${name(tx.destination)}` : `← ${name(tx.destination)}`) : '';
     return [dir, tx.description].filter(Boolean).join(' ');
@@ -41,6 +41,10 @@
       <table class="w-full">
         <thead><tr class="lbl text-right"><th scope="col" class="py-2 text-left">Tanggal</th><th scope="col" class="text-left">Keterangan</th><th scope="col">Mutasi</th><th scope="col">Saldo</th></tr></thead>
         <tbody>
+          <tr class="border-t border-line text-[13px]">
+            <td class="py-2.5 pr-2" colspan="3"><span class="text-ink2">Saldo awal</span></td>
+            <td class="num text-right font-semibold">{formatIDR(row?.awal ?? 0)}</td>
+          </tr>
           {#each ledger as l (l.tx.id)}
             <tr class="border-t border-line text-[13px]">
               <td class="num whitespace-nowrap py-2.5 pr-2 text-[11.5px] text-ink2">{new Date(l.tx.timestamp).toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })}</td>
