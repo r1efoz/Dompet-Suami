@@ -1,7 +1,7 @@
 <script lang="ts">
   import { accounts, categories, transactions } from '../lib/store';
   import { reportState } from '../lib/ui';
-  import { buildLedger, summarize } from '../lib/ledger';
+  import { buildLedger, operating, summarize } from '../lib/ledger';
   import { accountBalanceReport, categoryReport, fullBackupRows, monthlyTable, periodRange, toCsv, type Period } from '../lib/reports';
   import ListItem from '../components/ui/ListItem.svelte';
   import Pill from '../components/ui/Pill.svelte';
@@ -28,7 +28,7 @@
   $: period = $reportState.period ?? ({ kind: 'month', y: now.getFullYear(), m: now.getMonth() } as Period);
   $: range = periodRange(period);
   $: inPeriod = $transactions.filter((tx) => { const t = new Date(tx.timestamp).getTime(); return t >= range.start.getTime() && t < range.end.getTime(); });
-  $: flow = inPeriod.filter((tx) => !tx.transferId);
+  $: flow = operating(inPeriod);
   $: sum = summarize(flow);
   $: catReport = categoryReport($categories, $transactions, range.start, range.end, range.prevStart, range.prevEnd);
   $: balRows = accountBalanceReport($accounts, $transactions, range.start, range.end);

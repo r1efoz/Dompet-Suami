@@ -203,9 +203,9 @@
     <p class="mt-1 text-[11.5px] leading-[1.4] text-ink2">{new Date(detail.timestamp).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' })}</p>
     <p class="num mt-2 text-[18px] font-semibold">{detail.transferId ? formatIDR(detail.type === 'expense' ? pairAmount(detail) : detail.amount) : `${detail.type === 'income' ? '+' : '−'}${formatIDR(detail.amount)}`}</p>
     <dl class="mt-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-[13px] leading-[1.45]">
-      <dt class="text-ink2">Akun</dt><dd class="text-right">{accountName(detail.source)}</dd>
+      <dt class="text-ink2">Akun</dt><dd class="text-right">{accountName(detail.transferId && detail.type === 'income' ? detail.destination : detail.source)}</dd>
       {#if detail.transferId}
-        <dt class="text-ink2">Ke</dt><dd class="text-right">{accountName(detail.destination)}</dd>
+        <dt class="text-ink2">Ke</dt><dd class="text-right">{accountName(detail.type === 'income' ? detail.source : detail.destination)}</dd>
         <dt class="text-ink2">Biaya</dt><dd class="num text-right">{formatIDR(detail.type === 'expense' ? detail.amount - pairAmount(detail) : 0)}</dd>
       {:else}
         <dt class="text-ink2">Kategori</dt><dd class="text-right">{categoryName(detail.categoryId) || '-'}</dd>
