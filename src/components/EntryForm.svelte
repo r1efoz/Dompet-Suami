@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { accounts, balances, categories, editingTransaction, recordEntry, recordTransfer, transactions, updateEntry, updateTransfer } from '../lib/store';
+  import { activeAccounts, balances, categories, editingTransaction, recordEntry, recordTransfer, transactions, updateEntry, updateTransfer } from '../lib/store';
   import { formatIDR, formatNumber } from '../lib/format';
   import { categoryUsageOrder } from '../lib/history';
   import { showToast } from '../lib/ui';
@@ -192,7 +192,7 @@
         <span class="num text-[11.5px] text-ink2">{formatIDR($balances[source] ?? 0)}</span>
       </div>
       <select id="entry-source" class={fieldClass} bind:value={source}>
-        {#each $accounts as account (account.id)}
+        {#each $activeAccounts as account (account.id)}
           <option value={account.id}>{account.name} · {formatIDR($balances[account.id] ?? 0)}</option>
         {/each}
       </select>
@@ -202,7 +202,7 @@
       <div>
         <label class="lbl mb-2 block" for="entry-destination">KE</label>
         <select id="entry-destination" class={fieldClass} bind:value={destination}>
-          {#each $accounts as account (account.id)}
+          {#each $activeAccounts as account (account.id)}
             <option value={account.id}>{account.name} · {formatIDR($balances[account.id] ?? 0)}</option>
           {/each}
         </select>

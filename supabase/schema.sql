@@ -10,6 +10,7 @@ create table accounts (
   name text not null,
   type text not null check (type in ('bank', 'cash', 'ewallet')),
   icon text,
+  archived boolean not null default false,
   user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
   created_at timestamptz default now()
 );

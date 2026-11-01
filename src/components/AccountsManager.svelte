@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { accounts, balances, transactions } from '../lib/store';
+  import { accounts, activeAccounts, balances, transactions } from '../lib/store';
   import { formatIDR } from '../lib/format';
   import { isReferenced } from '../lib/master';
   import type { Account } from '../models/Account';
@@ -17,13 +17,13 @@
 
   const monthCount = (id: string) => $transactions.filter((t) => t.source === id && new Date(t.timestamp).getMonth() === now.getMonth() && new Date(t.timestamp).getFullYear() === now.getFullYear()).length;
   const sub = (id: string) => (isReferenced($transactions, { accountId: id }) ? `${monthCount(id)} transaksi bulan ini` : 'Belum dipakai');
-  const sorted = (type: string) => $accounts.filter((a) => a.type === type).sort((a, b) => ($balances[b.id] ?? 0) - ($balances[a.id] ?? 0) || a.name.localeCompare(b.name));
+  const sorted = (type: string) => $activeAccounts.filter((a) => a.type === type).sort((a, b) => ($balances[b.id] ?? 0) - ($balances[a.id] ?? 0) || a.name.localeCompare(b.name));
   function history(a: Account) { reportState.set({ tab: 'ledger', accountId: a.id }); currentView.set('report'); }
   function edit(a: Account | null) { item = a; open = true; }
 </script>
 
 <section>
-  <div class="mb-2.5 flex items-baseline justify-between"><h2 class="text-[15px] leading-[1.3] font-semibold">Akun · {$accounts.length}</h2>{#if !$viewer}<button type="button" class="h-7" on:click={() => edit(null)}><Pill variant="ink">+ Tambah</Pill></button>{/if}</div>
+  <div class="mb-2.5 flex items-baseline justify-between"><h2 class="text-[15px] leading-[1.3] font-semibold">Akun · {$activeAccounts.length}</h2>{#if !$viewer}<button type="button" class="h-7" on:click={() => edit(null)}><Pill variant="ink">+ Tambah</Pill></button>{/if}</div>
   {#each GROUPS as g}
     {@const list = sorted(g.type)}
     {#if list.length}

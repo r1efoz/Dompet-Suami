@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import { accounts, categories, transactions, newId, saveAccount, saveCategory, deleteAccount, deleteCategory } from '../lib/store';
-  import { errorMessage, isReferenced, validateName } from '../lib/master';
+  import { accounts, balances, categories, transactions, newId, saveAccount, saveCategory, deleteAccount, deleteCategory } from '../lib/store';
+  import { canRemoveAccount, errorMessage, isReferenced, validateName } from '../lib/master';
   import { showToast } from '../lib/ui';
   import ConfirmDialog from './ui/ConfirmDialog.svelte';
   import Field from './ui/Field.svelte';
@@ -16,9 +16,11 @@
 
   const ICONS: Record<string, string[]> = {
     account: ['🏦', '💳', '💵', '🛍️', '📱', '🐔'],
-    expense: ['🏠', '🛒', '🍜', '☕', '🚗', '⚡', '🎬', '💝', '🧾', '⋯'],
+    expense: ['🏠', '🛒', '🍜', '☕', '🚗', '⚡', '🎬', '💝', '🧾'],
     income: ['💼', '🤝', '🎁', '📈']
   };
+  const MORE = ['🍔', '🍕', '🍺', '🥗', '🛵', '⛽', '🚌', '✈️', '🏥', '💊', '🎓', '📚', '👕', '💄', '🎮', '🎵', '🐶', '👶', '🎁', '🏋️', '🔧', '📱', '💡', '🧴', '🏖️', '🙏', '💰', '💸', '🏦', '📦'];
+  let more = false;
   const DEFAULT_ICON: Record<string, string> = { bank: '🏦', cash: '💵', ewallet: '💳', income: '💼', expense: '🧾' };
   const TYPES = kind === 'account'
     ? [{ id: 'bank', label: 'Bank' }, { id: 'cash', label: 'Tunai' }, { id: 'ewallet', label: 'E-Wallet' }]
@@ -29,11 +31,12 @@
   let icon = '';
   let error = '';
   let confirmOpen = false;
-  function reset(src: typeof item) { name = src?.name ?? ''; type = src?.type ?? TYPES[0].id; icon = src?.icon ?? ''; error = ''; }
+  function reset(src: typeof item) { name = src?.name ?? ''; type = src?.type ?? TYPES[0].id; icon = src?.icon ?? ''; error = ''; more = false; }
   $: if (open) reset(item);
 
   $: ref = kind === 'account' ? { accountId: item?.id } : { categoryId: item?.id };
   $: used = item ? isReferenced($transactions, ref) : false;
+  $: removable = kind === 'account' ? canRemoveAccount($balances[item?.id ?? ''] ?? 0) : !used;
   $: typeLocked = kind === 'category' && used;
   $: choices = ICONS[kind === 'account' ? 'account' : type];
   $: shown = icon || DEFAULT_ICON[type];
@@ -83,13 +86,21 @@
         {#each choices as e}
           <button type="button" aria-label="Ikon {e}" aria-pressed={shown === e} class="grid h-10 w-10 place-items-center rounded-field border border-line text-[18px] {shown === e ? 'border-ink bg-chip' : 'bg-card'}" on:click={() => (icon = e)}>{e}</button>
         {/each}
+        <button type="button" aria-label="Ikon lainnya" aria-expanded={more} class="grid h-10 w-10 place-items-center rounded-field border border-line bg-card text-[18px]" on:click={() => (more = !more)}>⋯</button>
       </div>
+      {#if more}
+        <div class="mt-2 flex flex-wrap gap-2">
+          {#each MORE as e}
+            <button type="button" aria-label="Ikon {e}" aria-pressed={shown === e} class="grid h-10 w-10 place-items-center rounded-field border border-line text-[18px] {shown === e ? 'border-ink bg-chip' : 'bg-card'}" on:click={() => (icon = e)}>{e}</button>
+          {/each}
+        </div>
+      {/if}
     </div>
     {#if error}<p role="alert" class="text-[12px] text-accent">{error}</p>{/if}
     <div class="grid grid-cols-2 gap-2"><button type="button" class="h-11 rounded-btn bg-ink text-on-ink text-[14px] font-semibold" on:click={save}>Simpan</button><button type="button" class="h-11 rounded-btn bg-chip text-ink2 text-[14px] font-medium" on:click={() => dispatch('close')}>Batal</button></div>
     {#if item}
-      <button type="button" disabled={used} class="text-center text-[12px] leading-[1.4] text-accent disabled:opacity-50" on:click={() => (confirmOpen = true)}>Hapus {noun} (hanya bila tidak ada transaksi)</button>
+      <button type="button" disabled={!removable} class="text-center text-[12px] leading-[1.4] text-accent disabled:opacity-50" on:click={() => (confirmOpen = true)}>Hapus {noun} ({kind === 'account' ? 'hanya bila saldo Rp 0' : 'hanya bila tidak ada transaksi'})</button>
     {/if}
   </div>
 </Sheet>
-<ConfirmDialog open={confirmOpen} title="Hapus {item?.name}?" description="Tindakan ini tidak bisa dibatalkan." on:close={() => (confirmOpen = false)} on:click={remove} />
+<ConfirmDialog open={confirmOpen} title="Hapus {item?.name}?" description={kind === 'account' && used ? 'Akun disembunyikan, riwayat transaksi tetap ada.' : 'Tindakan ini tidak bisa dibatalkan.'} on:close={() => (confirmOpen = false)} on:click={remove} />

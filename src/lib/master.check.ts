@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import type { Transaction } from '../models/Transaction';
-import { errorMessage, isReferenced, validateName } from './master';
+import { canRemoveAccount, errorMessage, isReferenced, validateName } from './master';
 
 const tx = (p: Partial<Transaction>): Transaction => ({ id: 'x', type: 'expense', amount: 1, description: '', source: 'a', timestamp: '2026-10-01T00:00:00Z', ...p });
 const list = [tx({ source: 'bank', destination: 'cash', categoryId: 'food' })];
@@ -21,4 +21,8 @@ assert.equal(validateName(existing, 'Baru', 'bank'), null);
 assert.equal(errorMessage(new Error('boom'), 'x'), 'boom');
 assert.equal(errorMessage({ message: "Could not find the 'icon' column" }, 'x'), "Could not find the 'icon' column");
 assert.equal(errorMessage(null, 'x'), 'x');
+assert.equal(canRemoveAccount(0), true);
+assert.equal(canRemoveAccount(-0.2), true);
+assert.equal(canRemoveAccount(1000), false);
+assert.equal(canRemoveAccount(-5), false);
 console.log('master self-check: all assertions passed');

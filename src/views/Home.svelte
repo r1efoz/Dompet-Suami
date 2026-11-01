@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { accounts, categories, transactions, balances, totalBalance, monthSummary } from '../lib/store';
+  import { accounts, activeAccounts as notArchived, categories, transactions, balances, totalBalance, monthSummary } from '../lib/store';
   import { accountMonthStats, balanceAt, monthlyTrend, topCategories } from '../lib/dashboard';
   import { buildInsights } from '../lib/insights';
   import { formatCompact, formatIDR } from '../lib/format';
@@ -19,7 +19,7 @@
   $: stats = accountMonthStats($accounts, $transactions, start, end);
   $: activeAccounts = $accounts.filter((account) => (stats.find((item) => item.id === account.id)?.balance ?? 0) !== 0 || (stats.find((item) => item.id === account.id)?.count ?? 0) > 0);
   $: hiddenCount = $accounts.length - activeAccounts.length;
-  $: orderedAccounts = [...$accounts].sort((a, b) => ($balances[b.id] ?? 0) - ($balances[a.id] ?? 0));
+  $: orderedAccounts = [...$notArchived].sort((a, b) => ($balances[b.id] ?? 0) - ($balances[a.id] ?? 0));
   $: insights = buildInsights($transactions, $categories, now);
   $: categoriesTop = topCategories($transactions.filter((tx) => !tx.transferId && tx.type === 'expense' && new Date(tx.timestamp) >= start && new Date(tx.timestamp) < end), $categories, 5);
   $: monthly = monthlyTrend($transactions, 12, now);

@@ -5,4 +5,6 @@ export interface Account {
   name: string;
   type: AccountType;
   icon?: string;
+  /** Hidden from lists and pickers; history stays intact. */
+  archived?: boolean;
 }

@@ -20,3 +20,8 @@ export function errorMessage(e: unknown, fallback: string): string {
   const m = (e as { message?: unknown } | null)?.message;
   return typeof m === 'string' && m ? m : fallback;
 }
+
+/** An account may be removed (deleted, or archived when it has history) only at zero balance. */
+export function canRemoveAccount(balance: number): boolean {
+  return Math.round(balance) === 0;
+}

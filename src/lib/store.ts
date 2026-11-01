@@ -8,7 +8,7 @@ import { formatIDR } from './format';
 import { fromDatabaseTransaction, toDatabaseTransaction } from './transaction-mapping';
 import { buildTransferEdit } from './transaction-edit';
 import { transactionIdsToDelete } from './transaction-delete';
-import { isReferenced } from './master';
+import { canRemoveAccount, isReferenced } from './master';
 
 const DEFAULT_ACCOUNTS: Omit<Account, 'id'>[] = [
   { name: 'Bank', type: 'bank' },
@@ -29,6 +29,8 @@ export const accounts = writable<Account[]>([]);
 export const categories = writable<Category[]>([]);
 export const transactions = writable<Transaction[]>([]);
 export const editingTransaction = writable<Transaction | null>(null);
+
+export const activeAccounts = derived(accounts, ($accounts) => $accounts.filter((a) => !a.archived));
 
 export const balances = derived([accounts, transactions], ([$accounts, $transactions]) =>
   computeBalances($accounts, $transactions)
@@ -288,9 +290,15 @@ export async function saveCategory(category: Category): Promise<void> {
   if (error) throw error;
 }
 
-/** Hapus akun di Supabase dan store; ditolak bila masih dipakai transaksi. */
+/** Hapus akun bersaldo 0. Bila punya riwayat transaksi, akun hanya disembunyikan (arsip) agar riwayat tetap utuh. */
 export async function deleteAccount(id: string): Promise<void> {
-  if (isReferenced(get(transactions), { accountId: id })) throw new Error('Masih ada transaksi yang memakai ini.');
+  if (!canRemoveAccount(get(balances)[id] ?? 0)) throw new Error('Saldo harus Rp 0 sebelum akun dihapus.');
+  if (isReferenced(get(transactions), { accountId: id })) {
+    const { error } = await supabase.from('accounts').update({ archived: true }).eq('id', id);
+    if (error) throw error;
+    accounts.update((items) => items.map((a) => (a.id === id ? { ...a, archived: true } : a)));
+    return;
+  }
   const { error } = await supabase.from('accounts').delete().eq('id', id);
   if (error) throw error;
   accounts.update((items) => items.filter((a) => a.id !== id));
