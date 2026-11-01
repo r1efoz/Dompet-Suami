@@ -46,5 +46,5 @@
 <Chips {items} {value} onChange={choose} />
 <Sheet open={rangeOpen} title="Rentang tanggal" on:close={() => (rangeOpen = false)}>
   <div class="mt-3.5 grid grid-cols-2 gap-3"><Field label="Dari" type="date" bind:value={from} /><Field label="Sampai" type="date" bind:value={to} /></div>
-  <div class="mt-4"><Button variant="ink" disabled={!from || !to || from > to} on:click={apply}>Terapkan</Button></div>
+  <div class="mt-4 grid"><Button variant="ink" disabled={!from || !to || from > to} on:click={apply}>Terapkan</Button></div>
 </Sheet>
