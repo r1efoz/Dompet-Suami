@@ -54,4 +54,17 @@ const totalBalance = Object.values(computeBalances(accounts, withTransfer)).redu
 assert.equal(opSum.expense, 500, 'fee counted as expense');
 assert.equal(opSum.income - opSum.expense, totalBalance, 'net equals total balance change');
 
-console.log('ledger self-check: 10 assertions passed');
+// combined ledger (accountId ''): transfers hidden, fee shown, income before expense on same timestamp
+const same = '2026-10-25T12:00:00.000Z';
+const combined: Transaction[] = [
+  tx({ id: 'z-exp', type: 'expense', amount: 200_000, source: 'bank', timestamp: same }),
+  tx({ id: 'a-inc', type: 'income', amount: 5_000_000, source: 'bank', timestamp: same }),
+  tx({ id: 'o', type: 'expense', amount: 100_500, source: 'bank', destination: 'cash', transferId: 't9', timestamp: same }),
+  tx({ id: 'i', type: 'income', amount: 100_000, source: 'cash', destination: 'cash', transferId: 't9', timestamp: same })
+];
+const all = buildLedger(combined, '', 1_000);
+assert.equal(all[0].tx.id, 'a-inc', 'income leads same-timestamp rows');
+assert.equal(all.length, 3, 'transfer hidden, fee + 2 entries');
+assert.equal(all[all.length - 1].runningBalance, 1_000 + 5_000_000 - 200_000 - 500, 'combined running balance');
+
+console.log('ledger self-check: 13 assertions passed');

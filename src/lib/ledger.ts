@@ -62,17 +62,22 @@ export interface LedgerRow {
   runningBalance: number;
 }
 
-/** Running balance of one fund source, oldest entry first. */
+/**
+ * Running balance, oldest entry first. `accountId` '' = all accounts combined:
+ * transfers cancel out, only their admin fee shows. Same timestamp: income first.
+ */
 export function buildLedger(transactions: Transaction[], accountId: string, opening = 0): LedgerRow[] {
   let running = opening;
   const rows: LedgerRow[] = [];
-
-  const ordered = [...transactions].sort(
-    (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+  const source = accountId === '' ? operating(transactions) : transactions.filter((tx) => tx.source === accountId);
+  const ordered = [...source].sort(
+    (a, b) =>
+      new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime() ||
+      Number(b.type === 'income') - Number(a.type === 'income') ||
+      a.id.localeCompare(b.id)
   );
 
   for (const tx of ordered) {
-    if (tx.source !== accountId) continue;
     running += tx.type === 'income' ? tx.amount : -tx.amount;
     rows.push({ tx, runningBalance: running });
   }

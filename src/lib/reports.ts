@@ -5,7 +5,18 @@ import type { Transaction } from '../models/Transaction';
 export type Period =
   | { kind: 'month'; y: number; m: number }
   | { kind: 'year'; y: number }
-  | { kind: 'range'; from: string; to: string };
+  | { kind: 'range'; from: string; to: string }
+  | { kind: 'payday'; day: string }; // YYYY-MM-DD (local) of the salary entry
+
+export interface PaydayPeriod {
+  day: string;
+  start: Date;
+  /** Next payday 00:00; undefined while this is the current period. */
+  end?: Date;
+  prevDay?: string;
+  amount: number;
+  label: string;
+}
 
 export interface PeriodRange {
   start: Date;
@@ -29,8 +40,48 @@ function parseLocalDate(iso: string): Date {
   return new Date(y, m - 1, d);
 }
 
+const dayKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+/** Salary = income (not transfer) in a category named like "Gaji". A period runs payday 00:00 → next payday 00:00; newest first. */
+export function paydayPeriods(transactions: Transaction[], categories: Category[], now = new Date()): PaydayPeriod[] {
+  const salaryIds = new Set(categories.filter((c) => c.type === 'income' && /gaji/i.test(c.name)).map((c) => c.id));
+  const byDay = new Map<string, number>();
+  for (const tx of transactions) {
+    if (tx.type !== 'income' || tx.transferId || !tx.categoryId || !salaryIds.has(tx.categoryId)) continue;
+    const key = dayKey(new Date(tx.timestamp));
+    byDay.set(key, (byDay.get(key) ?? 0) + tx.amount);
+  }
+  const days = [...byDay.keys()].sort();
+  const fmt = (d: Date) => `${d.getDate()} ${MONTHS[d.getMonth()]}${d.getFullYear() === now.getFullYear() ? '' : ` ${d.getFullYear()}`}`;
+  return days
+    .map((day, i) => {
+      const start = parseLocalDate(day);
+      const end = days[i + 1] ? parseLocalDate(days[i + 1]) : undefined;
+      const last = end ? new Date(end.getFullYear(), end.getMonth(), end.getDate() - 1) : undefined;
+      return { day, start, end, prevDay: days[i - 1], amount: byDay.get(day)!, label: `Gajian ${fmt(start)}${last ? ` – ${fmt(last)}` : ''}` };
+    })
+    .reverse();
+}
+
+/** Sum of every account's signed entries before `start`. */
+export function totalBalanceBefore(transactions: Transaction[], start: Date): number {
+  return transactions.reduce((sum, tx) => (time(tx) < start.getTime() ? sum + signed(tx) : sum), 0);
+}
+
 /** `end` is exclusive; `prev*` is the preceding period of the same length. */
-export function periodRange(period: Period): PeriodRange {
+export function periodRange(period: Period, paydays: PaydayPeriod[] = []): PeriodRange {
+  if (period.kind === 'payday') {
+    const p = paydays.find((x) => x.day === period.day);
+    const start = p?.start ?? parseLocalDate(period.day);
+    const prev = paydays.find((x) => x.day === p?.prevDay);
+    return {
+      start,
+      end: p ? (p.end ?? new Date(8.64e15)) : new Date(start.getFullYear(), start.getMonth(), start.getDate() + 1),
+      label: p?.label ?? `Gajian ${period.day}`,
+      prevStart: prev?.start ?? start,
+      prevEnd: start
+    };
+  }
   if (period.kind === 'month') {
     return {
       start: new Date(period.y, period.m, 1),

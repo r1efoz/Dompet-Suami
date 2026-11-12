@@ -9,7 +9,9 @@ import {
   categoryReport,
   monthlyTable,
   toCsv,
-  fullBackupRows
+  fullBackupRows,
+  paydayPeriods,
+  totalBalanceBefore
 } from './reports';
 
 // --- Test 1: accountBalanceReport ---
@@ -114,5 +116,40 @@ assert.equal(t6Row[5], 'Makanan', 'Kategori using category name');
 // Check monthlyTable
 const mTable = monthlyTable(transactions, 2026);
 assert.ok(mTable.rows.length >= 2, 'monthlyTable rows count');
+
+// --- Test 7: payday periods ---
+const payCats: Category[] = [
+  { id: 'salary', name: 'Gaji', type: 'income' },
+  { id: 'bonus', name: 'Bonus', type: 'income' },
+  { id: 'food', name: 'Makanan', type: 'expense' }
+];
+const payTx: Transaction[] = [
+  { id: 'p1', type: 'income', amount: 5_000_000, source: 'bank', categoryId: 'salary', timestamp: '2026-09-25T12:00:00', description: 'Gaji Sep' },
+  { id: 'p2', type: 'expense', amount: 100_000, source: 'bank', categoryId: 'food', timestamp: '2026-09-26T12:00:00', description: 'Makan' },
+  { id: 'p3', type: 'income', amount: 5_000_000, source: 'bank', categoryId: 'salary', timestamp: '2026-10-25T12:00:00', description: 'Gaji Okt' },
+  { id: 'p4', type: 'income', amount: 500_000, source: 'bank', categoryId: 'salary', timestamp: '2026-10-25T12:00:00', description: 'Gaji tambahan' },
+  { id: 'p5', type: 'income', amount: 700_000, source: 'bank', categoryId: 'bonus', timestamp: '2026-10-28T12:00:00', description: 'Bonus' },
+  { id: 'p6', type: 'income', amount: 1_000_000, source: 'cash', categoryId: 'salary', transferId: 'x', timestamp: '2026-10-29T12:00:00', description: 'transfer' }
+];
+const now = new Date(2026, 10, 13);
+const pds = paydayPeriods(payTx, payCats, now);
+assert.equal(pds.length, 2, 'two payday periods');
+assert.equal(pds[0].day, '2026-10-25', 'newest first');
+assert.equal(pds[0].amount, 5_500_000, 'same-day salaries merged');
+assert.equal(pds[0].end, undefined, 'current period open-ended');
+assert.equal(pds[0].prevDay, '2026-09-25');
+assert.equal(pds[1].end!.getTime(), new Date(2026, 9, 25).getTime(), 'ends at next payday 00:00');
+assert.equal(pds[0].label, 'Gajian 25 Okt');
+assert.equal(pds[1].label, 'Gajian 25 Sep – 24 Okt');
+assert.deepEqual(paydayPeriods(payTx, [{ id: 'food', name: 'Makanan', type: 'expense' }], now), [], 'no Gaji category => none');
+
+const pr = periodRange({ kind: 'payday', day: '2026-10-25' }, pds);
+assert.equal(pr.start.getTime(), new Date(2026, 9, 25).getTime());
+assert.ok(pr.end.getTime() > new Date(2100, 0, 1).getTime(), 'open-ended end');
+assert.equal(pr.prevStart.getTime(), new Date(2026, 8, 25).getTime());
+assert.equal(pr.prevEnd.getTime(), pr.start.getTime());
+assert.equal(pr.label, 'Gajian 25 Okt');
+
+assert.equal(totalBalanceBefore(payTx, new Date(2026, 9, 25)), 5_000_000 - 100_000, 'total balance before payday');
 
 console.log('reports self-check: all assertions passed');

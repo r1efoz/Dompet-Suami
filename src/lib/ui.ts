@@ -1,6 +1,7 @@
 import { readable, writable } from 'svelte/store';
 
-export type Period = { kind: 'month'; y: number; m: number } | { kind: 'year'; y: number } | { kind: 'range'; from: string; to: string };
+import type { Period } from './reports';
+export type { Period };
 export type View = 'home' | 'transaction' | 'report' | 'master';
 
 export const currentView = writable<View>('home');
