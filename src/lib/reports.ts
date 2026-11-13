@@ -64,6 +64,62 @@ export function paydayPeriods(transactions: Transaction[], categories: Category[
     .reverse();
 }
 
+export interface ActivePeriod {
+  kind: 'payday' | 'month';
+  start: Date;
+  /** Exclusive; a running payday period ends at `new Date(8.64e15)`. */
+  end: Date;
+  /** Used for projection. */
+  expectedEnd: Date;
+  prev?: { start: Date; end: Date };
+  label: string;
+  short: string;
+  word: 'periode ini' | 'bulan ini';
+  payday?: PaydayPeriod;
+}
+
+/** Newest payday that has started (future-dated salaries ignored); calendar month when none. `paydays` is newest first. */
+export function activePeriod(paydays: PaydayPeriod[], now: Date): ActivePeriod {
+  const p = paydays.find((x) => x.start.getTime() <= now.getTime());
+  if (p) {
+    const prev = paydays.find((x) => x.day === p.prevDay);
+    // same day next month, clamped to that month's last day (salary on the 31st)
+    const nextMonthEnd = new Date(p.start.getFullYear(), p.start.getMonth() + 2, 0).getDate();
+    const expectedEnd = p.end ?? new Date(p.start.getFullYear(), p.start.getMonth() + 1, Math.min(p.start.getDate(), nextMonthEnd));
+    return {
+      kind: 'payday',
+      start: p.start,
+      end: p.end ?? new Date(8.64e15),
+      expectedEnd,
+      prev: prev && p.prevDay ? { start: prev.start, end: p.start } : undefined,
+      label: p.label,
+      short: fmtDay(p.start),
+      word: 'periode ini',
+      payday: p
+    };
+  }
+  const start = new Date(now.getFullYear(), now.getMonth(), 1);
+  const end = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  return {
+    kind: 'month',
+    start,
+    end,
+    expectedEnd: end,
+    prev: { start: new Date(now.getFullYear(), now.getMonth() - 1, 1), end: start },
+    label: now.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }),
+    short: MONTHS[now.getMonth()],
+    word: 'bulan ini'
+  };
+}
+
+const daysBetween = (from: Date, to: Date) => Math.round((to.getTime() - from.getTime()) / DAY_MS);
+
+export function periodDays(period: ActivePeriod, now: Date): { elapsed: number; total: number; remaining: number } {
+  const elapsed = Math.max(1, daysBetween(period.start, now) + 1);
+  const total = daysBetween(period.start, period.expectedEnd);
+  return { elapsed, total, remaining: total - elapsed };
+}
+
 /** `end` is exclusive; `prev*` is the preceding period of the same length. */
 export function periodRange(period: Period, paydays: PaydayPeriod[] = []): PeriodRange {
   if (period.kind === 'payday') {
@@ -145,12 +201,16 @@ export interface CategoryRow {
   prev: number;
   /** % change vs previous period, `'baru'` when previous was 0, `'—'` when both 0. */
   vs: number | 'baru' | '—';
+  /** Category is flagged as allocation (money set aside, not spending); the Total row is false. */
+  allocation: boolean;
 }
 
 export interface CategoryReport {
   expense: CategoryRow[];
   income: CategoryRow[];
   total: { expense: CategoryRow; income: CategoryRow };
+  /** Expense only: spending vs allocation. */
+  split: { real: number; allocation: number };
 }
 
 const NO_CATEGORY = '';
@@ -184,15 +244,29 @@ export function categoryReport(categories: Category[], transactions: Transaction
         amount,
         percent: (amount / total) * 100,
         prev: prev.get(id) ?? 0,
-        vs: compare(amount, prev.get(id) ?? 0)
+        vs: compare(amount, prev.get(id) ?? 0),
+        allocation: categories.find((c) => c.id === id)?.allocation === true
       }))
       .sort((a, b) => b.amount - a.amount);
-    const sum: CategoryRow = { id: 'total', name: 'Total', amount: total, percent: total ? 100 : 0, prev: prevTotal, vs: compare(total, prevTotal) };
+    const sum: CategoryRow = { id: 'total', name: 'Total', amount: total, percent: total ? 100 : 0, prev: prevTotal, vs: compare(total, prevTotal), allocation: false };
     return { rows, sum };
   };
   const expense = build('expense');
   const income = build('income');
-  return { expense: expense.rows, income: income.rows, total: { expense: expense.sum, income: income.sum } };
+  const allocation = expense.rows.filter((r) => r.allocation).reduce((s, r) => s + r.amount, 0);
+  return {
+    expense: expense.rows,
+    income: income.rows,
+    total: { expense: expense.sum, income: income.sum },
+    split: { real: expense.sum.amount - allocation, allocation }
+  };
+}
+
+/** Spending rows ranked by amount with percent of spending, then allocation rows with percent 0. */
+export function spendingRows(report: CategoryReport): { real: CategoryRow[]; allocation: CategoryRow[] } {
+  const real = report.expense.filter((r) => !r.allocation).map((r) => ({ ...r, percent: report.split.real ? (r.amount / report.split.real) * 100 : 0 }));
+  const allocation = report.expense.filter((r) => r.allocation).map((r) => ({ ...r, percent: 0 }));
+  return { real, allocation };
 }
 
 export interface MonthlyRow {

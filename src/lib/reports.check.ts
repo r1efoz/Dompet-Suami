@@ -10,7 +10,10 @@ import {
   monthlyTable,
   toCsv,
   fullBackupRows,
-  paydayPeriods
+  paydayPeriods,
+  activePeriod,
+  periodDays,
+  spendingRows
 } from './reports';
 
 // --- Test 1: accountBalanceReport ---
@@ -152,5 +155,57 @@ assert.equal(pr.label, 'Gajian 25 Okt');
 const payAccounts: Account[] = [{ id: 'bank', name: 'Bank', type: 'bank' }, { id: 'cash', name: 'Tunai', type: 'cash' }];
 const openingAll = accountBalanceReport(payAccounts, payTx, pr.start, pr.end).reduce((s, r) => s + r.awal, 0);
 assert.equal(openingAll, 5_000_000 - 100_000, 'combined opening = sum of account openings');
+
+// --- activePeriod ---
+const apCats = [{ id: 'salary', name: 'Gaji', type: 'income' }] as Category[];
+const sal = (id: string, y: number, m: number, d: number): Transaction =>
+  ({ id, type: 'income', amount: 18_214_145, source: 'bank', categoryId: 'salary', description: '', timestamp: new Date(y, m, d, 12).toISOString() });
+const apNow = new Date(2026, 10, 13, 10);
+const at = (y: number, m: number, d: number) => new Date(y, m, d).getTime();
+
+const one = activePeriod(paydayPeriods([sal('s1', 2026, 9, 27)], apCats, apNow), apNow);
+assert.equal(one.kind, 'payday');
+assert.equal(one.start.getTime(), at(2026, 9, 27));
+assert.equal(one.end.getTime(), 8.64e15);
+assert.equal(one.expectedEnd.getTime(), at(2026, 10, 27));
+assert.equal(one.prev, undefined);
+assert.deepEqual([one.label, one.short, one.word], ['Gajian 27 Okt', '27 Okt', 'periode ini']);
+assert.equal(one.payday?.amount, 18_214_145);
+assert.deepEqual(periodDays(one, apNow), { elapsed: 18, total: 31, remaining: 13 });
+
+const two = activePeriod(paydayPeriods([sal('s0', 2026, 8, 27), sal('s1', 2026, 9, 27)], apCats, apNow), apNow);
+assert.deepEqual([two.prev?.start.getTime(), two.prev?.end.getTime()], [at(2026, 8, 27), at(2026, 9, 27)]);
+
+const future = activePeriod(paydayPeriods([sal('s1', 2026, 9, 27), sal('s2', 2026, 10, 27)], apCats, apNow), apNow);
+assert.equal(future.start.getTime(), at(2026, 9, 27), 'gaji masa depan diabaikan');
+assert.equal(future.end.getTime(), at(2026, 10, 27));
+
+const febNow = new Date(2027, 1, 5, 10);
+const clamp = activePeriod(paydayPeriods([sal('s3', 2027, 0, 31)], apCats, febNow), febNow);
+assert.equal(clamp.expectedEnd.getTime(), at(2027, 1, 28), 'dijepit ke akhir bulan');
+
+const late = new Date(2026, 11, 5, 10);
+assert.ok(periodDays(activePeriod(paydayPeriods([sal('s1', 2026, 9, 27)], apCats, late), late), late).remaining <= 0);
+
+const none = activePeriod([], apNow);
+assert.equal(none.kind, 'month');
+assert.deepEqual([none.start.getTime(), none.end.getTime(), none.expectedEnd.getTime()], [at(2026, 10, 1), at(2026, 11, 1), at(2026, 11, 1)]);
+assert.deepEqual([none.prev?.start.getTime(), none.prev?.end.getTime()], [at(2026, 9, 1), at(2026, 10, 1)]);
+assert.deepEqual([none.label, none.short, none.word], ['November 2026', 'Nov', 'bulan ini']);
+
+// --- alokasi di categoryReport ---
+assert.deepEqual(catRep.split, { real: 600_000, allocation: 0 });
+assert.ok(catRep.expense.every((r) => r.allocation === false));
+const allocCats = [...categories, { id: 'wife', name: 'Istri', type: 'expense', allocation: true }] as Category[];
+const allocTx: Transaction[] = [...catTx, { id: 'c5', type: 'expense', amount: 1_000_000, source: 'bank', categoryId: 'wife', timestamp: '2026-10-13T12:00:00Z', description: '' }];
+const allocRep = categoryReport(allocCats, allocTx, start, end, prevStart, prevEnd);
+assert.deepEqual(allocRep.split, { real: 600_000, allocation: 1_000_000 });
+assert.equal(allocRep.total.expense.amount, 1_600_000, 'total tetap semua uang keluar');
+assert.deepEqual([allocRep.expense[0].id, allocRep.expense[0].allocation], ['wife', true], 'urutan categoryReport tidak berubah');
+assert.equal(Math.round(allocRep.expense[0].percent), 63, 'persen categoryReport tetap terhadap total');
+const rows = spendingRows(allocRep);
+assert.deepEqual(rows.real.map((r) => r.id), ['food', 'util', 'trans']);
+assert.equal(Math.round(rows.real[0].percent), 50, 'persen terhadap belanja');
+assert.deepEqual(rows.allocation.map((r) => [r.id, r.percent]), [['wife', 0]]);
 
 console.log('reports self-check: all assertions passed');
