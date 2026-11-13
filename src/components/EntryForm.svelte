@@ -267,9 +267,9 @@
           aria-describedby={errors.description ? 'entry-description-error' : undefined}
           aria-invalid={errors.description ? 'true' : undefined}
         />
+        {#if errors.description}<p id="entry-description-error" class="mt-1.5 text-[11.5px] leading-[1.4] text-accent" role="alert">{errors.description}</p>{/if}
       </div>
     </div>
-    {#if errors.description}<p id="entry-description-error" class="-mt-2.5 text-[11.5px] leading-[1.4] text-accent" role="alert">{errors.description}</p>{/if}
 
     <div>
       <Button variant="primary" type="submit">{editing ? 'Simpan perubahan' : submitLabel}</Button>
