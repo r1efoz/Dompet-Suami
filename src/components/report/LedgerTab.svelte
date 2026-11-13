@@ -26,7 +26,7 @@
 
   let detail: Transaction | null = null;
 
-  $: if (accountId !== '' && !accounts.some((a) => a.id === accountId)) accountId = '';
+  $: if (accountId !== '' && accounts.length > 0 && !accounts.some((a) => a.id === accountId)) accountId = '';
   $: combined = accountId === '';
   $: awal = combined ? openingAll : rows.find((r) => r.id === accountId)?.awal ?? 0;
   $: ledger = buildLedger(transactions, accountId, awal);

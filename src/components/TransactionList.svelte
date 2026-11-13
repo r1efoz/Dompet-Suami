@@ -199,7 +199,7 @@
   </div>
 </Sheet>
 
-<TransactionDetail tx={detail} accounts={$accounts} categories={$categories} transactions={$transactions} on:close={() => (detail = null)}>
+<TransactionDetail tx={detail} on:close={() => (detail = null)}>
   <svelte:fragment slot="actions">
     {#if detail && !$viewer}<div class="mt-4 grid grid-cols-2 gap-2">
       {#if !detail.transferId || detail.type === 'expense'}
