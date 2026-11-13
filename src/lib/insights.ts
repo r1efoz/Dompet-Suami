@@ -1,60 +1,85 @@
 import type { Category } from '../models/Category';
 import type { Transaction } from '../models/Transaction';
+import { entryProblem } from './entry-rules';
 import { formatCompact, formatIDR } from './format';
+import { operating } from './ledger';
+import { activePeriod, paydayPeriods, periodDays } from './reports';
 
 export interface Insight {
-  id: 'top-category' | 'savings-ratio' | 'daily-average' | 'vs-last-month' | 'new-category';
+  id: 'incomplete' | 'top-category' | 'allocation' | 'savings-ratio' | 'daily-average' | 'vs-previous' | 'new-category';
   tone: 'neg' | 'pos' | 'neutral';
   segments: Array<{ t: string; b?: boolean }>;
 }
 export function insightText(insight: Insight): string { return insight.segments.map(({ t }) => t).join(''); }
-const isWife = (name: string) => /istri/i.test(name);
 const make = (id: Insight['id'], tone: Insight['tone'], parts: Array<[string, boolean?]>): Insight => ({ id, tone, segments: parts.map(([t, b]) => ({ t, ...(b ? { b: true } : {}) })) });
+const rp = (amount: number) => 'Rp ' + formatCompact(amount);
+const sum = (list: Transaction[]) => list.reduce((total, tx) => total + tx.amount, 0);
+
 export function buildInsights(transactions: Transaction[], categories: Category[], now: Date): Insight[] {
-  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-  const lastStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-  const thisMonth = transactions.filter((tx) => !tx.transferId && new Date(tx.timestamp) >= monthStart && new Date(tx.timestamp) < new Date(now.getFullYear(), now.getMonth() + 1, 1));
-  const lastMonth = transactions.filter((tx) => !tx.transferId && new Date(tx.timestamp) >= lastStart && new Date(tx.timestamp) < monthStart);
-  const expenses = thisMonth.filter((tx) => tx.type === 'expense');
-  const income = thisMonth.filter((tx) => tx.type === 'income').reduce((sum, tx) => sum + tx.amount, 0);
-  const expense = expenses.reduce((sum, tx) => sum + tx.amount, 0);
-  const byCat = new Map<string, number>();
-  for (const tx of expenses) byCat.set(tx.categoryId ?? '', (byCat.get(tx.categoryId ?? '') ?? 0) + tx.amount);
-  const top = [...byCat].sort((a, b) => b[1] - a[1])[0];
+  const period = activePeriod(paydayPeriods(transactions, categories, now), now);
+  const { elapsed, total, remaining } = periodDays(period, now);
+  const word = period.word;
+  const nameOf = (id: string) => categories.find((category) => category.id === id)?.name ?? 'Tanpa kategori';
+  const isAllocation = (tx: Transaction) => !!categories.find((category) => category.id === tx.categoryId)?.allocation;
+  const ledger = operating(transactions);
+  const within = (tx: Transaction, from: Date, to: Date) => { const t = new Date(tx.timestamp).getTime(); return t >= from.getTime() && t < to.getTime(); };
+  const current = ledger.filter((tx) => within(tx, period.start, period.end));
+  const expenses = current.filter((tx) => tx.type === 'expense');
+  const allocations = expenses.filter(isAllocation);
+  const spending = expenses.filter((tx) => !isAllocation(tx));
+  const income = sum(current.filter((tx) => tx.type === 'income'));
+  const expense = sum(expenses);
+  const allocated = sum(allocations);
+  const spent = expense - allocated;
+  const byCategory = (list: Transaction[]) => {
+    const map = new Map<string, number>();
+    for (const tx of list) map.set(tx.categoryId ?? '', (map.get(tx.categoryId ?? '') ?? 0) + tx.amount);
+    return map;
+  };
   const results: Insight[] = [];
-  if (expense > 0 && top) {
-    const name = categories.find((category) => category.id === top[0])?.name ?? 'Tanpa kategori';
-    const share = ` (${Math.round(top[1] / expense * 100)}% dari total keluar).`;
-    results.push(isWife(name)
-      ? make('top-category', 'neg', [['Tanggung jawab ke istri sebesar ', false], ['Rp ' + formatCompact(top[1]), true], [share]])
-      : make('top-category', 'neg', [[name, true], [' adalah pengeluaran terbesar: Rp ' + formatCompact(top[1]) + share]]));
+
+  const unfinished = transactions.filter((tx) => entryProblem(tx, categories));
+  if (unfinished.length > 0) results.push(make('incomplete', 'neg', [[`${unfinished.length} transaksi`, true], [` (${rp(sum(unfinished))}) perlu dilengkapi. Buka Riwayat → Perlu dilengkapi.`]]));
+
+  const spendingByCategory = byCategory(spending);
+  const top = [...spendingByCategory].sort((a, b) => b[1] - a[1])[0];
+  if (spent > 0 && top) results.push(make('top-category', 'neg', [[nameOf(top[0]), true], [` adalah pengeluaran terbesar: ${rp(top[1])} (${Math.round(top[1] / spent * 100)}% dari belanja).`]]));
+
+  if (allocated > 0) {
+    const kinds = byCategory(allocations);
+    const label = kinds.size === 1 ? nameOf([...kinds.keys()][0]) : `(${kinds.size} kategori)`;
+    results.push(make('allocation', 'neutral', [['Alokasi '], [label, true], [` ${rp(allocated)}${income > 0 ? ` (${Math.round(allocated / income * 100)}% dari pemasukan)` : ''}.`]]));
   }
+
   if (income > 0) {
     const ratio = Math.round((income - expense) / income * 100);
     results.push(ratio < 0
-      ? make('savings-ratio', 'neg', [['Pengeluaran melebihi pemasukan bulan ini ('], [String(Math.abs(ratio)) + '%', true], [' lebih besar).']])
-      : make('savings-ratio', ratio >= 20 ? 'pos' : 'neg', [['Rasio tabungan bulan ini '], [`${ratio}%`, true], [` — ${ratio >= 20 ? 'di atas' : 'di bawah'} target 20%.`]]));
+      ? make('savings-ratio', 'neg', [[`Pengeluaran melebihi pemasukan ${word} (`], [`${Math.abs(ratio)}%`, true], [' lebih besar).']])
+      : make('savings-ratio', ratio >= 20 ? 'pos' : 'neg', [[`Rasio tabungan ${word} `], [`${ratio}%`, true], [` — ${ratio >= 20 ? 'di atas' : 'di bawah'} target 20%.`]]));
   }
-  if (expense > 0) {
-    const average = expense / now.getDate();
-    const remaining = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() - now.getDate();
-    results.push(remaining === 0
-      ? make('daily-average', 'neutral', [['Rata-rata pengeluaran harian '], [formatIDR(average), true], [' sepanjang bulan ini.']])
-      : make('daily-average', 'neutral', [['Rata-rata pengeluaran harian '], [formatIDR(average), true], [`. Sisa ${remaining} hari, proyeksi akhir bulan `], [formatIDR(average * new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()), true], ['.']]));
+
+  if (spent > 0) {
+    const average = spent / elapsed;
+    results.push(remaining > 0
+      ? make('daily-average', 'neutral', [['Rata-rata belanja harian '], [formatIDR(average), true], [`. Sisa ${remaining} hari, proyeksi ${period.kind === 'payday' ? 'sampai gajian berikutnya' : 'akhir bulan'} `], [formatIDR(average * total), true], ['.']])
+      : make('daily-average', 'neutral', [['Rata-rata belanja harian '], [formatIDR(average), true], [` ${word}.`]]));
   }
-  const previousExpense = lastMonth.filter((tx) => tx.type === 'expense').reduce((sum, tx) => sum + tx.amount, 0);
-  if (previousExpense > 0) {
-    const percent = Math.round(Math.abs(expense - previousExpense) / previousExpense * 100);
-    const monthName = lastStart.toLocaleDateString('id-ID', { month: 'long' });
-    results.push(percent === 0 ? make('vs-last-month', 'neutral', [['Pengeluaran '], ['sama', true], [` dengan ${monthName}.`]]) : make('vs-last-month', expense > previousExpense ? 'neg' : 'pos', [[`Pengeluaran ${expense > previousExpense ? 'naik' : 'turun'} `], [`${percent}%`, true], [` dibanding ${monthName}.`]]));
+
+  if (period.prev) {
+    const { start, end } = period.prev;
+    const label = period.kind === 'payday' ? 'gajian lalu' : 'bulan lalu';
+    const sameSpan = new Date(start.getFullYear(), start.getMonth(), start.getDate() + elapsed);
+    const prevSpending = ledger.filter((tx) => tx.type === 'expense' && !isAllocation(tx) && within(tx, start, end));
+    const previous = sum(prevSpending.filter((tx) => within(tx, start, sameSpan < end ? sameSpan : end)));
+    if (previous > 0) {
+      const percent = Math.round(Math.abs(spent - previous) / previous * 100);
+      results.push(percent === 0
+        ? make('vs-previous', 'neutral', [['Belanja '], ['sama', true], [` dengan rentang yang sama ${label}.`]])
+        : make('vs-previous', spent > previous ? 'neg' : 'pos', [[`Belanja ${spent > previous ? 'naik' : 'turun'} `], [`${percent}%`, true], [` dibanding rentang yang sama ${label}.`]]));
+    }
+    const seen = new Set(prevSpending.map((tx) => tx.categoryId ?? ''));
+    const fresh = [...spendingByCategory].filter(([id]) => id && !seen.has(id)).sort((a, b) => b[1] - a[1])[0];
+    if (fresh) results.push(make('new-category', 'neutral', [[`Kategori baru ${word}: `], [nameOf(fresh[0]), true], [` ${rp(fresh[1])}.`]]));
   }
-  const previousCategories = new Set(lastMonth.filter((tx) => tx.type === 'expense').map((tx) => tx.categoryId));
-  const fresh = [...byCat].filter(([id]) => id && !previousCategories.has(id)).sort((a, b) => b[1] - a[1])[0];
-  if (fresh) {
-    const name = categories.find((category) => category.id === fresh[0])?.name ?? 'Tanpa kategori';
-    results.push(isWife(name)
-      ? make('new-category', 'neutral', [['Tanggung jawab ke istri sebesar '], ['Rp ' + formatCompact(fresh[1]), true], [' bulan ini.']])
-      : make('new-category', 'neutral', [['Kategori baru bulan ini: '], [name, true], [` Rp ${formatCompact(fresh[1])}.`]]));
-  }
-  return results.slice(0, 3);
+  return results.slice(0, 5);
 }
