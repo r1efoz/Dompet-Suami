@@ -8,7 +8,7 @@ import { formatIDR } from './format';
 import { fromDatabaseTransaction, toDatabaseTransaction } from './transaction-mapping';
 import { buildTransferEdit } from './transaction-edit';
 import { transactionIdsToDelete } from './transaction-delete';
-import { canRemoveAccount, isReferenced } from './master';
+import { canRemoveAccount, categoryPayload, isReferenced } from './master';
 import { entryProblem } from './entry-rules';
 
 const DEFAULT_ACCOUNTS: Omit<Account, 'id'>[] = [
@@ -29,6 +29,8 @@ const DEFAULT_CATEGORIES: Omit<Category, 'id'>[] = [
 export const accounts = writable<Account[]>([]);
 export const categories = writable<Category[]>([]);
 export const transactions = writable<Transaction[]>([]);
+/** True once the loaded category rows carry the `allocation` column. */
+export const allocationSupported = writable(false);
 export const editingTransaction = writable<Transaction | null>(null);
 
 export const activeAccounts = derived(accounts, ($accounts) => $accounts.filter((a) => !a.archived));
@@ -95,7 +97,10 @@ export async function loadInitialData(ownerId?: string): Promise<void> {
   ]);
 
   if (!accRes.error) accounts.set((accRes.data as Account[]) ?? []);
-  if (!catRes.error) categories.set((catRes.data as Category[]) ?? []);
+  if (!catRes.error) {
+    categories.set((catRes.data as Category[]) ?? []);
+    allocationSupported.set(((catRes.data as object[]) ?? []).some((row) => 'allocation' in row));
+  }
   if (!txRes.error) transactions.set(((txRes.data as Parameters<typeof fromDatabaseTransaction>[0][]) ?? []).map(fromDatabaseTransaction));
 
   if (ownerId) return;
@@ -294,8 +299,7 @@ export async function saveAccount(account: Account): Promise<void> {
 /** Simpan kategori ke Supabase (create atau update). */
 export async function saveCategory(category: Category): Promise<void> {
   if (!category.id) throw new Error('Kategori ID tidak ada.');
-  const { icon, ...rest } = category;
-  const { error } = await supabase.from('categories').upsert(icon ? { ...rest, icon } : rest);
+  const { error } = await supabase.from('categories').upsert(categoryPayload(category, get(allocationSupported)));
   if (error) throw error;
 }
 

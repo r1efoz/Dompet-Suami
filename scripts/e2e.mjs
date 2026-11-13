@@ -455,6 +455,18 @@ await desktopShell.goto("http://localhost:5173/", { waitUntil: "networkidle" });
 check("desktop tidak render bottom nav", await desktopShell.locator('nav[aria-label="Navigasi bawah"]').count() === 0);
 check("desktop render top nav", await desktopShell.locator('nav[aria-label="Navigasi atas"]').count() === 1);
 
+// Task 8: mark an expense category as allocation in Master.
+const finalPage = await context.newPage();
+await finalPage.setViewportSize({ width: 1440, height: 900 });
+await finalPage.goto("http://localhost:5173/", { waitUntil: "networkidle" });
+await finalPage.locator('nav[aria-label="Navigasi atas"]').getByRole("button", { name: "Master", exact: true }).click();
+await finalPage.getByRole("button", { name: /Makanan/ }).first().click();
+const allocDialog = finalPage.getByRole("dialog");
+await allocDialog.getByRole("tablist", { name: "Dihitung sebagai" }).getByRole("tab", { name: "Alokasi", exact: true }).click();
+await allocDialog.getByRole("button", { name: "Simpan", exact: true }).click();
+await allocDialog.waitFor({ state: "hidden" });
+check("Master: baris Makanan bertanda Alokasi", /Alokasi ·/.test(await finalPage.getByRole("button", { name: /Makanan/ }).first().innerText()));
+
 await browser.close();
 
 for (const c of checks)

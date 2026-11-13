@@ -1,3 +1,4 @@
+import type { Category } from '../models/Category';
 import type { Transaction } from '../models/Transaction';
 
 export function isReferenced(transactions: Transaction[], ref: { accountId?: string; categoryId?: string }): boolean {
@@ -24,4 +25,10 @@ export function errorMessage(e: unknown, fallback: string): string {
 /** An account may be removed (deleted, or archived when it has history) only at zero balance. */
 export function canRemoveAccount(balance: number): boolean {
   return Math.round(balance) === 0;
+}
+
+/** Row sent to `categories`. `allocation` is sent only when the column exists in the database. */
+export function categoryPayload(category: Category, allocationSupported: boolean): Record<string, unknown> {
+  const { icon, allocation, ...rest } = category;
+  return { ...rest, ...(icon ? { icon } : {}), ...(allocationSupported ? { allocation: !!allocation } : {}) };
 }

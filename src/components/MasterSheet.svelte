@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import { accounts, balances, categories, transactions, newId, saveAccount, saveCategory, deleteAccount, deleteCategory } from '../lib/store';
+  import { accounts, balances, categories, transactions, newId, saveAccount, saveCategory, allocationSupported, deleteAccount, deleteCategory } from '../lib/store';
   import { canRemoveAccount, errorMessage, isReferenced, validateName } from '../lib/master';
   import { showToast } from '../lib/ui';
   import ConfirmDialog from './ui/ConfirmDialog.svelte';
@@ -11,7 +11,7 @@
   export let kind: 'account' | 'category';
   export let open = false;
   /** null = add mode */
-  export let item: { id: string; name: string; type: string; icon?: string } | null = null;
+  export let item: { id: string; name: string; type: string; icon?: string; allocation?: boolean } | null = null;
   const dispatch = createEventDispatcher();
 
   const ICONS: Record<string, string[]> = {
@@ -26,12 +26,15 @@
     ? [{ id: 'bank', label: 'Bank' }, { id: 'cash', label: 'Tunai' }, { id: 'ewallet', label: 'E-Wallet' }]
     : [{ id: 'expense', label: 'Pengeluaran' }, { id: 'income', label: 'Pemasukan' }];
 
+  const CALC = [{ id: 'belanja', label: 'Belanja' }, { id: 'alokasi', label: 'Alokasi' }];
+
   let name = '';
   let type = TYPES[0].id;
   let icon = '';
+  let allocation = false;
   let error = '';
   let confirmOpen = false;
-  function reset(src: typeof item) { name = src?.name ?? ''; type = src?.type ?? TYPES[0].id; icon = src?.icon ?? ''; error = ''; more = false; }
+  function reset(src: typeof item) { name = src?.name ?? ''; type = src?.type ?? TYPES[0].id; icon = src?.icon ?? ''; allocation = !!src?.allocation; error = ''; more = false; }
   $: if (open) reset(item);
 
   $: ref = kind === 'account' ? { accountId: item?.id } : { categoryId: item?.id };
@@ -46,7 +49,7 @@
     const problem = validateName(kind === 'account' ? $accounts : $categories, name, type, item?.id);
     if (problem) { error = problem; return; }
     try {
-      const row = { id: item?.id ?? newId(kind === 'account' ? 'acc' : 'cat'), name: name.trim(), type: type as never, icon: icon || undefined };
+      const row = { id: item?.id ?? newId(kind === 'account' ? 'acc' : 'cat'), name: name.trim(), type: type as never, icon: icon || undefined, ...(kind === 'category' ? { allocation: type === 'expense' && allocation } : {}) };
       if (kind === 'account') { await saveAccount(row); accounts.update((l) => (item ? l.map((a) => (a.id === row.id ? row : a)) : [...l, row])); }
       else { await saveCategory(row); categories.update((l) => (item ? l.map((c) => (c.id === row.id ? row : c)) : [...l, row])); }
       showToast('Disimpan.');
@@ -80,6 +83,13 @@
         <Segmented items={TYPES} bind:value={type} ariaLabel="Jenis {noun}" />
       {/if}
     </div>
+    {#if kind === 'category' && type === 'expense' && $allocationSupported}
+      <div>
+        <span class="lbl mb-2 block">Dihitung sebagai</span>
+        <Segmented items={CALC} value={allocation ? 'alokasi' : 'belanja'} onChange={(v) => (allocation = v === 'alokasi')} ariaLabel="Dihitung sebagai" />
+        <p class="mt-1.5 text-[11.5px] leading-[1.4] text-ink2">Alokasi tetap tercatat sebagai uang keluar, tetapi tidak ikut dihitung sebagai belanja.</p>
+      </div>
+    {/if}
     <div>
       <span class="lbl mb-2 block">Ikon</span>
       <div class="flex flex-wrap gap-2">

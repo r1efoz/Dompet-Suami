@@ -28,7 +28,7 @@
       <div class="lbl mt-3.5 mb-1.5">{g.label} · {list.length}</div>
       <Card dense>
         {#each list as c (c.id)}
-          <button type="button" class="block w-full text-left" on:click={() => !$viewer && edit(c)}><ListItem icon={c.icon || g.icon} title={c.name} subtitle={sub(c.id)} /></button>
+          <button type="button" class="block w-full text-left" on:click={() => !$viewer && edit(c)}><ListItem icon={c.icon || g.icon} title={c.name} subtitle={c.allocation ? `Alokasi · ${sub(c.id)}` : sub(c.id)} /></button>
         {/each}
       </Card>
     {/if}

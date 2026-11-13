@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import type { Transaction } from '../models/Transaction';
-import { canRemoveAccount, errorMessage, isReferenced, validateName } from './master';
+import { canRemoveAccount, categoryPayload, errorMessage, isReferenced, validateName } from './master';
 
 const tx = (p: Partial<Transaction>): Transaction => ({ id: 'x', type: 'expense', amount: 1, description: '', source: 'a', timestamp: '2026-10-01T00:00:00Z', ...p });
 const list = [tx({ source: 'bank', destination: 'cash', categoryId: 'food' })];
@@ -25,4 +25,8 @@ assert.equal(canRemoveAccount(0), true);
 assert.equal(canRemoveAccount(-0.2), true);
 assert.equal(canRemoveAccount(1000), false);
 assert.equal(canRemoveAccount(-5), false);
+const cat = { id: 'c1', name: 'Istri', type: 'expense', allocation: true } as import('../models/Category').Category;
+assert.deepEqual(categoryPayload(cat, false), { id: 'c1', name: 'Istri', type: 'expense' });
+assert.deepEqual(categoryPayload(cat, true), { id: 'c1', name: 'Istri', type: 'expense', allocation: true });
+assert.deepEqual(categoryPayload({ ...cat, allocation: undefined, icon: '💝' }, true), { id: 'c1', name: 'Istri', type: 'expense', icon: '💝', allocation: false });
 console.log('master self-check: all assertions passed');
