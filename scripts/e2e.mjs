@@ -424,6 +424,8 @@ const insightCount = await homePage.locator('[data-testid="insight-row"]').count
 check("Home menampilkan 1–5 insight", insightCount >= 1 && insightCount <= 5, String(insightCount));
 const homeLabel = await homePage.locator("header .lbl").first().innerText();
 check("Home berlabel periode gajian", /gajian .* gaji rp/i.test(homeLabel), homeLabel);
+check("StatStrip: caption periode", /13 NOV|NOV/i.test(await homePage.locator('[data-testid="stat-strip-period"]').innerText()));
+check("StatStrip: label satu baris", (await homePage.locator('[data-testid="stat-strip-period"]').locator("xpath=following-sibling::div").locator(".lbl").evaluateAll((els) => els.every((el) => el.getBoundingClientRect().height < 20))));
 check("tren Home menampilkan 12 bulan", await homePage.locator('svg[aria-label="Tren 12 bulan"] text[data-month]').count() === 12);
 const homeWidth = await homePage.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }));
 check("Home tanpa scroll horizontal halaman", homeWidth.scroll === homeWidth.client, `${homeWidth.scroll} !== ${homeWidth.client}`);

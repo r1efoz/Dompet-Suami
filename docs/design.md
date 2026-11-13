@@ -108,7 +108,7 @@ Semua "bulan ini" = kalender bulan berjalan **zona waktu lokal perangkat** (`new
 
 ### 2.4 Strip statistik (`StatStrip`)
 
-`MASUK · OKT | KELUAR · OKT | NET · OKT` dari `monthSummary` (sudah mengecualikan transfer). Desktop: strip ini **tidak** ditampilkan (sudah ada di legenda §2.2).
+`MASUK | KELUAR | NET` dengan satu baris caption periode di atasnya (`period.short`, contoh `13 NOV` atau `NOV`) dari ringkasan periode aktif (sudah mengecualikan transfer). Desktop: strip ini **tidak** ditampilkan (sudah ada di legenda §2.2).
 
 ### 2.5 Insight
 

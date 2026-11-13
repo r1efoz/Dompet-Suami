@@ -41,13 +41,13 @@
       <p class="py-2.5 text-[13px] text-ink2">Belum ada {s.empty} di periode ini.</p>
     {:else}
       <table class="w-full">
-        <thead><tr class="lbl text-right"><th scope="col" class="py-2 text-left">Kategori</th><th scope="col">Jumlah</th><th scope="col">%</th><th scope="col">{prevLabel}</th></tr></thead>
+        <thead><tr class="lbl text-right"><th scope="col" class="py-2 text-left">Kategori</th><th scope="col">Jumlah</th><th scope="col" class="pl-3">%</th><th scope="col">{prevLabel}</th></tr></thead>
         <tbody>
           {#each rows as r (r.id)}
             <tr class="cursor-pointer border-t border-line text-[13px]" on:click={() => (detail = { type: s.type, row: r })}>
               <td class="py-2.5">{r.name}{#if r.allocation} <Pill>Alokasi</Pill>{/if}</td>
               <td class="num text-right">{formatCompact(r.amount)}</td>
-              <td class="num text-right text-ink2">{r.allocation ? '—' : Math.round(r.percent)}</td>
+              <td class="num pl-3 text-right text-ink2">{r.allocation ? '—' : Math.round(r.percent)}</td>
               <td class="num text-right {vsTone(r.vs, s.type)}">{vsText(r.vs)}</td>
             </tr>
           {/each}
@@ -55,7 +55,7 @@
             <tr class="tot border-t border-ink text-[13px] font-semibold">
               <td class="py-2.5">Total</td>
               <td class="num text-right">{formatCompact(t.amount)}</td>
-              <td class="num text-right">{s.type === 'expense' && report.split.allocation > 0 ? '—' : 100}</td>
+              <td class="num pl-3 text-right">{s.type === 'expense' && report.split.allocation > 0 ? '—' : 100}</td>
               <td class="num text-right {vsTone(t.vs, s.type)}">{vsText(t.vs)}</td>
             </tr>
           {/each}
