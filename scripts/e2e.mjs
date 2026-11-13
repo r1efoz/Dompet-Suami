@@ -108,7 +108,13 @@ await amount.fill("250000");
 await page.locator("#entry-source").selectOption("cash");
 await page.locator("#entry-description").fill("Belanja pasar");
 await page.getByRole("button", { name: "Simpan pengeluaran" }).click();
+check("simpan tanpa kategori ditolak", await page.getByText("Pilih kategori dulu.").first().waitFor({ timeout: 3000 }).then(() => true).catch(() => false));
+await page.locator("#entry-category").getByRole("button", { name: "Makanan" }).click();
+await page.getByRole("button", { name: "Simpan pengeluaran" }).click();
 await toastOf("Pengeluaran dicatat.").waitFor();
+await amount.fill("600000");
+await page.getByRole("button", { name: "Simpan pengeluaran" }).click();
+check("≥ 500 rb tanpa keterangan ditolak", await page.getByText("Isi keterangan untuk pengeluaran Rp 500 rb ke atas.").first().waitFor({ timeout: 3000 }).then(() => true).catch(() => false));
 
 // 3b. Hapus lewat sheet detail → konfirmasi
 await amount.fill("1000");
@@ -184,7 +190,7 @@ await page.getByRole("button", { name: "Gajian…" }).click();
 await page.getByRole("dialog").getByRole("button", { name: /Gajian/ }).first().click();
 check("chip gajian aktif", (await page.getByRole("button", { name: /^Gajian \d/ }).count()) >= 1);
 check("ringkasan Kategori terbesar tampil", await page.getByText("Kategori terbesar", { exact: true }).isVisible());
-await page.getByRole("button", { name: /Tanpa kategori/ }).click();
+await page.getByRole("button", { name: /Makanan/ }).click();
 const catDetail = (await page.getByRole("dialog").innerText()).replace(/\s+/g, " ");
 check("kategori terbesar bisa diklik dan memuat isi + nominal", /Belanja pasar/.test(catDetail) && /250\.000/.test(catDetail), catDetail);
 await page.keyboard.press("Escape");

@@ -9,6 +9,7 @@ import { fromDatabaseTransaction, toDatabaseTransaction } from './transaction-ma
 import { buildTransferEdit } from './transaction-edit';
 import { transactionIdsToDelete } from './transaction-delete';
 import { canRemoveAccount, isReferenced } from './master';
+import { entryProblem } from './entry-rules';
 
 const DEFAULT_ACCOUNTS: Omit<Account, 'id'>[] = [
   { name: 'Bank', type: 'bank' },
@@ -127,6 +128,9 @@ export async function recordEntry({
   const value = requireAmount(amount);
   const note = description?.trim() ?? '';
 
+  const problem = entryProblem({ type, amount: value, categoryId, description: note }, get(categories));
+  if (problem) throw new Error(problem.message);
+
   if (categoryId) {
     requireCategory(categoryId);
     const cat = get(categories).find((c) => c.id === categoryId);
@@ -220,6 +224,11 @@ export async function updateEntry(input: TransactionEditInput): Promise<void> {
 
   requireAccount(input.source);
   const amount = requireAmount(input.amount);
+  const problem = entryProblem(
+    { type: input.type, amount, categoryId: input.categoryId, description: input.description?.trim() ?? '' },
+    get(categories)
+  );
+  if (problem) throw new Error(problem.message);
   if (input.categoryId) {
     const category = requireCategory(input.categoryId);
     if (category.type !== input.type) throw new Error('Kategori tidak cocok dengan jenis transaksi.');
