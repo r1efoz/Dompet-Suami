@@ -179,6 +179,13 @@ await page.getByRole("button", { name: "Gajian…" }).click();
 await page.getByRole("dialog").getByRole("button", { name: /Gajian/ }).first().click();
 check("chip gajian aktif", (await page.getByRole("button", { name: /^Gajian \d/ }).count()) >= 1);
 check("ringkasan Kategori terbesar tampil", await page.getByText("Kategori terbesar", { exact: true }).isVisible());
+await page.getByRole("button", { name: /Tanpa kategori/ }).click();
+const catDetail = (await page.getByRole("dialog").innerText()).replace(/\s+/g, " ");
+check("kategori terbesar bisa diklik dan memuat isi + nominal", /Belanja pasar/.test(catDetail) && /250\.000/.test(catDetail), catDetail);
+await page.keyboard.press("Escape");
+await page.locator("#ledger-account").selectOption("cash");
+check("kategori terbesar ikut filter akun", await page.getByText("Kategori terbesar", { exact: true }).isVisible());
+await page.locator("#ledger-account").selectOption("");
 check("akhir gajian = total semua akun", (await page.locator('[data-testid="ledger-akhir"]').getAttribute("data-value")) === "4750000");
 errors.length = 0;
 for (const tab of ["Arus kas", "Kategori", "Saldo akun", "Buku besar"]) {

@@ -34,6 +34,8 @@
   $: flow = operating(inPeriod);
   $: sum = summarize(flow);
   $: catReport = categoryReport($categories, $transactions, range.start, range.end, range.prevStart, range.prevEnd);
+  // ledger tab: expense categories of the chosen account ('' = all); fees count on their source account
+  $: ledgerCat = categoryReport($categories, operating($transactions).filter((tx) => !accountId || tx.source === accountId), range.start, range.end, range.prevStart, range.prevEnd);
   $: balRows = accountBalanceReport($accounts, $transactions, range.start, range.end);
   $: openingAll = balRows.reduce((sum, r) => sum + r.awal, 0);
   // ponytail: a range spanning two years lists months of its start year only
@@ -100,7 +102,7 @@
     {:else if tab === 'balance'}
       <div class="mt-3.5"><BalanceTab rows={balRows} on:select={(e) => openLedger(e.detail)} /></div>
     {:else}
-      <LedgerTab accounts={$accounts} categories={$categories} rows={balRows} transactions={inPeriod} catRows={catReport.expense} {openingAll} bind:accountId />
+      <LedgerTab accounts={$accounts} categories={$categories} rows={balRows} transactions={inPeriod} catRows={ledgerCat.expense} {openingAll} bind:accountId />
     {/if}
   </div>
 </div>

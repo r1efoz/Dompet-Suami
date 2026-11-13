@@ -6,7 +6,7 @@
   let panel: HTMLElement;
   function close() { dispatch('close'); }
   function keydown(event: KeyboardEvent) { if (event.key === 'Escape' && open) close(); }
-  $: if (open && panel) requestAnimationFrame(() => panel.focus());
+  $: if (open && panel) requestAnimationFrame(() => panel?.focus());
   onMount(() => { window.addEventListener('keydown', keydown); return () => window.removeEventListener('keydown', keydown); });
 </script>
 

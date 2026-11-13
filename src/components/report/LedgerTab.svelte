@@ -1,9 +1,11 @@
 <script lang="ts">
   import Card from '../ui/Card.svelte';
+  import ListItem from '../ui/ListItem.svelte';
   import SectionHeader from '../ui/SectionHeader.svelte';
+  import Sheet from '../ui/Sheet.svelte';
   import TransactionDetail from '../TransactionDetail.svelte';
   import { formatCompact, formatDayMonth, formatIDR } from '../../lib/format';
-  import { buildLedger } from '../../lib/ledger';
+  import { buildLedger, operating } from '../../lib/ledger';
   import type { AccountBalanceRow, CategoryRow } from '../../lib/reports';
   import type { Account } from '../../models/Account';
   import type { Category } from '../../models/Category';
@@ -25,6 +27,8 @@
   const categoryName = (id?: string) => categories.find((c) => c.id === id)?.name ?? '';
 
   let detail: Transaction | null = null;
+  /** Category rows shown in the open sheet ('' id = Tanpa kategori). */
+  let catDetail: { title: string; ids: string[]; amount: number } | null = null;
 
   $: if (accountId !== '' && accounts.length > 0 && !accounts.some((a) => a.id === accountId)) accountId = '';
   $: combined = accountId === '';
@@ -33,13 +37,16 @@
   $: akhir = ledger.length ? ledger[ledger.length - 1].runningBalance : awal;
   $: top = catRows.slice(0, TOP);
   $: rest = catRows.slice(TOP);
+  $: expenseTx = operating(transactions).filter((tx) => tx.type === 'expense' && (combined || tx.source === accountId));
+  $: catTx = catDetail ? expenseTx.filter((tx) => catDetail!.ids.includes(tx.categoryId ?? '')).sort((a, b) => b.timestamp.localeCompare(a.timestamp)) : [];
+  const openCat = (title: string, rows: CategoryRow[]) => (catDetail = { title, ids: rows.map((r) => r.id), amount: rows.reduce((sum, r) => sum + r.amount, 0) });
   function note(tx: Transaction) {
     if (combined) return `${tx.description || categoryName(tx.categoryId) || 'Tanpa keterangan'} · ${name(tx.source)}`;
     const dir = tx.transferId ? (tx.type === 'expense' ? `→ ${name(tx.destination)}` : `← ${name(tx.destination)}`) : '';
     return [dir, tx.description].filter(Boolean).join(' ');
   }
-  function activate(event: KeyboardEvent, tx: Transaction) {
-    if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); detail = tx; }
+  function key(event: KeyboardEvent, run: () => void) {
+    if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); run(); }
   }
 </script>
 
@@ -65,7 +72,7 @@
           </tr>
           {#each ledger as l (l.tx.id)}
             {@const label = note(l.tx)}
-            <tr class="cursor-pointer border-t border-line text-[13px] hover:bg-chip focus-visible:outline-2 focus-visible:outline-ink" role="button" tabindex="0" aria-label="Detail {label}" on:click={() => (detail = l.tx)} on:keydown={(e) => activate(e, l.tx)}>
+            <tr class="cursor-pointer border-t border-line text-[13px] hover:bg-chip focus-visible:outline-2 focus-visible:outline-ink" role="button" tabindex="0" aria-label="Detail {label}" on:click={() => (detail = l.tx)} on:keydown={(e) => key(e, () => (detail = l.tx))}>
               <td class="num whitespace-nowrap py-2.5 pr-2 text-[11.5px] text-ink2">{formatDayMonth(l.tx.timestamp)}</td>
               <td class="max-w-[140px] truncate pr-2 lg:max-w-none">{label}</td>
               <td class="num text-right {l.tx.type === 'income' ? 'text-pos' : 'text-accent'}">{signed(l.tx.type === 'income' ? l.tx.amount : -l.tx.amount)}</td>
@@ -76,16 +83,16 @@
       </table>
     {/if}
   </Card></div>
-  {#if combined && catRows.length > 0}
+  {#if catRows.length > 0}
     <SectionHeader title="Kategori terbesar" />
     <Card dense>
       <table class="w-full">
         <tbody>
           {#each top as r (r.id)}
-            <tr class="border-t border-line text-[13px] first:border-t-0"><td class="py-2.5">{r.name}</td><td class="num text-right">{formatCompact(r.amount)}</td><td class="num w-10 text-right text-ink2">{Math.round(r.percent)}%</td></tr>
+            <tr class="cursor-pointer border-t border-line text-[13px] first:border-t-0 hover:bg-chip focus-visible:outline-2 focus-visible:outline-ink" role="button" tabindex="0" on:click={() => openCat(r.name, [r])} on:keydown={(e) => key(e, () => openCat(r.name, [r]))}><td class="py-2.5">{r.name}</td><td class="num text-right">{formatCompact(r.amount)}</td><td class="num w-10 text-right text-ink2">{Math.round(r.percent)}%</td></tr>
           {/each}
           {#if rest.length > 0}
-            <tr class="border-t border-line text-[13px]"><td class="py-2.5 text-ink2">Lainnya</td><td class="num text-right">{formatCompact(rest.reduce((sum, r) => sum + r.amount, 0))}</td><td class="num w-10 text-right text-ink2">{Math.round(rest.reduce((sum, r) => sum + r.percent, 0))}%</td></tr>
+            <tr class="cursor-pointer border-t border-line text-[13px] hover:bg-chip focus-visible:outline-2 focus-visible:outline-ink" role="button" tabindex="0" on:click={() => openCat('Lainnya', rest)} on:keydown={(e) => key(e, () => openCat('Lainnya', rest))}><td class="py-2.5 text-ink2">Lainnya</td><td class="num text-right">{formatCompact(rest.reduce((sum, r) => sum + r.amount, 0))}</td><td class="num w-10 text-right text-ink2">{Math.round(rest.reduce((sum, r) => sum + r.percent, 0))}%</td></tr>
           {/if}
         </tbody>
       </table>
@@ -94,3 +101,9 @@
 </div>
 
 <TransactionDetail tx={detail} on:close={() => (detail = null)} />
+
+<Sheet open={catDetail !== null} title={catDetail ? `${catDetail.title} · ${formatIDR(catDetail.amount)}` : ''} on:close={() => (catDetail = null)}>
+  {#each catTx as tx (tx.id)}
+    <ListItem title={tx.description || categoryName(tx.categoryId) || 'Tanpa keterangan'} subtitle="{formatDayMonth(tx.timestamp)} · {name(tx.source)}" amount={formatIDR(tx.amount)} tone="expense" />
+  {/each}
+</Sheet>
