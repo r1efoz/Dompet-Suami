@@ -84,7 +84,7 @@ export function activePeriod(paydays: PaydayPeriod[], now: Date): ActivePeriod;
 - Ada gajian: `kind: 'payday'`, `start = p.start`, `end = p.end ?? new Date(8.64e15)`, `prev` = periode gajian sebelumnya bila ada, `label = p.label`, `word = 'periode ini'`.
 - `expectedEnd` gajian = `p.end` bila ada. Bila belum ada, tanggal yang sama bulan berikutnya, dijepit ke akhir bulan (gaji tgl 31 → tgl terakhir bulan berikutnya).
 - Tidak ada gajian: `kind: 'month'`, bulan kalender `now`, `expectedEnd = end`, `prev` = bulan sebelumnya, `word = 'bulan ini'`. Perilaku ini sama dengan sekarang.
-- Turunan yang dipakai insight, lewat `periodDays(period, now): { elapsed: number; total: number; remaining: number }`: `elapsed = selisih hari(now, start) + 1` (minimal 1), `total = selisih hari(expectedEnd, start)`, `remaining = total - elapsed`.
+- Turunan yang dipakai insight, lewat `periodDays(period, now): { elapsed: number; total: number; remaining: number }`: `elapsed = selisih hari(now, start) + 1` (minimal 1), `total = selisih hari(expectedEnd, start)`, `remaining = total - elapsed`. Selisih hari dihitung per tanggal lokal: jam pada `now` diabaikan, sehingga angka tidak berubah di tengah hari.
 - Batas yang diketahui:
   - Bila gaji bulan berikutnya tidak pernah dicatat, periode terus memanjang. Label tetap jujur ("Gajian 27 Okt") dan proyeksi hilang saat `remaining <= 0`.
   - Deteksi gajian tetap `/gaji/i` pada nama kategori pemasukan (`reports.ts:48`, keputusan pemilik di spec ledger-payday). Pemasukan lain di kategori yang namanya memuat "gaji" (bonus, THR) pada hari berbeda akan memulai periode baru di Home. Bonus dan THR sebaiknya dicatat di kategori tersendiri.
