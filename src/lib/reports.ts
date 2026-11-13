@@ -115,7 +115,8 @@ export function activePeriod(paydays: PaydayPeriod[], now: Date): ActivePeriod {
 const daysBetween = (from: Date, to: Date) => Math.round((to.getTime() - from.getTime()) / DAY_MS);
 
 export function periodDays(period: ActivePeriod, now: Date): { elapsed: number; total: number; remaining: number } {
-  const elapsed = Math.max(1, daysBetween(period.start, now) + 1);
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const elapsed = Math.max(1, daysBetween(period.start, today) + 1);
   const total = daysBetween(period.start, period.expectedEnd);
   return { elapsed, total, remaining: total - elapsed };
 }

@@ -187,6 +187,14 @@ assert.equal(clamp.expectedEnd.getTime(), at(2027, 1, 28), 'dijepit ke akhir bul
 const late = new Date(2026, 11, 5, 10);
 assert.ok(periodDays(activePeriod(paydayPeriods([sal('s1', 2026, 9, 27)], apCats, late), late), late).remaining <= 0);
 
+// jam pada `now` tidak mengubah hitungan hari
+assert.deepEqual(periodDays(one, new Date(2026, 10, 13, 14)), { elapsed: 18, total: 31, remaining: 13 });
+assert.deepEqual(periodDays(one, new Date(2026, 10, 13, 23, 59)), { elapsed: 18, total: 31, remaining: 13 });
+const payNoon = new Date(2026, 9, 27, 14);
+assert.deepEqual(periodDays(activePeriod(paydayPeriods([sal('s1', 2026, 9, 27)], apCats, payNoon), payNoon), payNoon), { elapsed: 1, total: 31, remaining: 30 });
+const monthEnd = new Date(2026, 10, 30, 14);
+assert.deepEqual(periodDays(activePeriod([], monthEnd), monthEnd), { elapsed: 30, total: 30, remaining: 0 });
+
 const none = activePeriod([], apNow);
 assert.equal(none.kind, 'month');
 assert.deepEqual([none.start.getTime(), none.end.getTime(), none.expectedEnd.getTime()], [at(2026, 10, 1), at(2026, 11, 1), at(2026, 11, 1)]);
