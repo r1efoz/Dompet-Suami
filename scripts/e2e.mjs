@@ -108,13 +108,14 @@ await amount.fill("250000");
 await page.locator("#entry-source").selectOption("cash");
 await page.locator("#entry-description").fill("Belanja pasar");
 await page.getByRole("button", { name: "Simpan pengeluaran" }).click();
-check("simpan tanpa kategori ditolak", await page.getByText("Pilih kategori dulu.").first().waitFor({ timeout: 3000 }).then(() => true).catch(() => false));
+check("simpan tanpa kategori ditolak", await page.locator("#entry-category-error").filter({ hasText: "Pilih kategori dulu." }).waitFor({ timeout: 3000 }).then(() => true).catch(() => false));
 await page.locator("#entry-category").getByRole("button", { name: "Makanan" }).click();
 await page.getByRole("button", { name: "Simpan pengeluaran" }).click();
 await toastOf("Pengeluaran dicatat.").waitFor();
 await amount.fill("600000");
 await page.getByRole("button", { name: "Simpan pengeluaran" }).click();
-check("≥ 500 rb tanpa keterangan ditolak", await page.getByText("Isi keterangan untuk pengeluaran Rp 500 rb ke atas.").first().waitFor({ timeout: 3000 }).then(() => true).catch(() => false));
+check("≥ 500 rb tanpa keterangan ditolak", await page.locator("#entry-description-error").filter({ hasText: "Isi keterangan untuk pengeluaran Rp 500 rb ke atas." }).waitFor({ timeout: 3000 }).then(() => true).catch(() => false));
+check("keterangan kosong ditandai aria-invalid", (await page.locator("#entry-description").getAttribute("aria-invalid")) === "true");
 
 // 3b. Hapus lewat sheet detail → konfirmasi
 await amount.fill("1000");

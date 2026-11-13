@@ -2,6 +2,7 @@
   import { activeAccounts, balances, categories, editingTransaction, recordEntry, recordTransfer, transactions, updateEntry, updateTransfer } from '../lib/store';
   import { formatIDR, formatNumber } from '../lib/format';
   import { categoryUsageOrder } from '../lib/history';
+  import { entryProblem } from '../lib/entry-rules';
   import { showToast } from '../lib/ui';
   import Button from './ui/Button.svelte';
   import Card from './ui/Card.svelte';
@@ -28,7 +29,11 @@
   let adminFee = '';
   let transactionDate = today();
 
-  let error = '';
+  type Errors = Partial<Record<'amount' | 'category' | 'description' | 'destination', string>>;
+  let errors: Errors = {};
+  const clearError = (field: keyof Errors) => {
+    if (errors[field]) errors = { ...errors, [field]: undefined };
+  };
   let loadedEditId = '';
   $: editing = $editingTransaction;
   $: if ($editingTransaction && loadedEditId !== $editingTransaction.id) {
@@ -42,7 +47,7 @@
     categoryId = tx.categoryId ?? '';
     adminFee = String(tx.transferId && tx.type === 'expense' ? transferFee(tx) : 0);
     transactionDate = new Date(tx.timestamp).toLocaleDateString('en-CA');
-    error = '';
+    errors = {};
   }
 
   function transferFee(tx: import('../models/Transaction').Transaction): number {
@@ -81,7 +86,7 @@
     amount = '';
     description = '';
     adminFee = '';
-    error = '';
+    errors = {};
   }
 
   function switchMode(next: string) {
@@ -105,14 +110,21 @@
     event.preventDefault();
     const value = parseInput(amount);
     const fee = parseInput(adminFee);
-    error = '';
+    errors = {};
     if (!(value > 0)) {
-      error = 'Jumlah harus lebih besar dari nol.';
+      errors = { amount: 'Jumlah harus lebih besar dari nol.' };
       return;
     }
     if (mode === 'transfer' && source === destination) {
-      error = 'Akun tujuan harus berbeda.';
+      errors = { destination: 'Akun tujuan harus berbeda.' };
       return;
+    }
+    if (mode !== 'transfer' && !editing?.transferId) {
+      const problem = entryProblem({ type: mode, amount: value, categoryId, description }, $categories);
+      if (problem) {
+        errors = { [problem.field]: problem.message };
+        return;
+      }
     }
 
     try {
@@ -166,22 +178,27 @@
                 const raw = target.value.replace(/\./g, '');
                 amount = raw;
                 target.value = formatInput(raw);
+                clearError('amount');
               }}
-              aria-describedby={error ? 'entry-error' : undefined}
-              aria-invalid={error ? 'true' : undefined}
+              aria-describedby={errors.amount ? 'entry-amount-error' : undefined}
+              aria-invalid={errors.amount ? 'true' : undefined}
             />
           </div>
         </div>
       </Card>
-      {#if error && error.startsWith('Jumlah')}<p id="entry-error" class="mt-1.5 text-[11.5px] leading-[1.4] text-accent" role="alert">{error}</p>{/if}
+      {#if errors.amount}<p id="entry-amount-error" class="mt-1.5 text-[11.5px] leading-[1.4] text-accent" role="alert">{errors.amount}</p>{/if}
     </div>
 
     {#if mode !== 'transfer'}
       <div>
         <span class="lbl mb-2 block">KATEGORI</span>
-        <div id="entry-category">
-          <Chips items={categoryItems} value={categoryId} onChange={(id) => (categoryId = categoryId === id ? '' : id)} />
+        {#if categoryItems.length === 0}
+          <p class="text-[12.5px] text-ink2">Belum ada kategori. Tambah di Master.</p>
+        {/if}
+        <div id="entry-category" role="group" aria-label="Kategori" aria-describedby={errors.category ? 'entry-category-error' : undefined} aria-invalid={errors.category ? 'true' : undefined}>
+          <Chips items={categoryItems} value={categoryId} onChange={(id) => { categoryId = categoryId === id ? '' : id; clearError('category'); }} />
         </div>
+        {#if errors.category}<p id="entry-category-error" class="mt-1.5 text-[11.5px] leading-[1.4] text-accent" role="alert">{errors.category}</p>{/if}
         <input type="hidden" name="categoryId" value={categoryId} />
       </div>
     {/if}
@@ -201,12 +218,12 @@
     {#if mode === 'transfer'}
       <div>
         <label class="lbl mb-2 block" for="entry-destination">KE</label>
-        <select id="entry-destination" class={fieldClass} bind:value={destination}>
+        <select id="entry-destination" class={fieldClass} bind:value={destination} on:change={() => clearError('destination')} aria-describedby={errors.destination ? 'entry-destination-error' : undefined} aria-invalid={errors.destination ? 'true' : undefined}>
           {#each $activeAccounts as account (account.id)}
             <option value={account.id}>{account.name} · {formatIDR($balances[account.id] ?? 0)}</option>
           {/each}
         </select>
-        {#if error && !error.startsWith('Jumlah')}<p id="entry-error" class="mt-1.5 text-[11.5px] leading-[1.4] text-accent" role="alert">{error}</p>{/if}
+        {#if errors.destination}<p id="entry-destination-error" class="mt-1.5 text-[11.5px] leading-[1.4] text-accent" role="alert">{errors.destination}</p>{/if}
       </div>
       <div>
         <label class="lbl mb-2 block" for="entry-fee">BIAYA ADMIN</label>
@@ -240,9 +257,19 @@
       </div>
       <div>
         <label class="lbl mb-2 block" for="entry-description">KETERANGAN</label>
-        <input id="entry-description" class={fieldClass} type="text" {placeholder} bind:value={description} />
+        <input
+          id="entry-description"
+          class={errors.description ? fieldClass.replace('border-line', 'border-accent') : fieldClass}
+          type="text"
+          {placeholder}
+          bind:value={description}
+          on:input={() => clearError('description')}
+          aria-describedby={errors.description ? 'entry-description-error' : undefined}
+          aria-invalid={errors.description ? 'true' : undefined}
+        />
       </div>
     </div>
+    {#if errors.description}<p id="entry-description-error" class="-mt-2.5 text-[11.5px] leading-[1.4] text-accent" role="alert">{errors.description}</p>{/if}
 
     <div>
       <Button variant="primary" type="submit">{editing ? 'Simpan perubahan' : submitLabel}</Button>
