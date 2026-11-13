@@ -195,7 +195,7 @@
         {#if categoryItems.length === 0}
           <p class="text-[12.5px] text-ink2">Belum ada kategori. Tambah di Master.</p>
         {/if}
-        <div id="entry-category" role="group" aria-label="Kategori" aria-describedby={errors.category ? 'entry-category-error' : undefined} aria-invalid={errors.category ? 'true' : undefined}>
+        <div id="entry-category" role="group" aria-label="Kategori" aria-describedby={errors.category ? 'entry-category-error' : undefined}>
           <Chips items={categoryItems} value={categoryId} onChange={(id) => { categoryId = categoryId === id ? '' : id; clearError('category'); }} />
         </div>
         {#if errors.category}<p id="entry-category-error" class="mt-1.5 text-[11.5px] leading-[1.4] text-accent" role="alert">{errors.category}</p>{/if}
