@@ -3,7 +3,7 @@ import type { Account } from '../models/Account';
 import type { Category } from '../models/Category';
 import type { Transaction } from '../models/Transaction';
 import { supabase, isSupabaseConfigured } from './supabase';
-import { computeBalances, operating, startOfMonth, summarizeSince } from './ledger';
+import { computeBalances } from './ledger';
 import { formatIDR } from './format';
 import { fromDatabaseTransaction, toDatabaseTransaction } from './transaction-mapping';
 import { buildTransferEdit } from './transaction-edit';
@@ -41,10 +41,6 @@ export const balances = derived([accounts, transactions], ([$accounts, $transact
 
 export const totalBalance = derived(balances, ($balances) =>
   Object.values($balances).reduce((sum, value) => sum + value, 0)
-);
-
-export const monthSummary = derived(transactions, ($transactions) =>
-  summarizeSince(operating($transactions), startOfMonth())
 );
 
 export function newId(prefix: string): string {

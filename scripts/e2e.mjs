@@ -421,7 +421,9 @@ await homePage.goto("http://localhost:5173/", { waitUntil: "networkidle" });
 check("Home menyapa Pak Arief", await homePage.getByText("Halo, Pak Arief", { exact: true }).count() > 0);
 check("rail akun bisa scroll horizontal", await homePage.locator('[data-testid="account-rail"]').evaluate((el) => el.scrollWidth > el.clientWidth));
 const insightCount = await homePage.locator('[data-testid="insight-row"]').count();
-check("Home menampilkan 1–3 insight", insightCount >= 1 && insightCount <= 3, String(insightCount));
+check("Home menampilkan 1–5 insight", insightCount >= 1 && insightCount <= 5, String(insightCount));
+const homeLabel = await homePage.locator("header .lbl").first().innerText();
+check("Home berlabel periode gajian", /gajian .* gaji rp/i.test(homeLabel), homeLabel);
 check("tren Home menampilkan 12 bulan", await homePage.locator('svg[aria-label="Tren 12 bulan"] text[data-month]').count() === 12);
 const homeWidth = await homePage.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }));
 check("Home tanpa scroll horizontal halaman", homeWidth.scroll === homeWidth.client, `${homeWidth.scroll} !== ${homeWidth.client}`);
@@ -466,6 +468,11 @@ await allocDialog.getByRole("tablist", { name: "Dihitung sebagai" }).getByRole("
 await allocDialog.getByRole("button", { name: "Simpan", exact: true }).click();
 await allocDialog.waitFor({ state: "hidden" });
 check("Master: baris Makanan bertanda Alokasi", /Alokasi ·/.test(await finalPage.getByRole("button", { name: /Makanan/ }).first().innerText()));
+await finalPage.locator('nav[aria-label="Navigasi atas"]').getByRole("button", { name: "Home", exact: true }).click();
+const allocInsights = await finalPage.locator('[data-testid="insight-row"]').allInnerTexts();
+check("Home: insight Alokasi Makanan", allocInsights.some((t) => /Alokasi Makanan/.test(t.replace(/\s+/g, " "))), allocInsights.join(" | "));
+const spendCard = await finalPage.locator("section", { has: finalPage.getByRole("heading", { name: /Belanja|Pengeluaran bulan/ }) }).first().innerText();
+check("Home: kartu belanja memuat baris Alokasi", /Makanan[\s\S]*Alokasi/.test(spendCard), spendCard);
 
 await browser.close();
 
