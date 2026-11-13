@@ -73,6 +73,7 @@ export interface ActivePeriod {
   expectedEnd: Date;  // dipakai proyeksi
   prev?: { start: Date; end: Date };
   label: string;      // "Gajian 27 Okt" | "November 2026"
+  short: string;      // "27 Okt" | "Nov"; label ringkas untuk StatStrip dan kartu akun
   word: 'periode ini' | 'bulan ini';
   payday?: PaydayPeriod;
 }
@@ -83,7 +84,7 @@ export function activePeriod(paydays: PaydayPeriod[], now: Date): ActivePeriod;
 - Ada gajian: `kind: 'payday'`, `start = p.start`, `end = p.end ?? new Date(8.64e15)`, `prev` = periode gajian sebelumnya bila ada, `label = p.label`, `word = 'periode ini'`.
 - `expectedEnd` gajian = `p.end` bila ada. Bila belum ada, tanggal yang sama bulan berikutnya, dijepit ke akhir bulan (gaji tgl 31 → tgl terakhir bulan berikutnya).
 - Tidak ada gajian: `kind: 'month'`, bulan kalender `now`, `expectedEnd = end`, `prev` = bulan sebelumnya, `word = 'bulan ini'`. Perilaku ini sama dengan sekarang.
-- Turunan yang dipakai insight: `elapsedDays = selisih hari(now, start) + 1` (minimal 1), `totalDays = selisih hari(expectedEnd, start)`, `remaining = totalDays - elapsedDays`.
+- Turunan yang dipakai insight, lewat `periodDays(period, now): { elapsed: number; total: number; remaining: number }`: `elapsed = selisih hari(now, start) + 1` (minimal 1), `total = selisih hari(expectedEnd, start)`, `remaining = total - elapsed`.
 - Batas yang diketahui:
   - Bila gaji bulan berikutnya tidak pernah dicatat, periode terus memanjang. Label tetap jujur ("Gajian 27 Okt") dan proyeksi hilang saat `remaining <= 0`.
   - Deteksi gajian tetap `/gaji/i` pada nama kategori pemasukan (`reports.ts:48`, keputusan pemilik di spec ledger-payday). Pemasukan lain di kategori yang namanya memuat "gaji" (bonus, THR) pada hari berbeda akan memulai periode baru di Home. Bonus dan THR sebaiknya dicatat di kategori tersendiri.
@@ -96,19 +97,20 @@ Satu `period = activePeriod(paydayPeriods($transactions, $categories, now), now)
 |---|---|---|
 | Label di atas sapaan | "NOVEMBER 2026" | `period.label`; untuk gajian ditambah ` · gaji Rp 18,21 jt` (`formatCompact(payday.amount)`) |
 | Pill delta saldo | "… bulan ini" | `balanceAt(period.start)`, teks `period.word` |
-| Ringkasan Masuk/Keluar/Net | store `monthSummary` | `summarize(operating(tx) dalam periode)`; label StatStrip "GAJIAN" atau singkatan bulan |
-| Statistik per akun (AccountRail) | `start`/`end` bulan | `period.start`/`period.end` |
-| Ketuk kartu akun (`AccountRail.svelte:13`) | buka Buku besar tanpa periode (bulan kalender) | buka Buku besar dengan periode yang sama dengan Home |
+| Ringkasan Masuk/Keluar/Net | store `monthSummary` | `summarize(operating(tx) dalam periode)`; label StatStrip `period.short` |
+| Statistik per akun (AccountRail) | `start`/`end` bulan; kartu berlabel bulan kalender (`AccountRail.svelte:17,20`) | `period.start`/`period.end`; label kartu `period.short` |
+| Ketuk kartu akun (`AccountRail.svelte:13`) | buka Buku besar tanpa periode (bulan kalender) | gajian: buka Buku besar akun itu dengan `{ kind: 'range', from: hari gajian, to: hari ini }`, karena periode `payday` di Laporan berarti semua akun (`Report.svelte:55-57`). Bulan: seperti sekarang. |
 | Kartu "Pengeluaran bulan ini" | bulan, semua kategori | periode; judul "Belanja periode ini" atau "Belanja bulan ini"; isi menurut §5.4 |
 | "Semua →" | buka Laporan bulan ini | buka Laporan dengan `{ kind: 'payday', day }` bila gajian |
 | Insight | bulan | §5.3 |
+| Teks kosong (`Home.svelte:49`, `:53`) | "… bulan ini" | memakai `period.word` |
 | Tren 12 bulan | bulan kalender | tidak berubah |
 
 `monthSummary` di `store.ts:43` hanya dipakai Home; dihapus bila tidak ada pemakai lain.
 
 ### 5.3 Insight (`src/lib/insights.ts`)
 
-Tanda tangan tetap `buildInsights(transactions, categories, now)`; periode dihitung di dalam lewat `activePeriod`. Hanya entri non-transfer (seperti sekarang; biaya admin transfer tidak ikut).
+Tanda tangan tetap `buildInsights(transactions, categories, now)`; periode dihitung di dalam lewat `activePeriod`. Angka memakai `operating()`, sama dengan ringkasan Masuk/Keluar di Home: transfer tidak ikut, biaya admin transfer ikut sebagai belanja tanpa kategori.
 
 Dalam periode: `I` = pemasukan, `E` = semua pengeluaran, `A` = pengeluaran berkategori alokasi, `R = E − A` (belanja).
 
@@ -116,12 +118,12 @@ Urutan, maksimal **5** (sekarang 3):
 
 | # | id | Syarat | Teks |
 |---|---|---|---|
-| 1 | `incomplete` | ada transaksi belum lengkap (§5.5), **sepanjang waktu**, bukan hanya periode ini | "**N transaksi** (Rp X) perlu dilengkapi. Buka Riwayat → Perlu dilengkapi." N sama dengan angka di chip Riwayat. |
-| 2 | `top-category` | ada belanja berkategori | "**{nama}** adalah pengeluaran terbesar: Rp X (N% dari belanja)." Alokasi dan tanpa kategori tidak ikut peringkat. |
+| 1 | `incomplete` | ada transaksi belum lengkap (§5.5), **sepanjang waktu**, bukan hanya periode ini | "**N transaksi** (Rp X) perlu dilengkapi. Buka Riwayat → Perlu dilengkapi." N sama dengan angka di chip Riwayat; X = jumlah nominal semua baris itu, pemasukan maupun pengeluaran. |
+| 2 | `top-category` | `R > 0` | "**{nama}** adalah pengeluaran terbesar: Rp X (N% dari belanja)." Alokasi tidak ikut peringkat; "Tanpa kategori" ikut, sama dengan daftar di sebelahnya. |
 | 3 | `allocation` | `A > 0` | "Alokasi **{nama}** Rp X (N% dari pemasukan)." Lebih dari satu kategori: "Alokasi (k kategori) Rp X …". Tanpa pemasukan: tanpa persen. |
 | 4 | `savings-ratio` | `I > 0` | `ratio = (I − E) / I`. Rumus tidak berubah: `E` memuat alokasi, jadi alokasi tidak pernah dihitung sebagai tabungan. Teks memakai `period.word`. |
 | 5 | `daily-average` | `R > 0` | `R / elapsedDays`. `remaining > 0`: "… Sisa N hari, proyeksi sampai gajian berikutnya Rp (rata-rata × totalDays)." (bulan: "proyeksi akhir bulan"). Selain itu tanpa proyeksi. |
-| 6 | `vs-previous` | `prev` ada dan belanja pembanding > 0 | `R` dibanding belanja periode lalu pada **rentang hari yang sama** (`prev.start` sampai `prev.start + elapsedDays`). "Belanja naik/turun N% dibanding rentang yang sama gajian lalu." |
+| 6 | `vs-previous` | `prev` ada dan belanja pembanding > 0 | `R` dibanding belanja periode lalu pada **rentang hari yang sama** (`prev.start` sampai `prev.start + elapsedDays`). "Belanja naik/turun N% dibanding rentang yang sama gajian lalu." (bulan: "… bulan lalu"; 0%: "Belanja sama dengan rentang yang sama …") |
 | 7 | `new-category` | `prev` ada | kategori belanja yang tidak muncul di periode lalu |
 
 Regex nama `/istri/i` (`insights.ts:11`) dan teks "Tanggung jawab ke istri" dihapus; penanda alokasi yang menentukan.
@@ -148,6 +150,8 @@ Dengan data nyata sekarang hanya ada satu gajian, jadi `prev` kosong: insight 6 
 - `store.ts` mengekspor store `allocationSupported`, diisi saat `loadInitialData`: `true` bila baris kategori yang dimuat memiliki kunci `allocation`.
 - `saveCategory`: bila didukung, selalu mengirim nilai boolean (termasuk `false`, supaya penanda bisa dimatikan). Bila tidak, kunci tidak dikirim.
 - Toggle di Master disembunyikan selama tidak didukung. Tidak ada penyimpanan yang gagal.
+- Bentuk baris yang dikirim ditentukan fungsi murni `categoryPayload(category, supported)` di `master.ts`, supaya bisa diuji tanpa Supabase.
+- Login pertama (belum ada kategori): dukungan baru terdeteksi setelah muat ulang.
 
 **Aturan**
 - Hanya kategori pengeluaran yang bisa ditandai.
@@ -157,7 +161,8 @@ Dengan data nyata sekarang hanya ada satu gajian, jadi `prev` kosong: insight 6 
 
 **Pemakai yang berubah**
 - `insights.ts` (§5.3).
-- `categoryReport` (`reports.ts:174`): `CategoryRow.allocation: boolean`. Untuk pengeluaran: baris belanja lebih dulu (urut nominal, `percent` terhadap belanja), lalu baris alokasi (`percent = 0`). Laporan menambah `split: { real: number; allocation: number }`. Baris Total tetap total uang keluar. Pemasukan tidak berubah.
+- `categoryReport` (`reports.ts:174`): hanya menambah `CategoryRow.allocation: boolean` dan `split: { real: number; allocation: number }`. Urutan dan `percent` barisnya **tidak berubah**, karena hasil ini juga dipakai Arus kas (`CashflowTab.svelte:20-21`), "Kategori terbesar" di Buku besar, dan CSV.
+- `spendingRows(report): { real: CategoryRow[]; allocation: CategoryRow[] }` (baru, `reports.ts`): baris belanja urut nominal dengan `percent` terhadap `split.real`, lalu baris alokasi dengan `percent = 0`. Hanya dipakai tab Kategori.
 - `topCategories` (`dashboard.ts:72`): menerima kategori yang sudah membawa `allocation`; `top`, `rest`, dan `total` hanya memuat belanja; hasil menambah `allocation: CategorySlice[]` (satu per kategori alokasi, `percent = 0`).
 - Tidak berubah: `monthlyTable`, `monthlyTrend`, `accountBalanceReport`, `ledger.ts`, dan ringkasan "Kategori terbesar" di tab Buku besar.
 
@@ -193,7 +198,7 @@ Mengikuti komponen dan token yang ada; tidak ada bahasa visual baru.
 - Satu string `error` dengan cek `startsWith('Jumlah')` diganti objek error per field: `amount`, `category`, `description`, `destination`. Sekarang pesan selain "Jumlah" hanya tampil di blok transfer, sehingga tidak terlihat di mode Keluar.
 - Pesan tampil tepat di bawah field-nya memakai pola yang ada: `mt-1.5 text-[11.5px] leading-[1.4] text-accent`, `role="alert"`.
 - Field keterangan invalid: `border-accent`, `aria-invalid`, `aria-describedby`. Grup chip kategori: `role="group"` dengan `aria-describedby` ke pesan.
-- `entryProblem` dipanggil sebelum simpan; pesan dari store tetap muncul sebagai toast bila lolos dari form.
+- `entryProblem` dipanggil sebelum simpan, kecuali di mode Transfer; `''` dihitung tanpa kategori. Pesan dari store tetap muncul sebagai toast bila lolos dari form.
 - Tidak ada kategori untuk mode itu: teks "Belum ada kategori. Tambah di Master." di tempat chip.
 
 ```
@@ -214,11 +219,11 @@ TANGGAL              KETERANGAN
 **Tanda alokasi**
 - `CategoryManager`: subtitle yang ada digabung, "Alokasi · {subtitle lama}".
 - Kartu belanja di Home: baris belanja seperti sekarang (persen dan batang terhadap belanja), lalu baris alokasi dengan `subtitle="Alokasi"`, tanpa `percent`.
-- `CategoryTab`: baris alokasi di bawah baris belanja, `Pill` varian `neutral` berisi "Alokasi" setelah nama, kolom persen "—". Bila ada alokasi, satu baris `text-[11.5px] text-ink2` di bawah Total: "Belanja Rp X · Alokasi Rp Y".
+- `CategoryTab`: baris alokasi di bawah baris belanja, `Pill` varian `neutral` berisi "Alokasi" setelah nama, kolom persen "—"; persen baris Total juga "—" bila ada alokasi (sekarang selalu 100). Bila ada alokasi, satu baris `text-[11.5px] text-ink2` di bawah Total: "Belanja Rp X · Alokasi Rp Y".
 
 **Riwayat** (`src/components/TransactionList.svelte`, `src/lib/history.ts`)
 - Chip filter kelima "Perlu dilengkapi (N)". N dihitung **sepanjang waktu** dan chip tampil bila N > 0, apa pun rentang yang sedang dipilih.
-- Saat chip ini aktif, rentang waktu diabaikan dan chip rentang tampil nonaktif (`opacity-50`, tidak bisa diketuk); filter akun dan pencarian tetap berlaku.
+- Saat chip ini aktif, rentang waktu diabaikan dan tombol rentang tampil nonaktif (`opacity-50`, `disabled`); filter akun dan pencarian tetap berlaku. Pengabaian rentang ada di `TransactionList.svelte` dan diuji lewat e2e.
 - `filterHistory` menerima filter `'incomplete'` dan daftar kategori.
 - Mengetuk baris membuka detail lalu Edit seperti biasa; form menolak simpan sampai lengkap.
 
@@ -227,10 +232,12 @@ TANGGAL              KETERANGAN
 - `src/lib/reports.check.ts`: `activePeriod` (gajian berjalan, gaji masa depan diabaikan, tanpa gajian → bulan, `expectedEnd` dijepit akhir bulan, `prev`); `categoryReport` dengan alokasi (`split`, total tetap).
 - `src/lib/insights.check.ts`: ditulis ulang. Wajib ada regresi kasus nyata: gaji 27 Okt, pengeluaran November, `now` 13 Nov → tidak ada "melebihi pemasukan". Juga: alokasi tidak mengubah rasio, alokasi keluar dari peringkat, `incomplete` dihitung sepanjang waktu, satu gajian tanpa `prev`, fallback bulan, maksimal 5 dan ketiga keadaan di tabel batas.
 - `src/lib/entry-rules.check.ts` (baru, ditambahkan ke skrip `check` di `package.json`): keempat baris tabel §5.5 dan batas 499.999/500.000.
-- `src/lib/history.check.ts`: filter `incomplete`, tidak terpengaruh rentang.
+- `src/lib/history.check.ts`: filter `incomplete`.
+- `src/lib/master.check.ts`: `categoryPayload` dengan dan tanpa dukungan kolom.
 - `src/lib/dashboard.check.ts`: `topCategories` memisahkan alokasi dari peringkat dan total.
 - `scripts/e2e.mjs`:
-  - Langkah 3 dan 3b sekarang menyimpan pengeluaran tanpa kategori; keduanya akan merah dan harus memilih chip lebih dulu. Semua penyimpanan lain di berkas itu diperiksa.
+  - Langkah 3 (`:107-111`) menyimpan pengeluaran tanpa kategori; ia akan merah dan harus memilih chip lebih dulu. Langkah 3b tidak, karena form mempertahankan kategori setelah simpan. Cek di `:187-189` mencari baris "Tanpa kategori" dan ikut berubah.
+  - Baris lama yang belum lengkap tidak bisa lagi dibuat lewat UI; e2e menyisipkannya lewat `psql` di blok paling akhir, supaya angka total yang sudah dipatok tidak bergeser.
   - Baru: simpan tanpa kategori ditolak dengan pesan; ≥ 500 rb tanpa keterangan ditolak; label Home memuat "Gajian"; jumlah insight 1–5 (sekarang 1–3 di baris 417); toggle Alokasi di Master; chip "Perlu dilengkapi".
 - Verifikasi akhir: `npm run check`, `npm run build`, `npm run test:ui` terhadap Supabase lokal (553xx), cek 375px dan dark mode.
 
@@ -251,6 +258,9 @@ TANGGAL              KETERANGAN
 - Di daftar kategori, alokasi dipisah dari peringkat dan persentase belanja.
 - Kartu akun di Home membuka Buku besar dengan periode yang sama.
 - Deteksi gajian tidak diubah; bonus dan THR di kategori ber-"gaji" akan memulai periode baru.
+- Insight memakai `operating()`, jadi biaya admin transfer ikut dihitung dan angkanya cocok dengan ringkasan Home.
+- Urutan dan persen `categoryReport` tidak diubah; pemisahan alokasi untuk tab Kategori lewat `spendingRows`.
+- Form tetap mempertahankan kategori setelah simpan (perilaku sekarang).
 - Teks "Tanggung jawab ke istri" diganti teks alokasi umum.
 - Perbandingan periode memakai rentang hari yang sama, bukan periode lalu penuh.
 - Toggle alokasi disembunyikan sampai kolomnya ada.
