@@ -188,7 +188,7 @@
 
     <div>
       <div class="mb-2 flex items-baseline justify-between">
-        <label class="lbl" for="entry-source">{mode === 'transfer' ? 'DARI' : 'DARI AKUN'}</label>
+        <label class="lbl" for="entry-source">{mode === 'transfer' ? 'DARI' : mode === 'income' ? 'KE AKUN' : 'DARI AKUN'}</label>
         <span class="num text-[11.5px] text-ink2">{formatIDR($balances[source] ?? 0)}</span>
       </div>
       <select id="entry-source" class={fieldClass} bind:value={source}>

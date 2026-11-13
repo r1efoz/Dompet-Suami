@@ -2,7 +2,7 @@
   import { accounts, categories, transactions } from '../lib/store';
   import { reportState } from '../lib/ui';
   import { buildLedger, operating, summarize } from '../lib/ledger';
-  import { accountBalanceReport, categoryReport, fullBackupRows, monthlyTable, periodRange, toCsv, type Period } from '../lib/reports';
+  import { accountBalanceReport, categoryReport, fullBackupRows, monthlyTable, paydayPeriods, periodRange, toCsv, totalBalanceBefore, type Period } from '../lib/reports';
   import ListItem from '../components/ui/ListItem.svelte';
   import Pill from '../components/ui/Pill.svelte';
   import Sheet from '../components/ui/Sheet.svelte';
@@ -25,28 +25,35 @@
   let csvOpen = false;
   let accountId = $reportState.accountId ?? '';
   $: tab = $reportState.tab;
-  $: period = $reportState.period ?? ({ kind: 'month', y: now.getFullYear(), m: now.getMonth() } as Period);
-  $: range = periodRange(period);
+  $: paydays = paydayPeriods($transactions, $categories);
+  // a payday whose salary entry was deleted/edited away falls back to the current month
+  $: period = (($reportState.period?.kind === 'payday' && !paydays.some((p) => p.day === ($reportState.period as { day: string }).day) ? undefined : $reportState.period) ?? { kind: 'month', y: now.getFullYear(), m: now.getMonth() }) as Period;
+  $: range = periodRange(period, paydays);
+  $: spanning = period.kind === 'range' || period.kind === 'payday';
+  $: openingAll = totalBalanceBefore($transactions, range.start);
   $: inPeriod = $transactions.filter((tx) => { const t = new Date(tx.timestamp).getTime(); return t >= range.start.getTime() && t < range.end.getTime(); });
   $: flow = operating(inPeriod);
   $: sum = summarize(flow);
   $: catReport = categoryReport($categories, $transactions, range.start, range.end, range.prevStart, range.prevEnd);
   $: balRows = accountBalanceReport($accounts, $transactions, range.start, range.end);
   // ponytail: a range spanning two years lists months of its start year only
-  $: year = period.kind === 'range' ? range.start.getFullYear() : period.y;
+  $: year = period.kind === 'range' || period.kind === 'payday' ? range.start.getFullYear() : period.y;
   $: monthly = (() => {
-    const all = monthlyTable(period.kind === 'range' ? flow : $transactions, year);
-    if (period.kind !== 'range') return all;
+    const all = monthlyTable(spanning ? flow : $transactions, year);
+    if (!spanning) return all;
     const rows = all.rows.filter((r) => range.start < new Date(year, r.month + 1, 1) && range.end > new Date(year, r.month, 1));
     const income = rows.reduce((s, r) => s + r.income, 0), expense = rows.reduce((s, r) => s + r.expense, 0);
     return { rows, total: { income, expense, net: income - expense } };
   })();
-  $: prevLabel = period.kind === 'month' ? `vs ${SHORT[(period.m + 11) % 12]}` : period.kind === 'year' ? `vs ${period.y - 1}` : 'vs sblm';
-  $: fileKey = period.kind === 'month' ? `${period.y}-${pad(period.m)}` : period.kind === 'year' ? String(period.y) : `${period.from}_${period.to}`;
+  $: prevLabel = period.kind === 'month' ? `vs ${SHORT[(period.m + 11) % 12]}` : period.kind === 'year' ? `vs ${period.y - 1}` : period.kind === 'payday' ? 'vs gajian sblm' : 'vs sblm';
+  $: fileKey = period.kind === 'month' ? `${period.y}-${pad(period.m)}` : period.kind === 'year' ? String(period.y) : period.kind === 'payday' ? `gajian-${period.day}` : `${period.from}_${period.to}`;
   $: tabLabel = TABS.find((t) => t.id === tab)!.label;
 
   function setTab(id: typeof TABS[number]['id']) { reportState.update((s) => ({ ...s, tab: id })); }
-  function setPeriod(p: Period) { reportState.update((s) => ({ ...s, period: p })); }
+  function setPeriod(p: Period) {
+    if (p.kind === 'payday') accountId = '';
+    reportState.update((s) => ({ ...s, period: p, ...(p.kind === 'payday' ? { accountId: '' } : {}) }));
+  }
   function openLedger(id: string) { accountId = id; reportState.update((s) => ({ ...s, tab: 'ledger', accountId: id })); }
 
   function tabRows(): (string | number)[][] {
@@ -56,9 +63,10 @@
       return [['Tipe', 'Kategori', 'Jumlah', 'Persen', 'Periode sebelumnya'], ...rows];
     }
     if (tab === 'balance') return [['Akun', 'Jenis', 'Awal', 'Masuk', 'Keluar', 'Akhir'], ...balRows.map((r) => [r.name, r.type, r.awal, r.masuk, r.keluar, r.akhir])];
-    const open = balRows.find((r) => r.id === accountId)?.awal ?? 0;
-    const rows = buildLedger(inPeriod, accountId, open).map((l) => [new Date(l.tx.timestamp).toLocaleDateString('sv-SE'), l.tx.description, l.tx.transferId ? 'transfer' : l.tx.type, l.tx.type === 'income' ? l.tx.amount : -l.tx.amount, l.runningBalance]);
-    return [['Tanggal', 'Keterangan', 'Tipe', 'Mutasi', 'Saldo'], ...rows];
+    const open = accountId ? balRows.find((r) => r.id === accountId)?.awal ?? 0 : openingAll;
+    const accountName = (id?: string) => $accounts.find((a) => a.id === id)?.name ?? '';
+    const rows = buildLedger(inPeriod, accountId, open).map((l) => [new Date(l.tx.timestamp).toLocaleDateString('sv-SE'), l.tx.description, accountName(l.tx.source), l.tx.transferId ? 'transfer' : l.tx.type, l.tx.type === 'income' ? l.tx.amount : -l.tx.amount, l.runningBalance]);
+    return [['Tanggal', 'Keterangan', 'Akun', 'Tipe', 'Mutasi', 'Saldo'], ...rows];
   }
 
   function download(rows: (string | number)[][], filename: string) {
@@ -76,7 +84,7 @@
     <button type="button" class="focus-visible:outline-2 focus-visible:outline-ink" on:click={() => (csvOpen = true)}><Pill variant="ink">⤓ CSV</Pill></button>
   </header>
   <div class="flex flex-wrap items-center gap-3">
-    <div class="min-w-0"><PeriodPicker {period} on:change={(e) => setPeriod(e.detail)} /></div>
+    <div class="min-w-0"><PeriodPicker {period} {paydays} on:change={(e) => setPeriod(e.detail)} /></div>
     <div role="tablist" aria-label="Jenis laporan" class="flex gap-2 overflow-x-auto">
       {#each TABS as t}
         <button type="button" role="tab" aria-selected={tab === t.id} class="whitespace-nowrap rounded-pill border border-line px-3 py-[7px] text-[12.5px] {tab === t.id ? 'border-ink bg-ink text-on-ink' : 'bg-card text-ink'}" on:click={() => setTab(t.id)}>{t.label}</button>
@@ -86,13 +94,13 @@
 
   <div class="max-w-[920px]">
     {#if tab === 'cashflow'}
-      <CashflowTab income={sum.income} expense={sum.expense} expenseRows={catReport.expense} months={monthly} title={period.kind === 'range' ? 'Per bulan' : `Per bulan, ${year}`} selectedMonth={period.kind === 'month' ? period.m : null} />
+      <CashflowTab income={sum.income} expense={sum.expense} expenseRows={catReport.expense} months={monthly} title={spanning ? 'Per bulan' : `Per bulan, ${year}`} selectedMonth={period.kind === 'month' ? period.m : null} />
     {:else if tab === 'category'}
       <CategoryTab report={catReport} transactions={flow} {prevLabel} />
     {:else if tab === 'balance'}
       <div class="mt-3.5"><BalanceTab rows={balRows} on:select={(e) => openLedger(e.detail)} /></div>
     {:else}
-      <LedgerTab accounts={$accounts} rows={balRows} transactions={inPeriod} bind:accountId />
+      <LedgerTab accounts={$accounts} categories={$categories} rows={balRows} transactions={inPeriod} allTransactions={$transactions} catRows={catReport.expense} {openingAll} bind:accountId />
     {/if}
   </div>
 </div>

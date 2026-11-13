@@ -80,6 +80,8 @@ const toastOf = (text) => page.getByRole("status").getByText(text);
 // 1. Income
 check("mode default Keluar", (await entryTabs.getByRole("tab", { name: "Keluar" }).getAttribute("aria-selected")) === "true");
 await entryTabs.getByRole("tab", { name: "Masuk" }).click();
+check("form Masuk memakai label KE AKUN", await page.getByText("KE AKUN", { exact: true }).isVisible());
+await page.locator("#entry-category").getByRole("button", { name: "Gaji" }).click();
 await amount.fill("5000000");
 await page.locator("#entry-description").fill("Gaji bulanan");
 await page.getByRole("button", { name: "Simpan pemasukan" }).click();
@@ -101,6 +103,7 @@ check("transfer akun sama ditolak", await page.getByText("Akun tujuan harus berb
 
 // 3. Expense from cash
 await entryTabs.getByRole("tab", { name: "Keluar" }).click();
+check("form Keluar memakai label DARI AKUN", await page.getByText("DARI AKUN", { exact: true }).isVisible());
 await amount.fill("250000");
 await page.locator("#entry-source").selectOption("cash");
 await page.locator("#entry-description").fill("Belanja pasar");
@@ -160,6 +163,32 @@ check(
   "isi buku besar tampil",
   await page.locator("#ledger-account").isVisible(),
 );
+
+// Buku besar gabungan + detail baris
+check("buku besar default Semua akun", (await page.locator("#ledger-account").inputValue()) === "");
+check("buku besar menampilkan Saldo awal", await page.getByText("Saldo awal", { exact: true }).isVisible());
+const firstLedgerRow = page.locator("tbody tr").nth(1);
+check("mutasi pertama = gaji masuk Bank", /Gaji bulanan · Bank/.test(await firstLedgerRow.innerText()), await firstLedgerRow.innerText());
+await firstLedgerRow.click();
+const ledgerDetail = (await page.getByRole("dialog").innerText()).replace(/\s+/g, " ");
+check("detail dari buku besar memuat Keterangan", /Keterangan/.test(ledgerDetail) && /Gaji bulanan/.test(ledgerDetail), ledgerDetail);
+await page.keyboard.press("Escape");
+
+// POV gajian
+await page.getByRole("button", { name: "Gajian…" }).click();
+await page.getByRole("dialog").getByRole("button", { name: /Gajian/ }).first().click();
+check("chip gajian aktif", (await page.getByRole("button", { name: /^Gajian \d/ }).count()) >= 1);
+check("ringkasan Kategori terbesar tampil", await page.getByText("Kategori terbesar", { exact: true }).isVisible());
+check("akhir gajian = total semua akun", (await page.locator('[data-testid="ledger-akhir"]').getAttribute("data-value")) === "4750000");
+errors.length = 0;
+for (const tab of ["Arus kas", "Kategori", "Saldo akun", "Buku besar"]) {
+  await reportTabs.getByRole("tab", { name: tab }).click();
+  await page.waitForTimeout(150);
+}
+await page.getByRole("button", { name: "⤓ CSV" }).click();
+await page.keyboard.press("Escape");
+check("periode gajian di semua tab tanpa error", errors.length === 0, errors.join(" | "));
+await page.getByRole("button", { name: /^(Jan|Feb|Mar|Apr|Mei|Jun|Jul|Agu|Sep|Okt|Nov|Des)/ }).first().click();
 
 await page.screenshot({ path: `${OUT}/dompet-ledger.png`, fullPage: true });
 

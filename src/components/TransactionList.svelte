@@ -9,6 +9,7 @@
   import Chips from './ui/Chips.svelte';
   import ListItem from './ui/ListItem.svelte';
   import Sheet from './ui/Sheet.svelte';
+  import TransactionDetail from './TransactionDetail.svelte';
 
   type Filter = 'all' | 'income' | 'expense' | 'transfer';
   type Range = 'month' | 'last' | 'three' | 'all';
@@ -198,20 +199,9 @@
   </div>
 </Sheet>
 
-<Sheet open={Boolean(detail)} title={detail ? titleOf(detail) : ''} on:close={() => (detail = null)}>
-  {#if detail}
-    <p class="mt-1 text-[11.5px] leading-[1.4] text-ink2">{new Date(detail.timestamp).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' })}</p>
-    <p class="num mt-2 text-[18px] font-semibold">{detail.transferId ? formatIDR(detail.type === 'expense' ? pairAmount(detail) : detail.amount) : `${detail.type === 'income' ? '+' : '−'}${formatIDR(detail.amount)}`}</p>
-    <dl class="mt-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-[13px] leading-[1.45]">
-      <dt class="text-ink2">Akun</dt><dd class="text-right">{accountName(detail.transferId && detail.type === 'income' ? detail.destination : detail.source)}</dd>
-      {#if detail.transferId}
-        <dt class="text-ink2">Ke</dt><dd class="text-right">{accountName(detail.type === 'income' ? detail.source : detail.destination)}</dd>
-        <dt class="text-ink2">Biaya</dt><dd class="num text-right">{formatIDR(detail.type === 'expense' ? detail.amount - pairAmount(detail) : 0)}</dd>
-      {:else}
-        <dt class="text-ink2">Kategori</dt><dd class="text-right">{categoryName(detail.categoryId) || '-'}</dd>
-      {/if}
-    </dl>
-    {#if !$viewer}<div class="mt-4 grid grid-cols-2 gap-2">
+<TransactionDetail tx={detail} accounts={$accounts} categories={$categories} transactions={$transactions} on:close={() => (detail = null)}>
+  <svelte:fragment slot="actions">
+    {#if detail && !$viewer}<div class="mt-4 grid grid-cols-2 gap-2">
       {#if !detail.transferId || detail.type === 'expense'}
         <button type="button" class="{btn} h-11 rounded-btn bg-ink text-on-ink font-semibold text-[14px]" on:click={edit}>Edit</button>
       {:else}
@@ -219,8 +209,8 @@
       {/if}
       <button type="button" class="{btn} h-11 rounded-btn bg-accent-soft text-accent font-semibold text-[14px]" on:click={askDelete}>Hapus</button>
     </div>{/if}
-  {/if}
-</Sheet>
+  </svelte:fragment>
+</TransactionDetail>
 
 <Sheet open={Boolean(deleting)} title="Hapus transaksi?" on:close={() => (deleting = null)}>
   <p class="text-[13px] leading-[1.45] text-ink2 mt-2">{deleting?.transferId ? 'Kedua catatan transfer akan dihapus.' : 'Transaksi ini akan dihapus permanen.'}</p>
