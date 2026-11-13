@@ -10,8 +10,7 @@ import {
   monthlyTable,
   toCsv,
   fullBackupRows,
-  paydayPeriods,
-  totalBalanceBefore
+  paydayPeriods
 } from './reports';
 
 // --- Test 1: accountBalanceReport ---
@@ -150,6 +149,8 @@ assert.equal(pr.prevStart.getTime(), new Date(2026, 8, 25).getTime());
 assert.equal(pr.prevEnd.getTime(), pr.start.getTime());
 assert.equal(pr.label, 'Gajian 25 Okt');
 
-assert.equal(totalBalanceBefore(payTx, new Date(2026, 9, 25)), 5_000_000 - 100_000, 'total balance before payday');
+const payAccounts: Account[] = [{ id: 'bank', name: 'Bank', type: 'bank' }, { id: 'cash', name: 'Tunai', type: 'cash' }];
+const openingAll = accountBalanceReport(payAccounts, payTx, pr.start, pr.end).reduce((s, r) => s + r.awal, 0);
+assert.equal(openingAll, 5_000_000 - 100_000, 'combined opening = sum of account openings');
 
 console.log('reports self-check: all assertions passed');

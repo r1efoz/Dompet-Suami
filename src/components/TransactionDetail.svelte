@@ -1,18 +1,14 @@
 <script lang="ts">
+  import { accounts, categories, transactions } from '../lib/store';
   import { formatIDR } from '../lib/format';
-  import type { Account } from '../models/Account';
-  import type { Category } from '../models/Category';
   import type { Transaction } from '../models/Transaction';
   import Sheet from './ui/Sheet.svelte';
 
   export let tx: Transaction | null = null;
-  export let accounts: Account[] = [];
-  export let categories: Category[] = [];
-  export let transactions: Transaction[] = [];
 
-  const accountName = (id: string | undefined) => accounts.find((a) => a.id === id)?.name ?? id ?? '';
-  const categoryName = (id: string | undefined) => categories.find((c) => c.id === id)?.name ?? '';
-  const pairAmount = (t: Transaction) => transactions.find((item) => item.transferId === t.transferId && item.type === 'income')?.amount ?? t.amount;
+  const accountName = (id: string | undefined) => $accounts.find((a) => a.id === id)?.name ?? id ?? '';
+  const categoryName = (id: string | undefined) => $categories.find((c) => c.id === id)?.name ?? '';
+  const pairAmount = (t: Transaction) => $transactions.find((item) => item.transferId === t.transferId && item.type === 'income')?.amount ?? t.amount;
 
   $: title = tx ? tx.description || categoryName(tx.categoryId) || 'Tanpa keterangan' : '';
 </script>

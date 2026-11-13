@@ -2,7 +2,7 @@
   import Card from '../ui/Card.svelte';
   import SectionHeader from '../ui/SectionHeader.svelte';
   import TransactionDetail from '../TransactionDetail.svelte';
-  import { formatCompact, formatIDR } from '../../lib/format';
+  import { formatCompact, formatDayMonth, formatIDR } from '../../lib/format';
   import { buildLedger } from '../../lib/ledger';
   import type { AccountBalanceRow, CategoryRow } from '../../lib/reports';
   import type { Account } from '../../models/Account';
@@ -13,8 +13,6 @@
   export let categories: Category[] = [];
   export let rows: AccountBalanceRow[] = [];
   export let transactions: Transaction[] = [];
-  /** All transactions (for transfer pair amounts in the detail sheet). */
-  export let allTransactions: Transaction[] = [];
   export let catRows: CategoryRow[] = [];
   /** Combined balance of every account at period start. */
   export let openingAll = 0;
@@ -66,9 +64,10 @@
             <td class="num text-right font-semibold">{formatIDR(awal)}</td>
           </tr>
           {#each ledger as l (l.tx.id)}
-            <tr class="cursor-pointer border-t border-line text-[13px] hover:bg-chip focus-visible:outline-2 focus-visible:outline-ink" role="button" tabindex="0" aria-label="Detail {note(l.tx)}" on:click={() => (detail = l.tx)} on:keydown={(e) => activate(e, l.tx)}>
-              <td class="num whitespace-nowrap py-2.5 pr-2 text-[11.5px] text-ink2">{new Date(l.tx.timestamp).toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })}</td>
-              <td class="max-w-[140px] truncate pr-2 lg:max-w-none">{note(l.tx)}</td>
+            {@const label = note(l.tx)}
+            <tr class="cursor-pointer border-t border-line text-[13px] hover:bg-chip focus-visible:outline-2 focus-visible:outline-ink" role="button" tabindex="0" aria-label="Detail {label}" on:click={() => (detail = l.tx)} on:keydown={(e) => activate(e, l.tx)}>
+              <td class="num whitespace-nowrap py-2.5 pr-2 text-[11.5px] text-ink2">{formatDayMonth(l.tx.timestamp)}</td>
+              <td class="max-w-[140px] truncate pr-2 lg:max-w-none">{label}</td>
               <td class="num text-right {l.tx.type === 'income' ? 'text-pos' : 'text-accent'}">{signed(l.tx.type === 'income' ? l.tx.amount : -l.tx.amount)}</td>
               <td class="num text-right font-semibold">{formatIDR(l.runningBalance)}</td>
             </tr>
@@ -94,4 +93,4 @@
   {/if}
 </div>
 
-<TransactionDetail tx={detail} {accounts} {categories} transactions={allTransactions} on:close={() => (detail = null)} />
+<TransactionDetail tx={detail} on:close={() => (detail = null)} />

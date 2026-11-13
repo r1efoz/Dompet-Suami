@@ -40,6 +40,7 @@ function parseLocalDate(iso: string): Date {
   return new Date(y, m - 1, d);
 }
 
+const fmtDay = (d: Date) => `${d.getDate()} ${MONTHS[d.getMonth()]}`;
 const dayKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
 /** Salary = income (not transfer) in a category named like "Gaji". A period runs payday 00:00 → next payday 00:00; newest first. */
@@ -52,7 +53,7 @@ export function paydayPeriods(transactions: Transaction[], categories: Category[
     byDay.set(key, (byDay.get(key) ?? 0) + tx.amount);
   }
   const days = [...byDay.keys()].sort();
-  const fmt = (d: Date) => `${d.getDate()} ${MONTHS[d.getMonth()]}${d.getFullYear() === now.getFullYear() ? '' : ` ${d.getFullYear()}`}`;
+  const fmt = (d: Date) => fmtDay(d) + (d.getFullYear() === now.getFullYear() ? '' : ` ${d.getFullYear()}`);
   return days
     .map((day, i) => {
       const start = parseLocalDate(day);
@@ -61,11 +62,6 @@ export function paydayPeriods(transactions: Transaction[], categories: Category[
       return { day, start, end, prevDay: days[i - 1], amount: byDay.get(day)!, label: `Gajian ${fmt(start)}${last ? ` – ${fmt(last)}` : ''}` };
     })
     .reverse();
-}
-
-/** Sum of every account's signed entries before `start`. */
-export function totalBalanceBefore(transactions: Transaction[], start: Date): number {
-  return transactions.reduce((sum, tx) => (time(tx) < start.getTime() ? sum + signed(tx) : sum), 0);
 }
 
 /** `end` is exclusive; `prev*` is the preceding period of the same length. */
@@ -104,11 +100,10 @@ export function periodRange(period: Period, paydays: PaydayPeriod[] = []): Perio
   const last = parseLocalDate(period.to);
   const end = new Date(last.getFullYear(), last.getMonth(), last.getDate() + 1);
   const days = Math.round((end.getTime() - start.getTime()) / DAY_MS);
-  const fmt = (d: Date) => `${d.getDate()} ${MONTHS[d.getMonth()]}`;
   return {
     start,
     end,
-    label: `${fmt(start)} – ${fmt(last)}`,
+    label: `${fmtDay(start)} – ${fmtDay(last)}`,
     prevStart: new Date(start.getFullYear(), start.getMonth(), start.getDate() - days),
     prevEnd: start
   };

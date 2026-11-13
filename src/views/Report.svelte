@@ -2,7 +2,7 @@
   import { accounts, categories, transactions } from '../lib/store';
   import { reportState } from '../lib/ui';
   import { buildLedger, operating, summarize } from '../lib/ledger';
-  import { accountBalanceReport, categoryReport, fullBackupRows, monthlyTable, paydayPeriods, periodRange, toCsv, totalBalanceBefore, type Period } from '../lib/reports';
+  import { accountBalanceReport, categoryReport, fullBackupRows, monthlyTable, paydayPeriods, periodRange, toCsv, type Period } from '../lib/reports';
   import ListItem from '../components/ui/ListItem.svelte';
   import Pill from '../components/ui/Pill.svelte';
   import Sheet from '../components/ui/Sheet.svelte';
@@ -30,14 +30,14 @@
   $: period = (($reportState.period?.kind === 'payday' && !paydays.some((p) => p.day === ($reportState.period as { day: string }).day) ? undefined : $reportState.period) ?? { kind: 'month', y: now.getFullYear(), m: now.getMonth() }) as Period;
   $: range = periodRange(period, paydays);
   $: spanning = period.kind === 'range' || period.kind === 'payday';
-  $: openingAll = totalBalanceBefore($transactions, range.start);
   $: inPeriod = $transactions.filter((tx) => { const t = new Date(tx.timestamp).getTime(); return t >= range.start.getTime() && t < range.end.getTime(); });
   $: flow = operating(inPeriod);
   $: sum = summarize(flow);
   $: catReport = categoryReport($categories, $transactions, range.start, range.end, range.prevStart, range.prevEnd);
   $: balRows = accountBalanceReport($accounts, $transactions, range.start, range.end);
+  $: openingAll = balRows.reduce((sum, r) => sum + r.awal, 0);
   // ponytail: a range spanning two years lists months of its start year only
-  $: year = period.kind === 'range' || period.kind === 'payday' ? range.start.getFullYear() : period.y;
+  $: year = spanning ? range.start.getFullYear() : period.y;
   $: monthly = (() => {
     const all = monthlyTable(spanning ? flow : $transactions, year);
     if (!spanning) return all;
@@ -100,7 +100,7 @@
     {:else if tab === 'balance'}
       <div class="mt-3.5"><BalanceTab rows={balRows} on:select={(e) => openLedger(e.detail)} /></div>
     {:else}
-      <LedgerTab accounts={$accounts} categories={$categories} rows={balRows} transactions={inPeriod} allTransactions={$transactions} catRows={catReport.expense} {openingAll} bind:accountId />
+      <LedgerTab accounts={$accounts} categories={$categories} rows={balRows} transactions={inPeriod} catRows={catReport.expense} {openingAll} bind:accountId />
     {/if}
   </div>
 </div>
