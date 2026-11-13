@@ -1,10 +1,11 @@
 <script lang="ts">
   import Card from '../ui/Card.svelte';
+  import Pill from '../ui/Pill.svelte';
   import ListItem from '../ui/ListItem.svelte';
   import SectionHeader from '../ui/SectionHeader.svelte';
   import Sheet from '../ui/Sheet.svelte';
   import { formatCompact, formatDayMonth, formatIDR } from '../../lib/format';
-  import type { CategoryReport, CategoryRow } from '../../lib/reports';
+  import { spendingRows, type CategoryReport, type CategoryRow } from '../../lib/reports';
   import type { Transaction } from '../../models/Transaction';
 
   export let report: CategoryReport;
@@ -33,7 +34,7 @@
 </script>
 
 {#each sections as s}
-  {@const rows = report[s.type]}
+  {@const rows = s.type === 'expense' ? [...spendingRows(report).real, ...spendingRows(report).allocation] : report.income}
   <SectionHeader title={s.title} />
   <Card dense>
     {#if rows.length === 0}
@@ -44,9 +45,9 @@
         <tbody>
           {#each rows as r (r.id)}
             <tr class="cursor-pointer border-t border-line text-[13px]" on:click={() => (detail = { type: s.type, row: r })}>
-              <td class="py-2.5">{r.name}</td>
+              <td class="py-2.5">{r.name}{#if r.allocation} <Pill>Alokasi</Pill>{/if}</td>
               <td class="num text-right">{formatCompact(r.amount)}</td>
-              <td class="num text-right text-ink2">{Math.round(r.percent)}</td>
+              <td class="num text-right text-ink2">{r.allocation ? '—' : Math.round(r.percent)}</td>
               <td class="num text-right {vsTone(r.vs, s.type)}">{vsText(r.vs)}</td>
             </tr>
           {/each}
@@ -54,12 +55,15 @@
             <tr class="tot border-t border-ink text-[13px] font-semibold">
               <td class="py-2.5">Total</td>
               <td class="num text-right">{formatCompact(t.amount)}</td>
-              <td class="num text-right">100</td>
+              <td class="num text-right">{s.type === 'expense' && report.split.allocation > 0 ? '—' : 100}</td>
               <td class="num text-right {vsTone(t.vs, s.type)}">{vsText(t.vs)}</td>
             </tr>
           {/each}
         </tbody>
       </table>
+    {/if}
+    {#if s.type === 'expense' && report.split.allocation > 0}
+      <p class="mt-2 text-[11.5px] leading-[1.4] text-ink2">Belanja {formatIDR(report.split.real)} · Alokasi {formatIDR(report.split.allocation)}</p>
     {/if}
   </Card>
 {/each}

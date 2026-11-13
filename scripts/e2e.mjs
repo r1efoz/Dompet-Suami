@@ -474,6 +474,14 @@ check("Home: insight Alokasi Makanan", allocInsights.some((t) => /Alokasi Makana
 const spendCard = await finalPage.locator("section", { has: finalPage.getByRole("heading", { name: /Belanja|Pengeluaran bulan/ }) }).first().innerText();
 check("Home: kartu belanja memuat baris Alokasi", /Makanan[\s\S]*Alokasi/.test(spendCard), spendCard);
 
+// Task 10: Laporan -> Kategori separates allocation from spending.
+await finalPage.locator('nav[aria-label="Navigasi atas"]').getByRole("button", { name: "Laporan", exact: true }).click();
+await finalPage.getByRole("tab", { name: "Kategori", exact: true }).click();
+const makananRow = await finalPage.locator("tr", { hasText: "Makanan" }).first().innerText();
+check("Kategori: baris Makanan memuat pill Alokasi", /Alokasi/.test(makananRow), makananRow);
+const kategoriBody = (await finalPage.locator("body").innerText()).replace(/\s+/g, " ");
+check("Kategori: ringkasan Belanja dan Alokasi", /Belanja Rp .* · Alokasi Rp/.test(kategoriBody), kategoriBody.slice(0, 300));
+
 await browser.close();
 
 for (const c of checks)
