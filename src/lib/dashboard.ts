@@ -69,20 +69,22 @@ export function accountMonthStats(accounts: Account[], tx: Transaction[], start:
 }
 
 export interface CategorySlice { id: string | null; name: string; icon: string; value: number; percent: number }
-export function topCategories(tx: Transaction[], categories: Category[], limit: number): { top: CategorySlice[]; rest: CategorySlice | null; total: number } {
+export function topCategories(tx: Transaction[], categories: Category[], limit: number): { top: CategorySlice[]; rest: CategorySlice | null; total: number; allocation: CategorySlice[] } {
   const totals = new Map<string | null, number>();
   for (const item of operating(tx)) {
     if (item.type !== 'expense' || item.transferId) continue;
     totals.set(item.categoryId ?? null, (totals.get(item.categoryId ?? null) ?? 0) + item.amount);
   }
-  const values = [...totals].map(([id, value]) => {
+  const slices = [...totals].map(([id, value]) => {
     const category = categories.find((item) => item.id === id);
-    return { id, name: category?.name ?? 'Tanpa kategori', icon: (category as Category & { icon?: string } | undefined)?.icon ?? '🧾', value, percent: 0 };
-  }).sort((a, b) => b.value - a.value);
+    return { slice: { id, name: category?.name ?? 'Tanpa kategori', icon: (category as Category & { icon?: string } | undefined)?.icon ?? '🧾', value, percent: 0 }, isAllocation: !!category?.allocation };
+  }).sort((a, b) => b.slice.value - a.slice.value);
+  const values = slices.filter((item) => !item.isAllocation).map((item) => item.slice);
+  const allocation = slices.filter((item) => item.isAllocation).map((item) => item.slice);
   const total = values.reduce((sum, item) => sum + item.value, 0);
   for (const item of values) item.percent = total ? Math.round(item.value / total * 100) : 0;
   const top = values.slice(0, limit);
   const restValues = values.slice(limit);
   const rest = restValues.length ? { id: null, name: `${restValues.length} kategori lain`, icon: '⋯', value: restValues.reduce((sum, item) => sum + item.value, 0), percent: total ? Math.round(restValues.reduce((sum, item) => sum + item.value, 0) / total * 100) : 0 } : null;
-  return { top, rest, total };
+  return { top, rest, total, allocation };
 }
