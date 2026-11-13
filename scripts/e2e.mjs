@@ -424,7 +424,7 @@ const insightCount = await homePage.locator('[data-testid="insight-row"]').count
 check("Home menampilkan 1–5 insight", insightCount >= 1 && insightCount <= 5, String(insightCount));
 const homeLabel = await homePage.locator("header .lbl").first().innerText();
 check("Home berlabel periode gajian", /gajian .* gaji rp/i.test(homeLabel), homeLabel);
-check("StatStrip: caption periode", /13 NOV|NOV/i.test(await homePage.locator('[data-testid="stat-strip-period"]').innerText()));
+check("StatStrip: caption periode", /NOV/i.test(await homePage.locator('[data-testid="stat-strip-period"]').innerText()));
 check("StatStrip: label satu baris", (await homePage.locator('[data-testid="stat-strip-period"]').locator("xpath=following-sibling::div").locator(".lbl").evaluateAll((els) => els.every((el) => el.getBoundingClientRect().height < 20))));
 check("tren Home menampilkan 12 bulan", await homePage.locator('svg[aria-label="Tren 12 bulan"] text[data-month]').count() === 12);
 const homeWidth = await homePage.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }));
@@ -473,7 +473,7 @@ check("Master: baris Makanan bertanda Alokasi", /Alokasi ·/.test(await finalPag
 await finalPage.locator('nav[aria-label="Navigasi atas"]').getByRole("button", { name: "Home", exact: true }).click();
 const allocInsights = await finalPage.locator('[data-testid="insight-row"]').allInnerTexts();
 check("Home: insight Alokasi Makanan", allocInsights.some((t) => /Alokasi Makanan/.test(t.replace(/\s+/g, " "))), allocInsights.join(" | "));
-const spendCard = await finalPage.locator("section", { has: finalPage.getByRole("heading", { name: /Belanja|Pengeluaran bulan/ }) }).first().innerText();
+const spendCard = await finalPage.locator("section", { has: finalPage.getByRole("heading", { name: /^Belanja/ }) }).first().innerText();
 check("Home: kartu belanja memuat baris Alokasi", /Makanan[\s\S]*Alokasi/.test(spendCard), spendCard);
 
 // Task 10: Laporan -> Kategori separates allocation from spending.
@@ -489,10 +489,10 @@ psql(`-c "insert into transactions (id, type, amount, description, source, times
 await finalPage.reload({ waitUntil: "networkidle" });
 await finalPage.locator('nav[aria-label="Navigasi atas"]').getByRole("button", { name: "Transaksi", exact: true }).click();
 const incompleteChip = finalPage.getByRole("button", { name: "Perlu dilengkapi (1)" });
-check("Riwayat: chip Perlu dilengkapi (1) terlihat", await incompleteChip.isVisible().catch(() => false));
+check("Riwayat: chip Perlu dilengkapi (1) terlihat", await incompleteChip.isVisible());
 await incompleteChip.click();
-check("Riwayat: baris Tanpa keterangan terlihat", await finalPage.getByText("Tanpa keterangan").first().isVisible().catch(() => false));
-check("Riwayat: tombol rentang disabled", await finalPage.getByRole("button", { name: /Bulan ini/ }).isDisabled().catch(() => false));
+check("Riwayat: baris Tanpa keterangan terlihat", await finalPage.getByText("Tanpa keterangan").first().isVisible());
+check("Riwayat: tombol rentang disabled", await finalPage.getByRole("button", { name: /Bulan ini/ }).isDisabled());
 await finalPage.getByText("Tanpa keterangan").first().click();
 await finalPage.getByRole("button", { name: "Edit", exact: true }).click();
 await finalPage.getByRole("button", { name: "Simpan perubahan" }).click();

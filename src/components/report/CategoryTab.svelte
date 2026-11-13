@@ -12,6 +12,9 @@
   export let transactions: Transaction[] = [];
   export let prevLabel = 'vs sblm';
 
+  $: spending = spendingRows(report);
+  $: hasAllocation = report.split.allocation > 0;
+
   let detail: { type: 'expense' | 'income'; row: CategoryRow } | null = null;
   $: detailTx = detail
     ? transactions
@@ -34,7 +37,7 @@
 </script>
 
 {#each sections as s}
-  {@const rows = s.type === 'expense' ? [...spendingRows(report).real, ...spendingRows(report).allocation] : report.income}
+  {@const rows = s.type === 'expense' ? [...spending.real, ...spending.allocation] : report.income}
   <SectionHeader title={s.title} />
   <Card dense>
     {#if rows.length === 0}
@@ -55,14 +58,14 @@
             <tr class="tot border-t border-ink text-[13px] font-semibold">
               <td class="py-2.5">Total</td>
               <td class="num text-right">{formatCompact(t.amount)}</td>
-              <td class="num pl-3 text-right">{s.type === 'expense' && report.split.allocation > 0 ? '—' : 100}</td>
+              <td class="num pl-3 text-right">{s.type === 'expense' && hasAllocation ? '—' : 100}</td>
               <td class="num text-right {vsTone(t.vs, s.type)}">{vsText(t.vs)}</td>
             </tr>
           {/each}
         </tbody>
       </table>
     {/if}
-    {#if s.type === 'expense' && report.split.allocation > 0}
+    {#if s.type === 'expense' && hasAllocation}
       <p class="mt-2 text-[11.5px] leading-[1.4] text-ink2">Belanja {formatIDR(report.split.real)} · Alokasi {formatIDR(report.split.allocation)}</p>
     {/if}
   </Card>

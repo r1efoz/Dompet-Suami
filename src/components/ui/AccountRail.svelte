@@ -13,7 +13,7 @@
   let active = 0;
   $: cards = accounts.filter((account) => (stats.find((item) => item.id === account.id)?.balance ?? 0) !== 0 || (stats.find((item) => item.id === account.id)?.count ?? 0) > 0);
   $: visibleCards = cards.length ? cards : accounts;
-  function openAccount(account: Account) { reportState.set({ tab: 'ledger', accountId: account.id, ...(ledgerPeriod ? { period: ledgerPeriod } : {}) }); currentView.set('report'); }
+  function openAccount(account: Account) { reportState.set({ tab: 'ledger', accountId: account.id, period: ledgerPeriod }); currentView.set('report'); }
   function handleScroll() { active = Math.round(rail.scrollLeft / 292); }
 </script>
 

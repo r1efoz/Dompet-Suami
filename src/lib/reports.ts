@@ -33,7 +33,7 @@ import { operating } from './ledger';
 
 const signed = (tx: Transaction) => (tx.type === 'income' ? tx.amount : -tx.amount);
 const time = (tx: Transaction) => new Date(tx.timestamp).getTime();
-const within = (tx: Transaction, start: Date, end: Date) => time(tx) >= start.getTime() && time(tx) < end.getTime();
+export const within = (tx: Transaction, start: Date, end: Date) => time(tx) >= start.getTime() && time(tx) < end.getTime();
 
 function parseLocalDate(iso: string): Date {
   const [y, m, d] = iso.split('-').map(Number);
@@ -41,7 +41,7 @@ function parseLocalDate(iso: string): Date {
 }
 
 const fmtDay = (d: Date) => `${d.getDate()} ${MONTHS[d.getMonth()]}`;
-const dayKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+export const dayKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
 /** Salary = income (not transfer) in a category named like "Gaji". A period runs payday 00:00 → next payday 00:00; newest first. */
 export function paydayPeriods(transactions: Transaction[], categories: Category[], now = new Date()): PaydayPeriod[] {
@@ -91,7 +91,7 @@ export function activePeriod(paydays: PaydayPeriod[], now: Date): ActivePeriod {
       start: p.start,
       end: p.end ?? new Date(8.64e15),
       expectedEnd,
-      prev: prev && p.prevDay ? { start: prev.start, end: p.start } : undefined,
+      prev: prev ? { start: prev.start, end: p.start } : undefined,
       label: p.label,
       short: fmtDay(p.start),
       word: 'periode ini',
@@ -116,7 +116,7 @@ const daysBetween = (from: Date, to: Date) => Math.round((to.getTime() - from.ge
 
 export function periodDays(period: ActivePeriod, now: Date): { elapsed: number; total: number; remaining: number } {
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const elapsed = Math.max(1, daysBetween(period.start, today) + 1);
+  const elapsed = daysBetween(period.start, today) + 1;
   const total = daysBetween(period.start, period.expectedEnd);
   return { elapsed, total, remaining: total - elapsed };
 }
@@ -239,15 +239,18 @@ export function categoryReport(categories: Category[], transactions: Transaction
     const total = [...cur.values()].reduce((a, b) => a + b, 0);
     const prevTotal = [...prev.values()].reduce((a, b) => a + b, 0);
     const rows: CategoryRow[] = [...cur]
-      .map(([id, amount]) => ({
-        id,
-        name: categories.find((c) => c.id === id)?.name ?? 'Tanpa kategori',
-        amount,
-        percent: (amount / total) * 100,
-        prev: prev.get(id) ?? 0,
-        vs: compare(amount, prev.get(id) ?? 0),
-        allocation: categories.find((c) => c.id === id)?.allocation === true
-      }))
+      .map(([id, amount]) => {
+        const category = categories.find((c) => c.id === id);
+        return {
+          id,
+          name: category?.name ?? 'Tanpa kategori',
+          amount,
+          percent: (amount / total) * 100,
+          prev: prev.get(id) ?? 0,
+          vs: compare(amount, prev.get(id) ?? 0),
+          allocation: category?.allocation === true
+        };
+      })
       .sort((a, b) => b.amount - a.amount);
     const sum: CategoryRow = { id: 'total', name: 'Total', amount: total, percent: total ? 100 : 0, prev: prevTotal, vs: compare(total, prevTotal), allocation: false };
     return { rows, sum };

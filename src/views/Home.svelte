@@ -3,7 +3,7 @@
   import { accountMonthStats, balanceAt, monthlyTrend, topCategories } from '../lib/dashboard';
   import { buildInsights } from '../lib/insights';
   import { operating, summarize } from '../lib/ledger';
-  import { activePeriod, paydayPeriods, type Period } from '../lib/reports';
+  import { activePeriod, dayKey, paydayPeriods, type Period } from '../lib/reports';
   import { formatCompact, formatIDR } from '../lib/format';
   import { APP_OWNER_NAME, currentView, reportState } from '../lib/ui';
   import AccountMenu from '../components/AccountMenu.svelte';
@@ -16,12 +16,12 @@
   import StatStrip from '../components/ui/StatStrip.svelte';
 
   const now = new Date();
-  const localDay = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   $: period = activePeriod(paydayPeriods($transactions, $categories, now), now);
   $: inPeriod = $transactions.filter((tx) => { const t = new Date(tx.timestamp); return t >= period.start && t < period.end; });
   $: summary = summarize(operating(inPeriod));
-  $: headerLabel = period.kind === 'payday' && period.payday ? `${period.label} · gaji Rp ${formatCompact(period.payday.amount)}` : period.label;
-  $: ledgerPeriod = (period.kind === 'payday' && period.payday ? { kind: 'range', from: period.payday.day, to: localDay(now) } : undefined) as Period | undefined;
+  $: headerLabel = period.payday ? `${period.label} · gaji Rp ${formatCompact(period.payday.amount)}` : period.label;
+  let ledgerPeriod: Period | undefined;
+  $: ledgerPeriod = period.payday ? { kind: 'range', from: period.payday.day, to: dayKey(now) } : undefined;
   $: stats = accountMonthStats($accounts, $transactions, period.start, period.end);
   $: activeAccounts = $accounts.filter((account) => (stats.find((item) => item.id === account.id)?.balance ?? 0) !== 0 || (stats.find((item) => item.id === account.id)?.count ?? 0) > 0);
   $: hiddenCount = $accounts.length - activeAccounts.length;
@@ -33,7 +33,7 @@
   $: delta = $totalBalance - beginning;
   $: desktop = typeof window !== 'undefined' && window.matchMedia('(min-width:1024px)').matches;
   function openCashflow() { currentView.set('report'); reportState.set({ tab: 'cashflow', period: { kind: 'year', y: now.getFullYear() } }); }
-  function openCategories() { currentView.set('report'); reportState.set({ tab: 'category', period: period.kind === 'payday' && period.payday ? { kind: 'payday', day: period.payday.day } : { kind: 'month', y: now.getFullYear(), m: now.getMonth() } }); }
+  function openCategories() { currentView.set('report'); reportState.set({ tab: 'category', period: period.payday ? { kind: 'payday', day: period.payday.day } : { kind: 'month', y: now.getFullYear(), m: now.getMonth() } }); }
   function dateLabel(timestamp: string) { return new Date(timestamp).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }); }
 </script>
 
@@ -53,7 +53,7 @@
     {#if insights.length === 0}<p class="py-2.5 text-[13px] leading-[1.45] text-ink2">Belum ada transaksi {period.word}. Catat yang pertama lewat tombol +.</p>
     {:else}{#each insights as insight, i}<div data-testid="insight-row" class="flex gap-2.5 py-2.5 {i < insights.length-1 ? 'border-b border-line' : ''}"><span class="mt-1.5 h-2 w-2 shrink-0 rounded-full {insight.tone === 'pos' ? 'bg-pos' : insight.tone === 'neutral' ? 'bg-ink2' : 'bg-accent'}"></span><p class="text-[13px] leading-[1.45]">{#each insight.segments as segment}{#if segment.b}<b>{segment.t}</b>{:else}{segment.t}{/if}{/each}</p></div>{/each}{/if}
   </Card></section>
-  <section class="min-w-0 lg:col-span-4"><SectionHeader title={period.kind === 'payday' ? 'Belanja periode ini' : 'Belanja bulan ini'} actionLabel="Semua →" on:click={openCategories} /><Card dense>
+  <section class="min-w-0 lg:col-span-4"><SectionHeader title="Belanja {period.word}" actionLabel="Semua →" on:click={openCategories} /><Card dense>
     {#if categoriesTop.top.length === 0 && categoriesTop.allocation.length === 0}<p class="py-2.5 text-[13px] text-ink2 italic">Belum ada pengeluaran {period.word}.</p>{:else}{#each [...categoriesTop.top, ...(categoriesTop.rest ? [categoriesTop.rest] : [])] as category}<ListItem icon={category.icon} title={category.name} amount={formatCompact(category.value)} amountSubtitle="{category.percent}%" percent={category.value / Math.max(categoriesTop.total, 1) * 100} />{/each}{#each categoriesTop.allocation as category}<ListItem icon={category.icon} title={category.name} subtitle="Alokasi" amount={formatCompact(category.value)} />{/each}{/if}
   </Card></section>
   <section class="min-w-0 lg:col-span-8"><SectionHeader title="Transaksi terbaru" actionLabel="Riwayat →" on:click={() => currentView.set('transaction')} /><Card dense>

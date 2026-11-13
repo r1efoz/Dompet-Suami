@@ -1,7 +1,6 @@
 <script lang="ts">
   import { accounts, categories, deleteTransaction, editingTransaction, transactions } from '../lib/store';
   import { formatIDR } from '../lib/format';
-  import { entryProblem } from '../lib/entry-rules';
   import { filterHistory, groupByDay } from '../lib/history';
   import { showToast } from '../lib/ui';
   import { viewer } from '../lib/queen';
@@ -15,7 +14,8 @@
   type Filter = 'all' | 'income' | 'expense' | 'transfer' | 'incomplete';
   type Range = 'month' | 'last' | 'three' | 'all';
 
-  $: n = $categories.length === 0 ? 0 : $transactions.filter((tx) => entryProblem(tx, $categories) !== null).length;
+  $: incomplete = $categories.length === 0 ? [] : filterHistory($transactions, { filter: 'incomplete', categories: $categories });
+  $: n = incomplete.length;
   $: filters = [
     { id: 'all', label: 'Semua' },
     { id: 'expense', label: 'Keluar' },
@@ -63,7 +63,7 @@
     return !needle || [tx.description, categoryName(tx.categoryId), accountName(tx.source), accountName(tx.destination)].some((value) => value.toLocaleLowerCase().includes(needle));
   }
 
-  $: typed = filter === 'incomplete' ? filterHistory($transactions, { filter, account, categories: $categories }) : filterHistory($transactions.filter((tx) => inRange(tx, range)), { filter, account });
+  $: typed = filterHistory(filter === 'incomplete' ? $transactions : $transactions.filter((tx) => inRange(tx, range)), { filter, account, categories: $categories });
   $: filtered = typed.filter((tx) => matches(tx, query));
   $: ordered = filtered.filter((tx) => account || !tx.transferId || tx.type === 'expense').sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime() || b.id.localeCompare(a.id));
   $: days = groupByDay(ordered);

@@ -2,8 +2,8 @@ import type { Category } from '../models/Category';
 import type { Transaction } from '../models/Transaction';
 import { entryProblem } from './entry-rules';
 import { formatCompact, formatIDR } from './format';
-import { operating } from './ledger';
-import { activePeriod, paydayPeriods, periodDays } from './reports';
+import { operating, summarize } from './ledger';
+import { activePeriod, paydayPeriods, periodDays, within } from './reports';
 
 export interface Insight {
   id: 'incomplete' | 'top-category' | 'allocation' | 'savings-ratio' | 'daily-average' | 'vs-previous' | 'new-category';
@@ -20,15 +20,14 @@ export function buildInsights(transactions: Transaction[], categories: Category[
   const { elapsed, total, remaining } = periodDays(period, now);
   const word = period.word;
   const nameOf = (id: string) => categories.find((category) => category.id === id)?.name ?? 'Tanpa kategori';
-  const isAllocation = (tx: Transaction) => !!categories.find((category) => category.id === tx.categoryId)?.allocation;
+  const allocationIds = new Set(categories.filter((c) => c.allocation).map((c) => c.id));
+  const isAllocation = (tx: Transaction) => allocationIds.has(tx.categoryId ?? '');
   const ledger = operating(transactions);
-  const within = (tx: Transaction, from: Date, to: Date) => { const t = new Date(tx.timestamp).getTime(); return t >= from.getTime() && t < to.getTime(); };
   const current = ledger.filter((tx) => within(tx, period.start, period.end));
   const expenses = current.filter((tx) => tx.type === 'expense');
   const allocations = expenses.filter(isAllocation);
   const spending = expenses.filter((tx) => !isAllocation(tx));
-  const income = sum(current.filter((tx) => tx.type === 'income'));
-  const expense = sum(expenses);
+  const { income, expense } = summarize(current);
   const allocated = sum(allocations);
   const spent = expense - allocated;
   const byCategory = (list: Transaction[]) => {
@@ -70,7 +69,7 @@ export function buildInsights(transactions: Transaction[], categories: Category[
     const label = period.kind === 'payday' ? 'gajian lalu' : 'bulan lalu';
     const sameSpan = new Date(start.getFullYear(), start.getMonth(), start.getDate() + elapsed);
     const prevSpending = ledger.filter((tx) => tx.type === 'expense' && !isAllocation(tx) && within(tx, start, end));
-    const previous = sum(prevSpending.filter((tx) => within(tx, start, sameSpan < end ? sameSpan : end)));
+    const previous = sum(prevSpending.filter((tx) => within(tx, start, sameSpan)));
     if (previous > 0) {
       const percent = Math.round(Math.abs(spent - previous) / previous * 100);
       results.push(percent === 0

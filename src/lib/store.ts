@@ -132,13 +132,8 @@ export async function recordEntry({
   const problem = entryProblem({ type, amount: value, categoryId, description: note }, get(categories));
   if (problem) throw new Error(problem.message);
 
-  if (categoryId) {
-    requireCategory(categoryId);
-    const cat = get(categories).find((c) => c.id === categoryId);
-    if (cat?.type !== type) {
-      throw new Error('Kategori tidak cocok dengan jenis transaksi.');
-    }
-  }
+  const category = requireCategory(categoryId as string);
+  if (category.type !== type) throw new Error('Kategori tidak cocok dengan jenis transaksi.');
 
   if (type === 'expense' && (get(balances)[source] ?? 0) < value + adminFee) {
     throw new Error('Saldo tidak cukup.');
@@ -230,10 +225,8 @@ export async function updateEntry(input: TransactionEditInput): Promise<void> {
     get(categories)
   );
   if (problem) throw new Error(problem.message);
-  if (input.categoryId) {
-    const category = requireCategory(input.categoryId);
-    if (category.type !== input.type) throw new Error('Kategori tidak cocok dengan jenis transaksi.');
-  }
+  const category = requireCategory(input.categoryId as string);
+  if (category.type !== input.type) throw new Error('Kategori tidak cocok dengan jenis transaksi.');
 
   const next: Transaction = {
     ...original,

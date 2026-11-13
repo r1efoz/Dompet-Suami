@@ -75,12 +75,13 @@ export function topCategories(tx: Transaction[], categories: Category[], limit: 
     if (item.type !== 'expense' || item.transferId) continue;
     totals.set(item.categoryId ?? null, (totals.get(item.categoryId ?? null) ?? 0) + item.amount);
   }
-  const slices = [...totals].map(([id, value]) => {
+  const slices: CategorySlice[] = [...totals].map(([id, value]) => {
     const category = categories.find((item) => item.id === id);
-    return { slice: { id, name: category?.name ?? 'Tanpa kategori', icon: (category as Category & { icon?: string } | undefined)?.icon ?? '🧾', value, percent: 0 }, isAllocation: !!category?.allocation };
-  }).sort((a, b) => b.slice.value - a.slice.value);
-  const values = slices.filter((item) => !item.isAllocation).map((item) => item.slice);
-  const allocation = slices.filter((item) => item.isAllocation).map((item) => item.slice);
+    return { id, name: category?.name ?? 'Tanpa kategori', icon: (category as Category & { icon?: string } | undefined)?.icon ?? '🧾', value, percent: 0 };
+  }).sort((a, b) => b.value - a.value);
+  const allocationIds = new Set(categories.filter((item) => item.allocation).map((item) => item.id));
+  const values = slices.filter((item) => !allocationIds.has(item.id as string));
+  const allocation = slices.filter((item) => allocationIds.has(item.id as string));
   const total = values.reduce((sum, item) => sum + item.value, 0);
   for (const item of values) item.percent = total ? Math.round(item.value / total * 100) : 0;
   const top = values.slice(0, limit);

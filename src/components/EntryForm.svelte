@@ -31,8 +31,9 @@
 
   type Errors = Partial<Record<'amount' | 'category' | 'description' | 'destination', string>>;
   let errors: Errors = {};
+  const errorClass = 'mt-1.5 text-[11.5px] leading-[1.4] text-accent';
   const clearError = (field: keyof Errors) => {
-    if (errors[field]) errors = { ...errors, [field]: undefined };
+    if (errors[field]) errors = {};
   };
   let loadedEditId = '';
   $: editing = $editingTransaction;
@@ -186,7 +187,7 @@
           </div>
         </div>
       </Card>
-      {#if errors.amount}<p id="entry-amount-error" class="mt-1.5 text-[11.5px] leading-[1.4] text-accent" role="alert">{errors.amount}</p>{/if}
+      {#if errors.amount}<p id="entry-amount-error" class={errorClass} role="alert">{errors.amount}</p>{/if}
     </div>
 
     {#if mode !== 'transfer'}
@@ -198,7 +199,7 @@
         <div id="entry-category" role="group" aria-label="Kategori" aria-describedby={errors.category ? 'entry-category-error' : undefined}>
           <Chips items={categoryItems} value={categoryId} onChange={(id) => { categoryId = categoryId === id ? '' : id; clearError('category'); }} />
         </div>
-        {#if errors.category}<p id="entry-category-error" class="mt-1.5 text-[11.5px] leading-[1.4] text-accent" role="alert">{errors.category}</p>{/if}
+        {#if errors.category}<p id="entry-category-error" class={errorClass} role="alert">{errors.category}</p>{/if}
         <input type="hidden" name="categoryId" value={categoryId} />
       </div>
     {/if}
@@ -223,7 +224,7 @@
             <option value={account.id}>{account.name} · {formatIDR($balances[account.id] ?? 0)}</option>
           {/each}
         </select>
-        {#if errors.destination}<p id="entry-destination-error" class="mt-1.5 text-[11.5px] leading-[1.4] text-accent" role="alert">{errors.destination}</p>{/if}
+        {#if errors.destination}<p id="entry-destination-error" class={errorClass} role="alert">{errors.destination}</p>{/if}
       </div>
       <div>
         <label class="lbl mb-2 block" for="entry-fee">BIAYA ADMIN</label>
@@ -267,7 +268,7 @@
           aria-describedby={errors.description ? 'entry-description-error' : undefined}
           aria-invalid={errors.description ? 'true' : undefined}
         />
-        {#if errors.description}<p id="entry-description-error" class="mt-1.5 text-[11.5px] leading-[1.4] text-accent" role="alert">{errors.description}</p>{/if}
+        {#if errors.description}<p id="entry-description-error" class={errorClass} role="alert">{errors.description}</p>{/if}
       </div>
     </div>
 
