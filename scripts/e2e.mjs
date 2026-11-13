@@ -482,6 +482,23 @@ check("Kategori: baris Makanan memuat pill Alokasi", /Alokasi/.test(makananRow),
 const kategoriBody = (await finalPage.locator("body").innerText()).replace(/\s+/g, " ");
 check("Kategori: ringkasan Belanja dan Alokasi", /Belanja Rp .* · Alokasi Rp/.test(kategoriBody), kategoriBody.slice(0, 300));
 
+// Task 11: legacy incomplete rows surface in Riwayat.
+psql(`-c "insert into transactions (id, type, amount, description, source, timestamp, user_id) values ('legacy-incomplete', 'expense', 1000, '', 'cash', now() - interval '70 days', '${uidOf(E2E_USER.email)}')"`);
+await finalPage.reload({ waitUntil: "networkidle" });
+await finalPage.locator('nav[aria-label="Navigasi atas"]').getByRole("button", { name: "Transaksi", exact: true }).click();
+const incompleteChip = finalPage.getByRole("button", { name: "Perlu dilengkapi (1)" });
+check("Riwayat: chip Perlu dilengkapi (1) terlihat", await incompleteChip.isVisible().catch(() => false));
+await incompleteChip.click();
+check("Riwayat: baris Tanpa keterangan terlihat", await finalPage.getByText("Tanpa keterangan").first().isVisible().catch(() => false));
+check("Riwayat: tombol rentang disabled", await finalPage.getByRole("button", { name: /Bulan ini/ }).isDisabled().catch(() => false));
+await finalPage.getByText("Tanpa keterangan").first().click();
+await finalPage.getByRole("button", { name: "Edit", exact: true }).click();
+await finalPage.getByRole("button", { name: "Simpan perubahan" }).click();
+check("Edit legacy: pesan Pilih kategori dulu.", /Pilih kategori dulu\./.test(await finalPage.locator("#entry-category-error").innerText().catch(() => "")));
+await finalPage.locator('nav[aria-label="Navigasi atas"]').getByRole("button", { name: "Home", exact: true }).click();
+const legacyInsights = await finalPage.locator('[data-testid="insight-row"]').allInnerTexts();
+check("Home: insight 1 transaksi perlu dilengkapi", legacyInsights.some((t) => /^1 transaksi/.test(t.replace(/\s+/g, " ").trim())), legacyInsights.join(" | "));
+
 await browser.close();
 
 for (const c of checks)

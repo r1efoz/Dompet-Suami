@@ -1,6 +1,7 @@
 <script lang="ts">
   import { accounts, categories, deleteTransaction, editingTransaction, transactions } from '../lib/store';
   import { formatIDR } from '../lib/format';
+  import { entryProblem } from '../lib/entry-rules';
   import { filterHistory, groupByDay } from '../lib/history';
   import { showToast } from '../lib/ui';
   import { viewer } from '../lib/queen';
@@ -11,15 +12,18 @@
   import Sheet from './ui/Sheet.svelte';
   import TransactionDetail from './TransactionDetail.svelte';
 
-  type Filter = 'all' | 'income' | 'expense' | 'transfer';
+  type Filter = 'all' | 'income' | 'expense' | 'transfer' | 'incomplete';
   type Range = 'month' | 'last' | 'three' | 'all';
 
-  const filters = [
+  $: n = $categories.length === 0 ? 0 : $transactions.filter((tx) => entryProblem(tx, $categories) !== null).length;
+  $: filters = [
     { id: 'all', label: 'Semua' },
     { id: 'expense', label: 'Keluar' },
     { id: 'income', label: 'Masuk' },
-    { id: 'transfer', label: 'Transfer' }
+    { id: 'transfer', label: 'Transfer' },
+    ...(n > 0 ? [{ id: 'incomplete', label: `Perlu dilengkapi (${n})` }] : [])
   ];
+  $: if (n === 0 && filter === 'incomplete') filter = 'all';
   const ranges: { id: Range; label: string }[] = [
     { id: 'month', label: 'Bulan ini' },
     { id: 'last', label: 'Bulan lalu' },
@@ -59,7 +63,7 @@
     return !needle || [tx.description, categoryName(tx.categoryId), accountName(tx.source), accountName(tx.destination)].some((value) => value.toLocaleLowerCase().includes(needle));
   }
 
-  $: typed = filterHistory($transactions.filter((tx) => inRange(tx, range)), { filter, account });
+  $: typed = filter === 'incomplete' ? filterHistory($transactions, { filter, account, categories: $categories }) : filterHistory($transactions.filter((tx) => inRange(tx, range)), { filter, account });
   $: filtered = typed.filter((tx) => matches(tx, query));
   $: ordered = filtered.filter((tx) => account || !tx.transferId || tx.type === 'expense').sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime() || b.id.localeCompare(a.id));
   $: days = groupByDay(ordered);
@@ -159,7 +163,7 @@
 
   <div class="mt-2.5 flex items-center gap-2" role="group" aria-label="Filter transaksi">
     <div class="min-w-0 flex-1"><Chips items={filters} value={filter} onChange={(id) => (filter = id as Filter)} /></div>
-    <button type="button" class="shrink-0 whitespace-nowrap rounded-pill border border-line bg-card px-3 py-[7px] text-[12.5px] text-ink" on:click={() => (rangeOpen = true)}>{ranges.find((item) => item.id === range)?.label} ▾</button>
+    <button type="button" disabled={filter === 'incomplete'} class="shrink-0 whitespace-nowrap rounded-pill border border-line bg-card px-3 py-[7px] text-[12.5px] text-ink {filter === 'incomplete' ? 'opacity-50' : ''}" on:click={() => (rangeOpen = true)}>{ranges.find((item) => item.id === range)?.label} ▾</button>
   </div>
 
   {#if total === 0}
