@@ -16,4 +16,7 @@ assert.equal(grouped[0].transactions.filter((tx) => tx.transferId).length, 1);
 assert.deepEqual(filterHistory(transactions, { query: 'bElAnJa' }).map((tx) => tx.id), ['expense']);
 assert.deepEqual(filterHistory(transactions, { account: 'cash' }).map((tx) => tx.id), ['transfer-in']);
 assert.deepEqual(filterHistory(transactions, { account: 'bank' }).map((tx) => tx.id), ['expense', 'transfer-out', 'income']);
-console.log('history self-check: 6 assertions passed');
+const histCats = [{ id: 'food', name: 'Makanan', type: 'expense' }] as import('../models/Category').Category[];
+assert.deepEqual(filterHistory(transactions, { filter: 'incomplete', categories: histCats }).map((tx) => tx.id), ['expense', 'income']);
+assert.deepEqual(filterHistory([{ ...transactions[0], categoryId: 'food' }], { filter: 'incomplete', categories: histCats }), []);
+console.log('history self-check: 8 assertions passed');

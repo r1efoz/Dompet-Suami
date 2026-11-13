@@ -1,4 +1,6 @@
 import type { Transaction } from '../models/Transaction';
+import type { Category } from '../models/Category';
+import { entryProblem } from './entry-rules';
 
 export interface HistoryDay {
   date: string;
@@ -22,10 +24,14 @@ export function groupByDay(transactions: Transaction[]): HistoryDay[] {
   }));
 }
 
-export function filterHistory(transactions: Transaction[], options: { query?: string; filter?: 'all' | 'income' | 'expense' | 'transfer'; account?: string }): Transaction[] {
+export function filterHistory(transactions: Transaction[], options: { query?: string; filter?: 'all' | 'income' | 'expense' | 'transfer' | 'incomplete'; account?: string; categories?: Category[] }): Transaction[] {
   const query = options.query?.trim().toLocaleLowerCase();
+  const categories = options.categories ?? [];
   return transactions.filter((tx) => {
-    const matchesType = !options.filter || options.filter === 'all' || (options.filter === 'transfer' ? Boolean(tx.transferId) : !tx.transferId && tx.type === options.filter);
+    const matchesType = !options.filter || options.filter === 'all'
+      || (options.filter === 'transfer' ? Boolean(tx.transferId)
+        : options.filter === 'incomplete' ? entryProblem(tx, categories) !== null
+        : !tx.transferId && tx.type === options.filter);
     return matchesType && (!options.account || tx.source === options.account) && (!query || tx.description.toLocaleLowerCase().includes(query));
   });
 }
