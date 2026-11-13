@@ -172,7 +172,12 @@ check("mutasi pertama = gaji masuk Bank", /Gaji bulanan · Bank/.test(await firs
 await firstLedgerRow.click();
 const ledgerDetail = (await page.getByRole("dialog").innerText()).replace(/\s+/g, " ");
 check("detail dari buku besar memuat Keterangan", /Keterangan/.test(ledgerDetail) && /Gaji bulanan/.test(ledgerDetail), ledgerDetail);
-await page.keyboard.press("Escape");
+check("detail buku besar punya tombol Edit", (await page.getByRole("dialog").getByRole("button", { name: "Edit", exact: true }).count()) === 1);
+await page.getByRole("dialog").getByRole("button", { name: "Edit", exact: true }).click();
+check("Edit dari buku besar membuka form dengan nominal terisi", (await page.locator("#entry-amount").inputValue()).replace(/\D/g, "") === "18214145" || (await page.locator("#entry-amount").inputValue()).length > 0);
+await page.getByRole("button", { name: "Batal", exact: true }).click().catch(() => {});
+await page.locator('nav[aria-label="Navigasi atas"]').getByRole("button", { name: "Laporan", exact: true }).click();
+await page.getByRole("tab", { name: "Buku besar" }).click();
 
 // POV gajian
 await page.getByRole("button", { name: "Gajian…" }).click();

@@ -4,6 +4,9 @@
   import SectionHeader from '../ui/SectionHeader.svelte';
   import Sheet from '../ui/Sheet.svelte';
   import TransactionDetail from '../TransactionDetail.svelte';
+  import { editingTransaction } from '../../lib/store';
+  import { viewer } from '../../lib/queen';
+  import { currentView } from '../../lib/ui';
   import { formatCompact, formatDayMonth, formatIDR } from '../../lib/format';
   import { buildLedger, operating } from '../../lib/ledger';
   import type { AccountBalanceRow, CategoryRow } from '../../lib/reports';
@@ -27,6 +30,15 @@
   const categoryName = (id?: string) => categories.find((c) => c.id === id)?.name ?? '';
 
   let detail: Transaction | null = null;
+
+  function edit() {
+    if (!detail) return;
+    editingTransaction.set(detail);
+    detail = null;
+    currentView.set('transaction');
+    window.scrollTo({ top: 0 });
+    requestAnimationFrame(() => document.getElementById('entry-amount')?.focus());
+  }
   /** Category rows shown in the open sheet ('' id = Tanpa kategori). */
   let catDetail: { title: string; ids: string[]; amount: number } | null = null;
 
@@ -100,7 +112,13 @@
   {/if}
 </div>
 
-<TransactionDetail tx={detail} on:close={() => (detail = null)} />
+<TransactionDetail tx={detail} on:close={() => (detail = null)}>
+  <svelte:fragment slot="actions">
+    {#if detail && !$viewer && !detail.id.startsWith('fee_') && (!detail.transferId || detail.type === 'expense')}
+      <div class="mt-4"><button type="button" class="h-11 w-full rounded-btn bg-ink text-on-ink font-semibold text-[14px] active:translate-y-px focus-visible:outline-2 focus-visible:outline-ink focus-visible:outline-offset-2" on:click={edit}>Edit</button></div>
+    {/if}
+  </svelte:fragment>
+</TransactionDetail>
 
 <Sheet open={catDetail !== null} title={catDetail ? `${catDetail.title} · ${formatIDR(catDetail.amount)}` : ''} on:close={() => (catDetail = null)}>
   {#each catTx as tx (tx.id)}
