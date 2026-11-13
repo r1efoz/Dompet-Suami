@@ -5,4 +5,5 @@ export interface Category {
   name: string;
   type: CategoryType;
   icon?: string;
+  allocation?: boolean;
 }

@@ -21,6 +21,7 @@ create table categories (
   name text not null,
   type text not null check (type in ('income', 'expense')),
   icon text,
+  allocation boolean not null default false,
   user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
   created_at timestamptz default now()
 );
@@ -42,6 +43,7 @@ create table transactions (
 
 -- Upgrade existing databases that were created before category support.
 alter table transactions add column if not exists category_id text;
+alter table categories add column if not exists allocation boolean not null default false;
 
 -- Index untuk query cepat
 create index idx_transactions_timestamp on transactions(timestamp);
